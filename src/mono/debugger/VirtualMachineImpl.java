@@ -260,14 +260,14 @@ class VirtualMachineImpl extends MirrorImpl
         return System.identityHashCode(this);
     }
 
-    public List<ReferenceType> classesByName(String className) {
+    public List<ReferenceType> getTypes(String className, boolean ignoreCase) {
         validateVM();
-        String signature = JNITypeParser.typeNameToSignature(className);
+        //String signature = JNITypeParser.typeNameToSignature(className);
         List<ReferenceType> list;
         if (retrievedAllTypes) {
-           list = findReferenceTypes(signature);
+           list = findReferenceTypes(className);
         } else {
-           list = retrieveClassesBySignature(signature);
+           list = retrieveClassesBySignature(className, ignoreCase);
         }
         return Collections.unmodifiableList(list);
     }
@@ -820,7 +820,7 @@ class VirtualMachineImpl extends MirrorImpl
          * with that name
          */
         if (matches > 1) {
-            retrieveClassesBySignature(signature);
+            retrieveClassesBySignature(signature, true);
         }
     }
 
@@ -924,14 +924,14 @@ class VirtualMachineImpl extends MirrorImpl
         return capabilitiesNew;
     }
 
-    private List<ReferenceType> retrieveClassesBySignature(String signature) {
+    private List<ReferenceType> retrieveClassesBySignature(String signature, boolean ignoreCase) {
         if ((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0) {
             vm.printTrace("Retrieving matching ReferenceTypes, sig=" + signature);
         }
         JDWP.VirtualMachine.ClassesBySignature.ClassInfo[] cinfos;
         try {
             cinfos = JDWP.VirtualMachine.ClassesBySignature.
-                                      process(vm, signature).classes;
+                                      process(vm, signature, ignoreCase).classes;
         } catch (JDWPException exc) {
             throw exc.toJDIException();
         }
@@ -954,39 +954,12 @@ class VirtualMachineImpl extends MirrorImpl
         return list;
     }
 
-    private void retrieveAllClasses1_4() {
-        JDWP.VirtualMachine.AllClasses.ClassInfo[] cinfos;
-        try {
-            cinfos = JDWP.VirtualMachine.AllClasses.process(vm).classes;
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-
-        // Hold lock during processing to improve performance
-        // and to have safe check/set of retrievedAllTypes
-        synchronized (this) {
-            if (!retrievedAllTypes) {
-                // Number of classes
-                int count = cinfos.length;
-                for (int i=0; i<count; i++) {
-                    JDWP.VirtualMachine.AllClasses.ClassInfo ci =
-                                                               cinfos[i];
-                    ReferenceTypeImpl type = referenceType(ci.typeID,
-                                                           ci.refTypeTag,
-                                                           ci.signature);
-                    type.setStatus(ci.status);
-                }
-                retrievedAllTypes = true;
-            }
-        }
-    }
-
     private void retrieveAllClasses() {
         if ((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0) {
             vm.printTrace("Retrieving all ReferenceTypes");
         }
 
-        retrieveAllClasses1_4();
+		//FIXME [VISTALL] GET_ALL_TYPES is not supported by mono
     }
 
     void sendToTarget(Packet packet) {

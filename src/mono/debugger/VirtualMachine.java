@@ -25,11 +25,11 @@
 
 package mono.debugger;
 
-import mono.debugger.event.EventQueue;
-import mono.debugger.request.EventRequestManager;
-
 import java.util.List;
 import java.util.Map;
+
+import mono.debugger.event.EventQueue;
+import mono.debugger.request.EventRequestManager;
 
 /**
  * A virtual machine targeted for debugging.
@@ -86,11 +86,13 @@ public interface VirtualMachine extends Mirror {
      * types (like array) for which preparation is
      * not defined.
      *
-     * @param className the class/interface name to search for
-     * @return a list of {@link ReferenceType} objects, each
+     *
+	 * @param className the class/interface name to search for
+	 * @param ignoreCase
+	 * @return a list of {@link ReferenceType} objects, each
      * mirroring a type in the target VM with the given name.
      */
-    List<ReferenceType> classesByName(String className);
+    List<ReferenceType> getTypes(String className, boolean ignoreCase);
 
     /**
      * Returns all loaded types. For each loaded type in the target

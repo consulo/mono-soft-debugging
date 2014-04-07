@@ -23,6 +23,6 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		System.out.println("virtualMachine connected " + accept.allThreads());
+		System.out.println("virtualMachine connected " + accept.getTypes("String", true));
 	}
 }

@@ -25,7 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
 import mono.debugger.request.BreakpointRequest;
 import java.util.*;
 import java.lang.ref.WeakReference;
@@ -240,7 +239,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
     public void stop(ObjectReference throwable) throws InvalidTypeException {
         validateMirror(throwable);
         // Verify that the given object is a Throwable instance
-        List<ReferenceType> list = vm.classesByName("java.lang.Throwable");
+        List<ReferenceType> list = vm.getTypes("java.lang.Throwable", addedListener);
         ClassTypeImpl throwableClass = (ClassTypeImpl)list.get(0);
         if ((throwable == null) ||
             !throwableClass.isAssignableFrom(throwable)) {

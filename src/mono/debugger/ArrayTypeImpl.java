@@ -25,8 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -83,7 +81,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         if (PacketStream.isObjectTag(tag)) {
             // It's a reference type
             JNITypeParser parser = new JNITypeParser(componentSignature());
-            List<ReferenceType> list = vm.classesByName(parser.typeName());
+            List<ReferenceType> list = vm.getTypes(parser.typeName(), true);
             Iterator<ReferenceType> iter = list.iterator();
             while (iter.hasNext()) {
                 ReferenceType type = iter.next();
