@@ -25,9 +25,9 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import java.util.*;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 class PacketStream {
     final VirtualMachineImpl vm;
@@ -74,11 +74,7 @@ class PacketStream {
     }
 
     void writeBoolean(boolean data) {
-        if(data) {
-            dataStream.write( 1 );
-        } else {
-            dataStream.write( 0 );
-        }
+        writeInt(data ? 1 : 0);
     }
 
     void writeByte(byte data) {
@@ -303,7 +299,7 @@ class PacketStream {
      * Read boolean represented as one byte.
      */
     boolean readBoolean() {
-        byte ret = readByte();
+        int ret = readInt();
         return (ret != 0);
     }
 
