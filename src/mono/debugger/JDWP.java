@@ -332,7 +332,7 @@ class JDWP {
 		 * the same number of times it has been suspended. 
 		 */
 		static class Suspend {
-			static final int COMMAND = 8;
+			static final int COMMAND = 3;
 
 			static Suspend process(VirtualMachineImpl vm)
 					throws JDWPException {

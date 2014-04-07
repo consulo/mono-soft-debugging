@@ -23,6 +23,8 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		System.out.println("virtualMachine connected " + accept.getTypes("String", true));
+		//accept.suspend();
+		//System.out.println("virtualMachine suspended ");
+		Thread.sleep(50000L);
 	}
 }
