@@ -278,7 +278,7 @@ class JDWP {
 		 * included in the returned list. 
 		 */
 		static class AllThreads {
-			static final int COMMAND = 4;
+			static final int COMMAND = 2;
 
 			static AllThreads process(VirtualMachineImpl vm)
 					throws JDWPException {
