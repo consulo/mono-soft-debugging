@@ -60,7 +60,7 @@ class VirtualMachineImpl extends MirrorImpl
 
     // Allow direct access to this field so that that tracing code slows down
     // JDI as little as possible when not enabled.
-    int traceFlags = TRACE_NONE;
+    int traceFlags = TRACE_ALL;
 
     static int TRACE_RAW_SENDS     = 0x01000000;
     static int TRACE_RAW_RECEIVES  = 0x02000000;
