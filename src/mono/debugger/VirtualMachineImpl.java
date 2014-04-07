@@ -986,41 +986,7 @@ class VirtualMachineImpl extends MirrorImpl
             vm.printTrace("Retrieving all ReferenceTypes");
         }
 
-        if (!vm.canGet1_5LanguageFeatures()) {
-            retrieveAllClasses1_4();
-            return;
-        }
-
-        /*
-         * To save time (assuming the caller will be
-         * using then) we will get the generic sigs too.
-         */
-
-        JDWP.VirtualMachine.AllClasses.ClassInfo[] cinfos;
-        try {
-            cinfos = JDWP.VirtualMachine.AllClasses.process(vm).classes;
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-
-        // Hold lock during processing to improve performance
-        // and to have safe check/set of retrievedAllTypes
-        synchronized (this) {
-            if (!retrievedAllTypes) {
-                // Number of classes
-                int count = cinfos.length;
-                for (int i=0; i<count; i++) {
-                    JDWP.VirtualMachine.AllClasses.ClassInfo ci =
-                                                               cinfos[i];
-                    ReferenceTypeImpl type = referenceType(ci.typeID,
-                                                           ci.refTypeTag,
-                                                           ci.signature);
-                    //type.setGenericSignature(ci.genericSignature);
-                    type.setStatus(ci.status);
-                }
-                retrievedAllTypes = true;
-            }
-        }
+        retrieveAllClasses1_4();
     }
 
     void sendToTarget(Packet packet) {
