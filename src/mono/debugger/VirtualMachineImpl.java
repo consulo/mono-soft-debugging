@@ -996,9 +996,9 @@ class VirtualMachineImpl extends MirrorImpl
          * using then) we will get the generic sigs too.
          */
 
-        JDWP.VirtualMachine.AllClassesWithGeneric.ClassInfo[] cinfos;
+        JDWP.VirtualMachine.AllClasses.ClassInfo[] cinfos;
         try {
-            cinfos = JDWP.VirtualMachine.AllClassesWithGeneric.process(vm).classes;
+            cinfos = JDWP.VirtualMachine.AllClasses.process(vm).classes;
         } catch (JDWPException exc) {
             throw exc.toJDIException();
         }
@@ -1010,12 +1010,12 @@ class VirtualMachineImpl extends MirrorImpl
                 // Number of classes
                 int count = cinfos.length;
                 for (int i=0; i<count; i++) {
-                    JDWP.VirtualMachine.AllClassesWithGeneric.ClassInfo ci =
+                    JDWP.VirtualMachine.AllClasses.ClassInfo ci =
                                                                cinfos[i];
                     ReferenceTypeImpl type = referenceType(ci.typeID,
                                                            ci.refTypeTag,
                                                            ci.signature);
-                    type.setGenericSignature(ci.genericSignature);
+                    //type.setGenericSignature(ci.genericSignature);
                     type.setStatus(ci.status);
                 }
                 retrievedAllTypes = true;

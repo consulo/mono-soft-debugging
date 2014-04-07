@@ -177,7 +177,7 @@ class JDWP {
 		 * target VM.
 		 */
 		static class AllClasses {
-			static final int COMMAND = 3;
+			static final int COMMAND = 12;
 
 			static AllClasses process(VirtualMachineImpl vm)
 					throws JDWPException {
@@ -1468,117 +1468,6 @@ class JDWP {
 			}
 		}
 
-		/**
-		 * Returns reference types for all classes currently loaded by the 
-		 * target VM.  
-		 * Both the JNI signature and the generic signature are 
-		 * returned for each class.  
-		 * Generic signatures are described in the signature attribute 
-		 * section in 
-		 * <cite>The Java&trade; Virtual Machine Specification</cite>. 
-		 * Since JDWP version 1.5.
-		 */
-		static class AllClassesWithGeneric {
-			static final int COMMAND = 20;
-
-			static AllClassesWithGeneric process(VirtualMachineImpl vm)
-					throws JDWPException {
-				PacketStream ps = enqueueCommand(vm);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(VirtualMachineImpl vm) {
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if ((vm.traceFlags & vm.TRACE_SENDS) != 0) {
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.AllClassesWithGeneric"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:""));
-				}
-				ps.send();
-				return ps;
-			}
-
-			static AllClassesWithGeneric waitForReply(VirtualMachineImpl vm, PacketStream ps)
-					throws JDWPException {
-				ps.waitForReply();
-				return new AllClassesWithGeneric(vm, ps);
-			}
-
-			static class ClassInfo {
-
-				/**
-				 * <a href="#JDWP_TypeTag">Kind</a> 
-				 * of following reference type. 
-				 */
-				final byte refTypeTag;
-
-				/**
-				 * Loaded reference type
-				 */
-				final long typeID;
-
-				/**
-				 * The JNI signature of the loaded reference type.
-				 */
-				final String signature;
-
-				/**
-				 * The generic signature of the loaded reference type 
-				 * or an empty string if there is none.
-				 */
-				final String genericSignature;
-
-				/**
-				 * The current class 
-				 * <a href="#JDWP_ClassStatus">status.</a> 
-				 */
-				final int status;
-
-				private ClassInfo(VirtualMachineImpl vm, PacketStream ps) {
-					refTypeTag = ps.readByte();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "refTypeTag(byte): " + refTypeTag);
-					}
-					typeID = ps.readClassRef();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "typeID(long): " + "ref="+typeID);
-					}
-					signature = ps.readString();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "signature(String): " + signature);
-					}
-					genericSignature = ps.readString();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "genericSignature(String): " + genericSignature);
-					}
-					status = ps.readInt();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "status(int): " + status);
-					}
-				}
-			}
-
-
-			/**
-			 * Number of reference types that follow.
-			 */
-			final ClassInfo[] classes;
-
-			private AllClassesWithGeneric(VirtualMachineImpl vm, PacketStream ps) {
-				if (vm.traceReceives) {
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.AllClassesWithGeneric"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
-				}
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "classes(ClassInfo[]): " + "");
-				}
-				int classesCount = ps.readInt();
-				classes = new ClassInfo[classesCount];
-				for (int i = 0; i < classesCount; i++) {;
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "classes[i](ClassInfo): " + "");
-					}
-					classes[i] = new ClassInfo(vm, ps);
-				}
-			}
-		}
 
 		/**
 		 * Returns the number of instances of each reference type in the input list. 
