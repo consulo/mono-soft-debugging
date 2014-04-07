@@ -25,13 +25,22 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import mono.debugger.connect.*;
-import mono.debugger.connect.spi.*;
-import java.net.*;
-import java.io.*;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ResourceBundle;
+
+import mono.debugger.connect.TransportTimeoutException;
+import mono.debugger.connect.spi.ClosedConnectionException;
+import mono.debugger.connect.spi.Connection;
+import mono.debugger.connect.spi.TransportService;
 
 /*
  * A transport service based on a TCP connection between the
@@ -119,7 +128,7 @@ public class SocketTransportService extends TransportService {
     void handshake(Socket s, long timeout) throws IOException {
         s.setSoTimeout((int)timeout);
 
-        byte[] hello = "JDWP-Handshake".getBytes("UTF-8");
+        byte[] hello = "DWP-Handshake".getBytes("UTF-8");
         s.getOutputStream().write(hello);
 
         byte[] b = new byte[hello.length];
