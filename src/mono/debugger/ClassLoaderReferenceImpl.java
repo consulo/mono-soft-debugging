@@ -25,8 +25,10 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
                   implements ClassLoaderReference, VMListener  {
@@ -74,8 +76,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
                                             process(vm, this).classes;
                 classes = new ArrayList<ReferenceType>(jdwpClasses.length);
                 for (int i = 0; i < jdwpClasses.length; ++i) {
-                    classes.add(vm.referenceType(jdwpClasses[i].typeID,
-                                                 jdwpClasses[i].refTypeTag));
+                    classes.add(vm.referenceType(jdwpClasses[i].typeID));
                 }
                 classes = Collections.unmodifiableList(classes);
                 if (local != null) {

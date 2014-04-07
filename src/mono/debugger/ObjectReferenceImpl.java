@@ -25,10 +25,11 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ObjectReferenceImpl extends ValueImpl
              implements ObjectReference, VMListener {
@@ -151,8 +152,7 @@ public class ObjectReferenceImpl extends ValueImpl
             try {
                 JDWP.ObjectReference.ReferenceType rtinfo =
                     JDWP.ObjectReference.ReferenceType.process(vm, this);
-                type = vm.referenceType(rtinfo.typeID,
-                                        rtinfo.refTypeTag);
+                type = vm.referenceType(rtinfo.typeID);
             } catch (JDWPException exc) {
                 throw exc.toJDIException();
             }

@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import mono.debugger.*;
 import mono.debugger.event.*;
 import mono.debugger.request.EventRequest;
 enum EventDestination {UNKNOWN_EVENT, INTERNAL_EVENT, CLIENT_EVENT};
@@ -368,8 +367,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
 
         ClassPrepareEventImpl(JDWP.Event.Composite.Events.ClassPrepare evt) {
             super(evt, evt.requestID, evt.thread);
-            referenceType = this.vm.referenceType(evt.typeID, evt.refTypeTag,
-                                                  evt.signature);
+            referenceType = this.vm.referenceType(evt.typeID, evt.signature);
             ((ReferenceTypeImpl)referenceType).setStatus(evt.status);
         }
 
@@ -497,7 +495,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
                             byte refTypeTag, long typeID, long fieldID,
                             ObjectReference object) {
             super(evt, requestID, thread, location);
-            this.refType = this.vm.referenceType(typeID, refTypeTag);
+            this.refType = this.vm.referenceType(typeID);
             this.fieldID = fieldID;
             this.object = object;
         }

@@ -745,27 +745,11 @@ class VirtualMachineImpl extends MirrorImpl
         printTrace(sb.toString());
     }
 
-    private synchronized ReferenceTypeImpl addReferenceType(long id,
-                                                       int tag,
-                                                       String signature) {
+    private synchronized ReferenceTypeImpl addReferenceType(long id, String signature) {
         if (typesByID == null) {
             initReferenceTypes();
         }
-        ReferenceTypeImpl type = null;
-        switch(tag) {
-            case JDWP.TypeTag.CLASS:
-                type = new ClassTypeImpl(vm, id);
-                break;
-            case JDWP.TypeTag.INTERFACE:
-                type = new InterfaceTypeImpl(vm, id);
-                break;
-            case JDWP.TypeTag.ARRAY:
-                type = new ArrayTypeImpl(vm, id);
-                break;
-            default:
-                throw new InternalException("Invalid reference type tag");
-        }
-
+        ReferenceTypeImpl type = new ClassTypeImpl(vm, id);
         /*
          * If a signature was specified, make sure to set it ASAP, to
          * prevent any needless JDWP command to retrieve it. (for example,
@@ -848,36 +832,28 @@ class VirtualMachineImpl extends MirrorImpl
         typesBySignature = new TreeSet<ReferenceType>();
     }
 
-    ReferenceTypeImpl referenceType(long ref, byte tag) {
-        return referenceType(ref, tag, null);
+    ReferenceTypeImpl referenceType(long ref) {
+        return referenceType(ref,  null);
     }
 
     ClassTypeImpl classType(long ref) {
-        return (ClassTypeImpl)referenceType(ref, JDWP.TypeTag.CLASS, null);
+        return (ClassTypeImpl)referenceType(ref, null);
     }
 
     InterfaceTypeImpl interfaceType(long ref) {
-        return (InterfaceTypeImpl)referenceType(ref, JDWP.TypeTag.INTERFACE, null);
+        return (InterfaceTypeImpl)referenceType(ref, null);
     }
 
     ArrayTypeImpl arrayType(long ref) {
-        return (ArrayTypeImpl)referenceType(ref, JDWP.TypeTag.ARRAY, null);
+        return (ArrayTypeImpl)referenceType(ref, null);
     }
 
-    ReferenceTypeImpl referenceType(long id, int tag,
-                                                 String signature) {
+    ReferenceTypeImpl referenceType(long id, String signature) {
         if ((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0) {
             StringBuffer sb = new StringBuffer();
             sb.append("Looking up ");
-            if (tag == JDWP.TypeTag.CLASS) {
-                sb.append("Class");
-            } else if (tag == JDWP.TypeTag.INTERFACE) {
-                sb.append("Interface");
-            } else if (tag == JDWP.TypeTag.ARRAY) {
-                sb.append("ArrayType");
-            } else {
-                sb.append("UNKNOWN TAG: " + tag);
-            }
+            sb.append("Class");
+
             if (signature != null) {
                 sb.append(", signature='" + signature + "'");
             }
@@ -893,7 +869,7 @@ class VirtualMachineImpl extends MirrorImpl
                     retType = (ReferenceTypeImpl)typesByID.get(new Long(id));
                 }
                 if (retType == null) {
-                    retType = addReferenceType(id, tag, signature);
+                    retType = addReferenceType(id, signature);
                 }
             }
             return retType;
@@ -944,10 +920,7 @@ class VirtualMachineImpl extends MirrorImpl
             for (int i = 0; i < count; i++) {
                 JDWP.VirtualMachine.GetTypes.ClassInfo ci =
                                                                cinfos[i];
-                ReferenceTypeImpl type = referenceType(ci.typeID,
-                                                       ci.refTypeTag,
-                                                       signature);
-                type.setStatus(ci.status);
+                ReferenceTypeImpl type = referenceType(ci.typeID, signature);
                 list.add(type);
             }
         }

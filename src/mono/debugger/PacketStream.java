@@ -414,8 +414,8 @@ class PacketStream {
         return readID(vm.sizeofObjectRef);
     }
 
-    long readClassRef() {
-        return readID(vm.sizeofClassRef);
+    int readClassRef() {
+        return (int) readID(vm.sizeofClassRef);
     }
 
     ObjectReferenceImpl readTaggedObjectReference() {
@@ -458,9 +458,8 @@ class PacketStream {
     }
 
     ReferenceTypeImpl readReferenceType() {
-        byte tag = readByte();
         long ref = readObjectRef();
-        return vm.referenceType(ref, tag);
+        return vm.referenceType(ref);
     }
 
     /**
@@ -552,13 +551,12 @@ class PacketStream {
      * Read location represented as vm specific byte sequence.
      */
     Location readLocation() {
-        byte tag = readByte();
         long classRef = readObjectRef();
         long methodRef = readMethodRef();
         long codeIndex = readLong();
         if (classRef != 0) {
             /* Valid location */
-            ReferenceTypeImpl refType = vm.referenceType(classRef, tag);
+            ReferenceTypeImpl refType = vm.referenceType(classRef);
             return new LocationImpl(vm, refType, methodRef, codeIndex);
         } else {
             /* Null location (example: uncaught exception) */

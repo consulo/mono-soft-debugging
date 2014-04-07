@@ -94,7 +94,8 @@ class JDWP {
 			static PacketStream enqueueCommand(VirtualMachineImpl vm, String signature, boolean ignoreCase) {
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if ((vm.traceFlags & vm.TRACE_SENDS) != 0) {
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.ClassesBySignature"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:""));
+					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.GetTypes"+(ps.pkt.flags!=0?", " +
+							"FLAGS=" + ps.pkt.flags:""));
 				}
 				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 					ps.vm.printTrace("Sending:                 signature(String): " + signature);
@@ -112,36 +113,16 @@ class JDWP {
 			}
 
 			static class ClassInfo {
-
-				/**
-				 * <a href="#JDWP_TypeTag">Kind</a> 
-				 * of following reference type. 
-				 */
-				final byte refTypeTag;
-
 				/**
 				 * Matching loaded reference type
 				 */
-				final long typeID;
+				final int typeID;
 
-				/**
-				 * The current class 
-				 * <a href="#JDWP_ClassStatus">status.</a> 
-				 */
-				final int status;
 
 				private ClassInfo(VirtualMachineImpl vm, PacketStream ps) {
-					refTypeTag = ps.readByte();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "refTypeTag(byte): " + refTypeTag);
-					}
 					typeID = ps.readClassRef();
 					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "typeID(long): " + "ref="+typeID);
-					}
-					status = ps.readInt();
-					if (vm.traceReceives) {
-						vm.printReceiveTrace(5, "status(int): " + status);
+						vm.printReceiveTrace(5, "typeID(int): " + "ref="+typeID);
 					}
 				}
 			}
@@ -154,7 +135,8 @@ class JDWP {
 
 			private GetTypes(VirtualMachineImpl vm, PacketStream ps) {
 				if (vm.traceReceives) {
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.ClassesBySignature"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
+					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.GetTypes"+(ps.pkt.flags!=0?", " +
+							"FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
 				}
 				if (vm.traceReceives) {
 					vm.printReceiveTrace(4, "classes(ClassInfo[]): " + "");

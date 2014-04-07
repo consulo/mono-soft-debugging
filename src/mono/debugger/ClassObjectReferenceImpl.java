@@ -25,9 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import java.util.*;
-
 public class ClassObjectReferenceImpl extends ObjectReferenceImpl
                                       implements ClassObjectReference {
     private ReferenceType reflectedType;
@@ -41,8 +38,7 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl
             try {
                 JDWP.ClassObjectReference.ReflectedType reply =
                     JDWP.ClassObjectReference.ReflectedType.process(vm, this);
-                reflectedType = vm.referenceType(reply.typeID,
-                                                 reply.refTypeTag);
+                reflectedType = vm.referenceType(reply.typeID);
 
             } catch (JDWPException exc) {
                 throw exc.toJDIException();
