@@ -56,16 +56,6 @@ class JDWP {
 			 */
 			final int jdwpMinor;
 
-			/**
-			 * Target VM JRE version, as in the java.version property
-			 */
-			final String vmVersion;
-
-			/**
-			 * Target VM name, as in the java.vm.name property
-			 */
-			final String vmName;
-
 			private Version(VirtualMachineImpl vm, PacketStream ps) {
 				if (vm.traceReceives) {
 					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Version"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
@@ -81,14 +71,6 @@ class JDWP {
 				jdwpMinor = ps.readInt();
 				if (vm.traceReceives) {
 					vm.printReceiveTrace(4, "jdwpMinor(int): " + jdwpMinor);
-				}
-				vmVersion = ps.readString();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "vmVersion(String): " + vmVersion);
-				}
-				vmName = ps.readString();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "vmName(String): " + vmName);
 				}
 			}
 		}
@@ -8411,7 +8393,7 @@ class JDWP {
 		static final int NAMES_DONT_MATCH = 69;
 		static final int CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 70;
 		static final int METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 71;
-		static final int NOT_IMPLEMENTED = 99;
+		static final int NOT_IMPLEMENTED = 100;
 		static final int NULL_POINTER = 100;
 		static final int ABSENT_INFORMATION = 101;
 		static final int INVALID_EVENT_TYPE = 102;

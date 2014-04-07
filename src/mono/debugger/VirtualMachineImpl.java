@@ -592,12 +592,12 @@ class VirtualMachineImpl extends MirrorImpl
 
     public String version() {
         validateVM();
-        return versionInfo().vmVersion;
+        return versionInfo().jdwpMajor + "." + versionInfo().jdwpMinor;
     }
 
     public String name() {
         validateVM();
-        return versionInfo().vmName;
+        return versionInfo().description;
     }
 
     public boolean canWatchFieldModification() {
