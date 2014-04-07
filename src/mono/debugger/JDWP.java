@@ -83,10 +83,10 @@ class JDWP {
 		 * The search is confined to loaded classes only; no attempt is made 
 		 * to load a class of the given signature. 
 		 */
-		static class ClassesBySignature {
+		static class GetTypes {
 			static final int COMMAND = 12;
 
-			static ClassesBySignature process(VirtualMachineImpl vm, String signature, boolean ignoreCase) throws JDWPException {
+			static GetTypes process(VirtualMachineImpl vm, String signature, boolean ignoreCase) throws JDWPException {
 				PacketStream ps = enqueueCommand(vm, signature, ignoreCase);
 				return waitForReply(vm, ps);
 			}
@@ -105,10 +105,10 @@ class JDWP {
 				return ps;
 			}
 
-			static ClassesBySignature waitForReply(VirtualMachineImpl vm, PacketStream ps)
+			static GetTypes waitForReply(VirtualMachineImpl vm, PacketStream ps)
 					throws JDWPException {
 				ps.waitForReply();
-				return new ClassesBySignature(vm, ps);
+				return new GetTypes(vm, ps);
 			}
 
 			static class ClassInfo {
@@ -152,7 +152,7 @@ class JDWP {
 			 */
 			final ClassInfo[] classes;
 
-			private ClassesBySignature(VirtualMachineImpl vm, PacketStream ps) {
+			private GetTypes(VirtualMachineImpl vm, PacketStream ps) {
 				if (vm.traceReceives) {
 					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.ClassesBySignature"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
 				}

@@ -928,9 +928,9 @@ class VirtualMachineImpl extends MirrorImpl
         if ((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0) {
             vm.printTrace("Retrieving matching ReferenceTypes, sig=" + signature);
         }
-        JDWP.VirtualMachine.ClassesBySignature.ClassInfo[] cinfos;
+        JDWP.VirtualMachine.GetTypes.ClassInfo[] cinfos;
         try {
-            cinfos = JDWP.VirtualMachine.ClassesBySignature.
+            cinfos = JDWP.VirtualMachine.GetTypes.
                                       process(vm, signature, ignoreCase).classes;
         } catch (JDWPException exc) {
             throw exc.toJDIException();
@@ -942,7 +942,7 @@ class VirtualMachineImpl extends MirrorImpl
         // Hold lock during processing to improve performance
         synchronized (this) {
             for (int i = 0; i < count; i++) {
-                JDWP.VirtualMachine.ClassesBySignature.ClassInfo ci =
+                JDWP.VirtualMachine.GetTypes.ClassInfo ci =
                                                                cinfos[i];
                 ReferenceTypeImpl type = referenceType(ci.typeID,
                                                        ci.refTypeTag,
