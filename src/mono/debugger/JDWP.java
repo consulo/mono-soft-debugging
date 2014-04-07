@@ -7108,6 +7108,9 @@ class JDWP {
 						case JDWP.EventKind.VM_DEATH:
 							aEventsCommon = new VMDeath(vm, ps);
 							break;
+						default:
+							System.out.println("Unknown EventKind: " + eventKind);
+							break;
 					}
 				}
 
