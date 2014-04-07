@@ -8435,8 +8435,12 @@ class JDWP {
 	}
 
 	static class EventKind {
-		static final int SINGLE_STEP = 1;
-		static final int BREAKPOINT = 2;
+		static final int VM_START = 1;
+		static final int VM_DEATH = 2;
+
+		static final int BREAKPOINT = 10;
+		static final int SINGLE_STEP = 11;
+
 		static final int FRAME_POP = 3;
 		static final int EXCEPTION = 4;
 		static final int USER_DEFINED = 5;
@@ -8456,9 +8460,7 @@ class JDWP {
 		static final int MONITOR_CONTENDED_ENTERED = 44;
 		static final int MONITOR_WAIT = 45;
 		static final int MONITOR_WAITED = 46;
-		static final int VM_START = 90;
 		static final int VM_INIT = 90;
-		static final int VM_DEATH = 99;
 		static final int VM_DISCONNECTED = 100;
 	}
 
