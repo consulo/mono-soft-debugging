@@ -8190,8 +8190,8 @@ class JDWP {
 	}
 
 	static class EventKind {
-		static final int VM_START = 1;
-		static final int VM_DEATH = 2;
+		static final int VM_START = 0;
+		static final int VM_DEATH = 1;
 
 		static final int BREAKPOINT = 10;
 		static final int SINGLE_STEP = 11;
