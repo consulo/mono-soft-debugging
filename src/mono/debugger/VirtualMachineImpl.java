@@ -25,19 +25,24 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import mono.debugger.connect.spi.Connection;
-import mono.debugger.request.EventRequestManager;
-import mono.debugger.request.EventRequest;
-import mono.debugger.request.BreakpointRequest;
-import mono.debugger.event.EventQueue;
-
-import java.util.*;
-import java.text.MessageFormat;
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+import mono.debugger.connect.spi.Connection;
+import mono.debugger.event.EventQueue;
+import mono.debugger.request.BreakpointRequest;
+import mono.debugger.request.EventRequest;
+import mono.debugger.request.EventRequestManager;
 
 class VirtualMachineImpl extends MirrorImpl
              implements PathSearchingVirtualMachine, ThreadListener {
@@ -189,21 +194,11 @@ class VirtualMachineImpl extends MirrorImpl
 
         target.start();
 
-        /*
-         * Many ids are variably sized, depending on target VM.
-         * Find out the sizes right away.
-         */
-        JDWP.VirtualMachine.IDSizes idSizes;
-        try {
-            idSizes = JDWP.VirtualMachine.IDSizes.process(vm);
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-        sizeofFieldRef  = idSizes.fieldIDSize;
-        sizeofMethodRef = idSizes.methodIDSize;
-        sizeofObjectRef = idSizes.objectIDSize;
-        sizeofClassRef = idSizes.referenceTypeIDSize;
-        sizeofFrameRef  = idSizes.frameIDSize;
+        sizeofFieldRef  = 4;
+        sizeofMethodRef = 4;
+        sizeofObjectRef = 4;
+        sizeofClassRef = 4;
+        sizeofFrameRef  = 4;
 
         /**
          * Set up requests needed by internal event handler.

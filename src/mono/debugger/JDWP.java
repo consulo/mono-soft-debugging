@@ -1,7 +1,6 @@
 package mono.debugger;
 
-import mono.debugger.*;
-import java.util.*;
+import java.util.List;
 
 
 /**
@@ -454,87 +453,6 @@ class JDWP {
 			}
 		}
 
-		/**
-		 * Returns the sizes of variably-sized data types in the target VM.
-		 * The returned values indicate the number of bytes used by the 
-		 * identifiers in command and reply packets.
-		 */
-		static class IDSizes {
-			static final int COMMAND = 7;
-
-			static IDSizes process(VirtualMachineImpl vm)
-					throws JDWPException {
-				PacketStream ps = enqueueCommand(vm);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(VirtualMachineImpl vm) {
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if ((vm.traceFlags & vm.TRACE_SENDS) != 0) {
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.IDSizes"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:""));
-				}
-				ps.send();
-				return ps;
-			}
-
-			static IDSizes waitForReply(VirtualMachineImpl vm, PacketStream ps)
-					throws JDWPException {
-				ps.waitForReply();
-				return new IDSizes(vm, ps);
-			}
-
-
-			/**
-			 * fieldID size in bytes 
-			 */
-			final int fieldIDSize;
-
-			/**
-			 * methodID size in bytes 
-			 */
-			final int methodIDSize;
-
-			/**
-			 * objectID size in bytes 
-			 */
-			final int objectIDSize;
-
-			/**
-			 * referenceTypeID size in bytes 
-			 */
-			final int referenceTypeIDSize;
-
-			/**
-			 * frameID size in bytes 
-			 */
-			final int frameIDSize;
-
-			private IDSizes(VirtualMachineImpl vm, PacketStream ps) {
-				if (vm.traceReceives) {
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.IDSizes"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
-				}
-				fieldIDSize = ps.readInt();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "fieldIDSize(int): " + fieldIDSize);
-				}
-				methodIDSize = ps.readInt();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "methodIDSize(int): " + methodIDSize);
-				}
-				objectIDSize = ps.readInt();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "objectIDSize(int): " + objectIDSize);
-				}
-				referenceTypeIDSize = ps.readInt();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "referenceTypeIDSize(int): " + referenceTypeIDSize);
-				}
-				frameIDSize = ps.readInt();
-				if (vm.traceReceives) {
-					vm.printReceiveTrace(4, "frameIDSize(int): " + frameIDSize);
-				}
-			}
-		}
 
 		/**
 		 * Suspends the execution of the application running in the target 
