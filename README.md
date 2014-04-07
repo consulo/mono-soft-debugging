@@ -1,6 +1,6 @@
 ### What is it?
 
-This is - Mono Soft Debugger Library in Java. It based from Java (JDI).
+This is - Mono Soft Debugger Library in Java. It based on JDI OpenJDK implementation.
 
 ### Usefull links
 
