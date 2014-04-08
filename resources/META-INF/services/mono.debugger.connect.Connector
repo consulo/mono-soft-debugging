@@ -33,4 +33,3 @@ mono.debugger.SunCommandLineLauncher
 mono.debugger.RawCommandLineLauncher
 mono.debugger.SocketAttachingConnector
 mono.debugger.SocketListeningConnector
-mono.debugger.ProcessAttachingConnector
