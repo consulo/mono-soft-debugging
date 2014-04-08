@@ -5967,6 +5967,7 @@ class JDWP {
 						this.count = count;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         count(int): " + count);
@@ -5993,6 +5994,7 @@ class JDWP {
 						this.exprID = exprID;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         exprID(int): " + exprID);
@@ -6022,6 +6024,7 @@ class JDWP {
 						this.thread = thread;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         thread(ThreadReferenceImpl): " + (thread==null?"NULL":"ref="+thread.ref()));
@@ -6060,6 +6063,7 @@ class JDWP {
 						this.clazz = clazz;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         clazz(ReferenceTypeImpl): " + (clazz==null?"NULL":"ref="+clazz.ref()));
@@ -6099,6 +6103,7 @@ class JDWP {
 						this.classPattern = classPattern;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         classPattern(String): " + classPattern);
@@ -6138,6 +6143,7 @@ class JDWP {
 						this.classPattern = classPattern;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         classPattern(String): " + classPattern);
@@ -6168,6 +6174,7 @@ class JDWP {
 						this.loc = loc;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         loc(Location): " + loc);
@@ -6219,6 +6226,7 @@ class JDWP {
 						this.uncaught = uncaught;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         exceptionOrNull(ReferenceTypeImpl): " + (exceptionOrNull==null?"NULL":"ref="+exceptionOrNull.ref()));
@@ -6262,6 +6270,7 @@ class JDWP {
 						this.fieldID = fieldID;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         declaring(ReferenceTypeImpl): " + (declaring==null?"NULL":"ref="+declaring.ref()));
@@ -6310,6 +6319,7 @@ class JDWP {
 						this.depth = depth;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         thread(ThreadReferenceImpl): " + (thread==null?"NULL":"ref="+thread.ref()));
@@ -6349,6 +6359,7 @@ class JDWP {
 						this.instance = instance;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         instance(ObjectReferenceImpl): " + (instance==null?"NULL":"ref="+instance.ref()));
@@ -6389,6 +6400,7 @@ class JDWP {
 						this.sourceNamePattern = sourceNamePattern;
 					}
 
+					@Override
 					void write(PacketStream ps) {
 						if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
 							ps.vm.printTrace("Sending:                         sourceNamePattern(String): " + sourceNamePattern);
@@ -7125,6 +7137,7 @@ class JDWP {
 				 */
 				static class VMStart extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.VM_START;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7158,6 +7171,7 @@ class JDWP {
 				 */
 				static class SingleStep extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.SINGLE_STEP;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7199,6 +7213,7 @@ class JDWP {
 				 */
 				static class Breakpoint extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.BREAKPOINT;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7246,6 +7261,7 @@ class JDWP {
 				 */
 				static class MethodEntry extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.METHOD_ENTRY;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7291,6 +7307,7 @@ class JDWP {
 				 */
 				static class MethodExit extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.METHOD_EXIT;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7336,6 +7353,7 @@ class JDWP {
 				 */
 				static class MethodExitWithReturnValue extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.METHOD_EXIT_WITH_RETURN_VALUE;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7389,6 +7407,7 @@ class JDWP {
 				 */
 				static class MonitorContendedEnter extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.MONITOR_CONTENDED_ENTER;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7442,6 +7461,7 @@ class JDWP {
 				 */
 				static class MonitorContendedEntered extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.MONITOR_CONTENDED_ENTERED;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7494,6 +7514,7 @@ class JDWP {
 				 */
 				static class MonitorWait extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.MONITOR_WAIT;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7556,6 +7577,7 @@ class JDWP {
 				 */
 				static class MonitorWaited extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.MONITOR_WAITED;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7620,6 +7642,7 @@ class JDWP {
 				 */
 				static class Exception extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.EXCEPTION;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7724,6 +7747,7 @@ class JDWP {
 				 */
 				static class ThreadStart extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.THREAD_START;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7763,6 +7787,7 @@ class JDWP {
 				 */
 				static class ThreadDeath extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.THREAD_DEATH;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7797,6 +7822,7 @@ class JDWP {
 				 */
 				static class ClassPrepare extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_LOAD;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7855,6 +7881,7 @@ class JDWP {
 				 */
 				static class ClassUnload extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_UNLOAD;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7894,6 +7921,7 @@ class JDWP {
 				 */
 				static class FieldAccess extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.FIELD_ACCESS;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7973,6 +8001,7 @@ class JDWP {
 				 */
 				static class FieldModification extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.FIELD_MODIFICATION;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -8056,6 +8085,7 @@ class JDWP {
 
 				static class VMDeath extends EventsCommon {
 					static final byte ALT_ID = JDWP.EventKind.VM_DEATH;
+					@Override
 					byte eventKind() {
 						return ALT_ID;
 					}
