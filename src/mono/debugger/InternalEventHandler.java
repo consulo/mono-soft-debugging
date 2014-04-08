@@ -26,6 +26,7 @@
 package mono.debugger;
 
 import mono.debugger.event.AssemblyLoadEvent;
+import mono.debugger.event.AssemblyUnloadEvent;
 import mono.debugger.event.Event;
 import mono.debugger.event.EventIterator;
 import mono.debugger.event.EventSet;
@@ -62,36 +63,28 @@ public class InternalEventHandler implements Runnable
 					while(it.hasNext())
 					{
 						Event event = it.nextEvent();
-						/*if(event instanceof ClassUnloadEvent)
-						{
-							ClassUnloadEvent cuEvent = (ClassUnloadEvent) event;
-							vm.removeReferenceType(cuEvent.referenceType());
 
-							if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
-							{
-								vm.printTrace("Handled Unload Event for " + cuEvent.referenceType());
-							}
-						}
-						else */if(event instanceof AssemblyLoadEvent)
+						if(event instanceof AssemblyLoadEvent)
 						{
 							AssemblyReference assembly = ((AssemblyLoadEvent) event).getAssembly();
 							vm.addLoadedAssembly(assembly);
 							if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
 							{
-								vm.printTrace("Handled AssemblyLoad Event for " + assembly.name());
+								vm.printTrace("Handled AssemblyLoad Event for " + assembly.name() + ",  thread: " + ((AssemblyLoadEvent) event)
+										.thread().name());
 							}
 						}
-						/*else if(event instanceof ClassPrepareEvent)
+						else if(event instanceof AssemblyUnloadEvent)
 						{
-							ClassPrepareEvent cpEvent = (ClassPrepareEvent) event;
-							((ReferenceTypeImpl) cpEvent.referenceType()).markPrepared();
-
+							AssemblyReference assembly = ((AssemblyUnloadEvent) event).getAssembly();
+							vm.removeLoadedAssembly(assembly);
+							vm.removeObjectMirror(assembly);
 							if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
 							{
-								vm.printTrace("Handled Prepare Event for " + cpEvent.referenceType().name());
+								vm.printTrace("Handled AssemblyUnload Event for " + assembly.name() + ",  thread: " + ((AssemblyUnloadEvent) event)
+										.thread().name());
 							}
-						} */
-
+						}
 					}
 
                 /*

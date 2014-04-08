@@ -9,11 +9,11 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 08.04.14
  */
-public class AssemblyLoadEvent extends EventSetImpl.ThreadedEventImpl implements Event
+public class AssemblyUnloadEvent extends EventSetImpl.ThreadedEventImpl implements Event
 {
 	private final AssemblyReference myAssembly;
 
-	public AssemblyLoadEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.AssemblyLoad evt)
+	public AssemblyUnloadEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.AssemblyUnLoad evt)
 	{
 		super(virtualMachine, evt, evt.requestID, evt.thread);
 
@@ -23,7 +23,7 @@ public class AssemblyLoadEvent extends EventSetImpl.ThreadedEventImpl implements
 	@Override
 	public String eventName()
 	{
-		return "AssemblyLoadEvent";
+		return "AssemblyUnloadEvent";
 	}
 
 	public AssemblyReference getAssembly()

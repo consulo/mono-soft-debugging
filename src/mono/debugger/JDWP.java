@@ -8267,7 +8267,7 @@ public class JDWP
 							aEventsCommon = new AssemblyLoad(vm, ps);
 							break;
 						case JDWP.EventKind.ASSEMBLY_UNLOAD:
-							aEventsCommon = new ClassUnload(vm, ps);
+							aEventsCommon = new AssemblyUnLoad(vm, ps);
 							break;
 						case JDWP.EventKind.FIELD_ACCESS:
 							aEventsCommon = new FieldAccess(vm, ps);
@@ -9090,6 +9090,45 @@ public class JDWP
 
 
 					public AssemblyLoad(VirtualMachineImpl vm, PacketStream ps)
+					{
+						requestID = ps.readInt();
+						if(vm.traceReceives)
+						{
+							vm.printReceiveTrace(6, "requestID(int): " + requestID);
+						}
+						thread = ps.readThreadReference();
+						if(vm.traceReceives)
+						{
+							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+						}
+						assembly = ps.readAssemblyReference();
+						if(vm.traceReceives)
+						{
+							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.ref()));
+						}
+					}
+				}
+
+				public static class AssemblyUnLoad extends EventsCommon
+				{
+					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_LOAD;
+
+					@Override
+					byte eventKind()
+					{
+						return ALT_ID;
+					}
+
+					/**
+					 * Request that generated event
+					 */
+					public final int requestID;
+
+					public final ThreadReferenceImpl thread;
+
+					public final AssemblyReference assembly;
+
+					public AssemblyUnLoad(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
 						if(vm.traceReceives)

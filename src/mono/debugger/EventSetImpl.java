@@ -876,7 +876,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				return new AssemblyLoadEvent(vm, (JDWP.Event.Composite.Events.AssemblyLoad) comm);
 
 			case JDWP.EventKind.ASSEMBLY_UNLOAD:
-				return new ClassUnloadEventImpl(vm, (JDWP.Event.Composite.Events.ClassUnload) comm);
+				return new AssemblyUnloadEvent(vm, (JDWP.Event.Composite.Events.AssemblyUnLoad) comm);
 
 			case JDWP.EventKind.MONITOR_CONTENDED_ENTER:
 				return new MonitorContendedEnterEventImpl(vm, (JDWP.Event.Composite.Events.MonitorContendedEnter) comm);

@@ -1453,7 +1453,9 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 		// Handle any queue elements that are not strongly reachable
 		processQueue();
 
-		SoftObjectReference ref = objectsByID.remove(new Long(object.ref()));
+		Map<Long, SoftObjectReference> map = object instanceof AssemblyReference ? assemblyById : objectsByID;
+
+		SoftObjectReference ref = map.remove(new Long(object.ref()));
 		if(ref != null)
 		{
 			batchForDispose(ref);
@@ -1464,8 +1466,7 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
              * If there's a live ObjectReference about, it better be part
              * of the cache.
              */
-			throw new InternalException("ObjectReference " + object.ref() +
-					" not found in object cache");
+			throw new InternalException("ObjectReference " + object.ref() + " not found in object cache");
 		}
 	}
 
@@ -1584,5 +1585,10 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 	public void addLoadedAssembly(AssemblyReference assembly)
 	{
 		myLoadedAssemblies.add(assembly);
+	}
+
+	public void removeLoadedAssembly(AssemblyReference assembly)
+	{
+		myLoadedAssemblies.remove(assembly);
 	}
 }
