@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,8 +113,6 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 	private Object initMonitor = new Object();
 	private boolean initComplete = false;
 	private boolean shutdown = false;
-
-	private Set<AssemblyReference> myLoadedAssemblies = new LinkedHashSet<AssemblyReference>();
 
 	private void notifyInitCompletion()
 	{
@@ -390,7 +387,7 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 	@Override
 	public Set<AssemblyReference> allAssemblies()
 	{
-		return myLoadedAssemblies;
+		return Collections.emptySet();
 	}
 
 	@Override
@@ -1580,15 +1577,5 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 		{
 			return get();
 		}
-	}
-
-	public void addLoadedAssembly(AssemblyReference assembly)
-	{
-		myLoadedAssemblies.add(assembly);
-	}
-
-	public void removeLoadedAssembly(AssemblyReference assembly)
-	{
-		myLoadedAssemblies.remove(assembly);
 	}
 }
