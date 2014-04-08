@@ -27,6 +27,7 @@ package mono.debugger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import mono.debugger.event.EventQueue;
 import mono.debugger.request.EventRequestManager;
@@ -235,6 +236,8 @@ public interface VirtualMachine extends Mirror {
      * running thread in the mirrored VM.
      */
     List<ThreadReference> allThreads();
+
+	Set<AssemblyReference> allAssemblies();
 
     /**
      * Suspends the execution of the application running in this

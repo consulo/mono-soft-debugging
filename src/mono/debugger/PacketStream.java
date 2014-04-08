@@ -544,7 +544,7 @@ class PacketStream
 	AssemblyReference readAssemblyReference()
 	{
 		long ref = readObjectRef();
-		return new AssemblyReference(vm, ref);
+		return vm.assemblyMirror(ref);
 	}
 
 	ThreadGroupReferenceImpl readThreadGroupReference()

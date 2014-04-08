@@ -33,8 +33,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import mono.debugger.connect.spi.Connection;
@@ -76,6 +78,7 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 
 	// ObjectReference cache
 	// "objectsByID" protected by "synchronized(this)".
+	private final Map<Long, SoftObjectReference> assemblyById = new HashMap<Long, SoftObjectReference>();
 	private final Map<Long, SoftObjectReference> objectsByID = new HashMap<Long, SoftObjectReference>();
 	private final ReferenceQueue<ObjectReferenceImpl> referenceQueue = new ReferenceQueue<ObjectReferenceImpl>();
 	static private final int DISPOSE_THRESHOLD = 50;
@@ -111,6 +114,8 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 	private Object initMonitor = new Object();
 	private boolean initComplete = false;
 	private boolean shutdown = false;
+
+	private Set<AssemblyReference> myLoadedAssemblies = new LinkedHashSet<AssemblyReference>();
 
 	private void notifyInitCompletion()
 	{
@@ -380,6 +385,12 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 	{
 		validateVM();
 		return state.allThreads();
+	}
+
+	@Override
+	public Set<AssemblyReference> allAssemblies()
+	{
+		return myLoadedAssemblies;
 	}
 
 	@Override
@@ -1371,7 +1382,9 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
         /*
          * Attempt to retrieve an existing object object reference
          */
-		SoftObjectReference ref = objectsByID.get(key);
+		Map<Long, SoftObjectReference> map = tag == JDWP.Tag.ASSEMBLY ? assemblyById : objectsByID;
+
+		SoftObjectReference ref = map.get(key);
 		if(ref != null)
 		{
 			object = ref.object();
@@ -1420,11 +1433,10 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
              * If there was no previous entry in the table, we add one here
              * If the previous entry was cleared, we replace it here.
              */
-			objectsByID.put(key, ref);
+			map.put(key, ref);
 			if((traceFlags & TRACE_OBJREFS) != 0)
 			{
-				printTrace("Creating new " +
-						object.getClass().getName() + " (id = " + id + ")");
+				printTrace("Creating new " + object.getClass().getName() + " (id = " + id + ")");
 			}
 		}
 		else
@@ -1567,5 +1579,10 @@ class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadLis
 		{
 			return get();
 		}
+	}
+
+	public void addLoadedAssembly(AssemblyReference assembly)
+	{
+		myLoadedAssemblies.add(assembly);
 	}
 }
