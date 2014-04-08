@@ -30,7 +30,6 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,16 +43,8 @@ import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequest;
 import mono.debugger.request.EventRequestManager;
 
-class VirtualMachineImpl extends MirrorImpl implements PathSearchingVirtualMachine, ThreadListener
+class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
 {
-	// VM Level exported variables, these
-	// are unique to a given vm
-	public final int sizeofFieldRef;
-	public final int sizeofMethodRef;
-	public final int sizeofObjectRef;
-	public final int sizeofClassRef;
-	public final int sizeofFrameRef;
-
 	final int sequenceNumber;
 
 	private final TargetVM target;
@@ -93,7 +84,6 @@ class VirtualMachineImpl extends MirrorImpl implements PathSearchingVirtualMachi
 
 	// These are cached once for the life of the VM
 	private JDWP.VirtualMachine.Version versionInfo;
-	private JDWP.VirtualMachine.ClassPaths pathInfo;
 	private JDWP.VirtualMachine.Capabilities capabilities = null;
 	private JDWP.VirtualMachine.CapabilitiesNew capabilitiesNew = null;
 
@@ -161,7 +151,7 @@ class VirtualMachineImpl extends MirrorImpl implements PathSearchingVirtualMachi
 	public boolean threadResumable(ThreadAction action)
 	{
 		/*
-         * If any thread is resumed, the VM is considered not suspended.
+		 * If any thread is resumed, the VM is considered not suspended.
          * Just one thread is being resumed so pass it to thaw.
          */
 		state.thaw(action.thread());
@@ -203,12 +193,6 @@ class VirtualMachineImpl extends MirrorImpl implements PathSearchingVirtualMachi
 		eventRequestManager = new EventRequestManagerImpl(this);
 
 		target.start();
-
-		sizeofFieldRef = 4;
-		sizeofMethodRef = 4;
-		sizeofObjectRef = 4;
-		sizeofClassRef = 4;
-		sizeofFrameRef = 4;
 
 		/**
 		 * Set up requests needed by internal event handler.
@@ -1520,43 +1504,6 @@ class VirtualMachineImpl extends MirrorImpl implements PathSearchingVirtualMachi
 	ClassObjectReferenceImpl classObjectMirror(long id)
 	{
 		return (ClassObjectReferenceImpl) objectMirror(id, JDWP.Tag.CLASS_OBJECT);
-	}
-
-	/*
-	 * Implementation of PathSearchingVirtualMachine
-	 */
-	private JDWP.VirtualMachine.ClassPaths getClasspath()
-	{
-		if(pathInfo == null)
-		{
-			try
-			{
-				pathInfo = JDWP.VirtualMachine.ClassPaths.process(vm);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return pathInfo;
-	}
-
-	@Override
-	public List<String> classPath()
-	{
-		return Arrays.asList(getClasspath().classpaths);
-	}
-
-	@Override
-	public List<String> bootClassPath()
-	{
-		return Arrays.asList(getClasspath().bootclasspaths);
-	}
-
-	@Override
-	public String baseDirectory()
-	{
-		return getClasspath().baseDir;
 	}
 
 	@Override

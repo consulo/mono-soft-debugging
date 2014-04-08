@@ -166,27 +166,27 @@ class PacketStream
 	@Deprecated
 	void writeObjectRef(long data)
 	{
-		writeID(vm.sizeofObjectRef, data);
+		writeID(4, data);
 	}
 
 	void writeClassRef(long data)
 	{
-		writeID(vm.sizeofClassRef, data);
+		writeID(4, data);
 	}
 
 	void writeMethodRef(long data)
 	{
-		writeID(vm.sizeofMethodRef, data);
+		writeID(4, data);
 	}
 
 	void writeFieldRef(long data)
 	{
-		writeID(vm.sizeofFieldRef, data);
+		writeID(4, data);
 	}
 
 	void writeFrameRef(long data)
 	{
-		writeID(vm.sizeofFrameRef, data);
+		writeID(4, data);
 	}
 
 	void writeByteArray(byte[] data)
@@ -498,7 +498,7 @@ class PacketStream
 	 */
 	long readObjectRef()
 	{
-		return readID(vm.sizeofObjectRef);
+		return readID(4);
 	}
 
 	public int readId()
@@ -509,7 +509,7 @@ class PacketStream
 	@Deprecated
 	int readClassRef()
 	{
-		return (int) readID(vm.sizeofClassRef);
+		return (int) readID(4);
 	}
 
 	ObjectReferenceImpl readTaggedObjectReference()
@@ -576,7 +576,7 @@ class PacketStream
 	 */
 	long readMethodRef()
 	{
-		return readID(vm.sizeofMethodRef);
+		return readID(4);
 	}
 
 	/**
@@ -584,7 +584,7 @@ class PacketStream
 	 */
 	long readFieldRef()
 	{
-		return readID(vm.sizeofFieldRef);
+		return readID(4);
 	}
 
 	/**
@@ -602,7 +602,7 @@ class PacketStream
 	 */
 	long readFrameRef()
 	{
-		return readID(vm.sizeofFrameRef);
+		return readID(4);
 	}
 
 	/**
