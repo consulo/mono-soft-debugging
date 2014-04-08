@@ -6422,25 +6422,32 @@ class JDWP {
 			static PacketStream enqueueCommand(VirtualMachineImpl vm,
 					byte eventKind,
 					byte suspendPolicy,
-					Modifier[] modifiers) {
+					Modifier[] modifiers)
+			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if ((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0) {
+				if ((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
+				{
 					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.EventRequest.Set"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:""));
 				}
-				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
+				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
+				{
 					ps.vm.printTrace("Sending:                 eventKind(byte): " + eventKind);
 				}
 				ps.writeByte(eventKind);
-				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
+				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
+				{
 					ps.vm.printTrace("Sending:                 suspendPolicy(byte): " + suspendPolicy);
 				}
 				ps.writeByte(suspendPolicy);
-				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
+				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
+				{
 					ps.vm.printTrace("Sending:                 modifiers(Modifier[]): " + "");
 				}
-				ps.writeInt(modifiers.length);
-				for (int i = 0; i < modifiers.length; i++) {
-					if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
+				ps.writeByte((byte)modifiers.length);
+				for (int i = 0; i < modifiers.length; i++)
+				{
+					if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
+					{
 						ps.vm.printTrace("Sending:                     modifiers[i](Modifier): " + "");
 					}
 					modifiers[i].write(ps);
@@ -6449,8 +6456,8 @@ class JDWP {
 				return ps;
 			}
 
-			static Set waitForReply(VirtualMachineImpl vm, PacketStream ps)
-					throws JDWPException {
+			static Set waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
+			{
 				ps.waitForReply();
 				return new Set(vm, ps);
 			}
