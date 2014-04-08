@@ -41,15 +41,18 @@ class StratumLineInfo implements LineInfo {
         this.sourcePath = sourcePath;
     }
 
-    public String liStratum() {
+    @Override
+	public String liStratum() {
         return stratumID;
     }
 
-    public int liLineNumber() {
+    @Override
+	public int liLineNumber() {
         return lineNumber;
     }
 
-    public String liSourceName()
+    @Override
+	public String liSourceName()
                             throws AbsentInformationException {
         if (sourceName == null) {
             throw new AbsentInformationException();
@@ -57,7 +60,8 @@ class StratumLineInfo implements LineInfo {
         return sourceName;
     }
 
-    public String liSourcePath()
+    @Override
+	public String liSourcePath()
                             throws AbsentInformationException {
         if (sourcePath == null) {
             throw new AbsentInformationException();

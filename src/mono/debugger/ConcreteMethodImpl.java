@@ -91,7 +91,8 @@ public class ConcreteMethodImpl extends MethodImpl {
               genericSignature, modifiers);
     }
 
-    public Location location() {
+    @Override
+	public Location location() {
         if (location == null) {
             getBaseLocations();
         }
@@ -116,7 +117,8 @@ public class ConcreteMethodImpl extends MethodImpl {
         }
     }
 
-    List<Location> allLineLocations(SDE.Stratum stratum,
+    @Override
+	List<Location> allLineLocations(SDE.Stratum stratum,
                           String sourceName)
                             throws AbsentInformationException {
         List<Location> lineLocations = getLocations(stratum).lineLocations;
@@ -129,7 +131,8 @@ public class ConcreteMethodImpl extends MethodImpl {
           sourceNameFilter(lineLocations, stratum, sourceName));
     }
 
-    List<Location> locationsOfLine(SDE.Stratum stratum,
+    @Override
+	List<Location> locationsOfLine(SDE.Stratum stratum,
                          String sourceName,
                          int lineNumber)
                             throws AbsentInformationException {
@@ -153,7 +156,8 @@ public class ConcreteMethodImpl extends MethodImpl {
     }
 
 
-    public Location locationOfCodeIndex(long codeIndex) {
+    @Override
+	public Location locationOfCodeIndex(long codeIndex) {
         if (firstIndex == -1) {
             getBaseLocations();
         }
@@ -169,7 +173,8 @@ public class ConcreteMethodImpl extends MethodImpl {
     }
 
 
-    LineInfo codeIndexToLineInfo(SDE.Stratum stratum,
+    @Override
+	LineInfo codeIndexToLineInfo(SDE.Stratum stratum,
                                  long codeIndex) {
         if (firstIndex == -1) {
             getBaseLocations();
@@ -213,11 +218,13 @@ public class ConcreteMethodImpl extends MethodImpl {
     }
 
 
-    public List<LocalVariable> variables() throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> variables() throws AbsentInformationException {
         return getVariables();
     }
 
-    public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
         List<LocalVariable> variables = getVariables();
 
         List<LocalVariable> retList = new ArrayList<LocalVariable>(2);
@@ -231,7 +238,8 @@ public class ConcreteMethodImpl extends MethodImpl {
         return retList;
     }
 
-    public List<LocalVariable> arguments() throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> arguments() throws AbsentInformationException {
         List<LocalVariable> variables = getVariables();
 
         List<LocalVariable> retList = new ArrayList<LocalVariable>(variables.size());
@@ -245,7 +253,8 @@ public class ConcreteMethodImpl extends MethodImpl {
         return retList;
     }
 
-    public byte[] bytecodes() {
+    @Override
+	public byte[] bytecodes() {
         byte[] bytecodes = (bytecodesRef == null) ? null :
                                      bytecodesRef.get();
         if (bytecodes == null) {
@@ -265,7 +274,8 @@ public class ConcreteMethodImpl extends MethodImpl {
         return bytecodes.clone();
     }
 
-    int argSlotCount() throws AbsentInformationException {
+    @Override
+	int argSlotCount() throws AbsentInformationException {
         if (argSlotCount == -1) {
             getVariables();
         }

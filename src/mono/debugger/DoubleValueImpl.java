@@ -37,7 +37,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         value = aValue;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof DoubleValue)) {
             return (value == ((DoubleValue)obj).value()) &&
                    super.equals(obj);
@@ -46,7 +47,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public int compareTo(DoubleValue obj) {
+    @Override
+	public int compareTo(DoubleValue obj) {
         double other = obj.value();
         if (value() < other) {
             return -1;
@@ -57,54 +59,66 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: Better hash code
          */
         return intValue();
     }
 
-    public Type type() {
+    @Override
+	public Type type() {
         return vm.theDoubleType();
     }
 
-    public double value() {
+    @Override
+	public double value() {
         return value;
     }
 
-    public boolean booleanValue() {
+    @Override
+	public boolean booleanValue() {
         return(value == 0.0)?false:true;
     }
 
-    public byte byteValue() {
+    @Override
+	public byte byteValue() {
         return(byte)value;
     }
 
-    public char charValue() {
+    @Override
+	public char charValue() {
         return(char)value;
     }
 
-    public short shortValue() {
+    @Override
+	public short shortValue() {
         return(short)value;
     }
 
-    public int intValue() {
+    @Override
+	public int intValue() {
         return(int)value;
     }
 
-    public long longValue() {
+    @Override
+	public long longValue() {
         return(long)value;
     }
 
-    public float floatValue() {
+    @Override
+	public float floatValue() {
         return(float)value;
     }
 
-    public double doubleValue() {
+    @Override
+	public double doubleValue() {
         return value;
     }
 
-    byte checkedByteValue() throws InvalidTypeException {
+    @Override
+	byte checkedByteValue() throws InvalidTypeException {
         if ((value > Byte.MAX_VALUE) || (value < Byte.MIN_VALUE)) {
             throw new InvalidTypeException("Can't convert " + value + " to byte");
         } else {
@@ -112,7 +126,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    char checkedCharValue() throws InvalidTypeException {
+    @Override
+	char checkedCharValue() throws InvalidTypeException {
         if ((value > Character.MAX_VALUE) || (value < Character.MIN_VALUE)) {
             throw new InvalidTypeException("Can't convert " + value + " to char");
         } else {
@@ -120,7 +135,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    short checkedShortValue() throws InvalidTypeException {
+    @Override
+	short checkedShortValue() throws InvalidTypeException {
         if ((value > Short.MAX_VALUE) || (value < Short.MIN_VALUE)) {
             throw new InvalidTypeException("Can't convert " + value + " to short");
         } else {
@@ -128,7 +144,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    int checkedIntValue() throws InvalidTypeException {
+    @Override
+	int checkedIntValue() throws InvalidTypeException {
         if ((value > Integer.MAX_VALUE) || (value < Integer.MIN_VALUE)) {
             throw new InvalidTypeException("Can't convert " + value + " to int");
         } else {
@@ -136,7 +153,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    long checkedLongValue() throws InvalidTypeException {
+    @Override
+	long checkedLongValue() throws InvalidTypeException {
         long longValue = (long)value;
         if (longValue != value) {
             throw new InvalidTypeException("Can't convert " + value + " to long");
@@ -145,7 +163,8 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    float checkedFloatValue() throws InvalidTypeException {
+    @Override
+	float checkedFloatValue() throws InvalidTypeException {
         float floatValue = (float)value;
         if (floatValue != value) {
             throw new InvalidTypeException("Can't convert " + value + " to float");
@@ -154,11 +173,13 @@ public class DoubleValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "" + value;
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.DOUBLE;
     }
 }

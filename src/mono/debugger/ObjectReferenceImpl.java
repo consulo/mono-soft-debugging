@@ -103,12 +103,14 @@ public class ObjectReferenceImpl extends ValueImpl
     /*
      * VMListener implementation
      */
-    public boolean vmSuspended(VMAction action) {
+    @Override
+	public boolean vmSuspended(VMAction action) {
         enableCache();
         return true;
     }
 
-    public boolean vmNotSuspended(VMAction action) {
+    @Override
+	public boolean vmNotSuspended(VMAction action) {
         // make sure that cache and listener management are synchronized
         synchronized (vm.state()) {
             if (cache != null && (vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0) {
@@ -129,7 +131,8 @@ public class ObjectReferenceImpl extends ValueImpl
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof ObjectReferenceImpl)) {
             ObjectReferenceImpl other = (ObjectReferenceImpl)obj;
             return (ref() == other.ref()) &&
@@ -139,15 +142,18 @@ public class ObjectReferenceImpl extends ValueImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return(int)ref();
     }
 
-    public Type type() {
+    @Override
+	public Type type() {
         return referenceType();
     }
 
-    public ReferenceType referenceType() {
+    @Override
+	public ReferenceType referenceType() {
         if (type == null) {
             try {
                 JDWP.ObjectReference.ReferenceType rtinfo =
@@ -160,14 +166,16 @@ public class ObjectReferenceImpl extends ValueImpl
         return type;
     }
 
-    public Value getValue(Field sig) {
+    @Override
+	public Value getValue(Field sig) {
         List<Field> list = new ArrayList<Field>(1);
         list.add(sig);
         Map<Field, Value> map = getValues(list);
         return map.get(sig);
     }
 
-    public Map<Field,Value> getValues(List<? extends Field> theFields) {
+    @Override
+	public Map<Field,Value> getValues(List<? extends Field> theFields) {
         validateMirrors(theFields);
 
         List<Field> staticFields = new ArrayList<Field>(0);
@@ -226,7 +234,8 @@ public class ObjectReferenceImpl extends ValueImpl
         return map;
     }
 
-    public void setValue(Field field, Value value)
+    @Override
+	public void setValue(Field field, Value value)
                    throws InvalidTypeException, ClassNotLoadedException {
 
         validateMirror(field);
@@ -339,7 +348,8 @@ public class ObjectReferenceImpl extends ValueImpl
                                    final int options) {
         CommandSender sender =
             new CommandSender() {
-                public PacketStream send() {
+                @Override
+				public PacketStream send() {
                     return JDWP.ObjectReference.InvokeMethod.enqueueCommand(
                                           vm, ObjectReferenceImpl.this,
                                           thread, refType,
@@ -356,7 +366,8 @@ public class ObjectReferenceImpl extends ValueImpl
         return stream;
     }
 
-    public Value invokeMethod(ThreadReference threadIntf, Method methodIntf,
+    @Override
+	public Value invokeMethod(ThreadReference threadIntf, Method methodIntf,
                               List<? extends Value> origArguments, int options)
                               throws InvalidTypeException,
                                      IncompatibleThreadStateException,
@@ -414,7 +425,8 @@ public class ObjectReferenceImpl extends ValueImpl
     }
 
     /* leave synchronized to keep count accurate */
-    public synchronized void disableCollection() {
+    @Override
+	public synchronized void disableCollection() {
         if (gcDisableCount == 0) {
             try {
                 JDWP.ObjectReference.DisableCollection.process(vm, this);
@@ -426,7 +438,8 @@ public class ObjectReferenceImpl extends ValueImpl
     }
 
     /* leave synchronized to keep count accurate */
-    public synchronized void enableCollection() {
+    @Override
+	public synchronized void enableCollection() {
         gcDisableCount--;
 
         if (gcDisableCount == 0) {
@@ -442,7 +455,8 @@ public class ObjectReferenceImpl extends ValueImpl
         }
     }
 
-    public boolean isCollected() {
+    @Override
+	public boolean isCollected() {
         try {
             return JDWP.ObjectReference.IsCollected.process(vm, this).
                                                               isCollected;
@@ -451,7 +465,8 @@ public class ObjectReferenceImpl extends ValueImpl
         }
     }
 
-    public long uniqueID() {
+    @Override
+	public long uniqueID() {
         return ref();
     }
 
@@ -503,20 +518,24 @@ public class ObjectReferenceImpl extends ValueImpl
         return info;
     }
 
-    public List<ThreadReference> waitingThreads() throws IncompatibleThreadStateException {
+    @Override
+	public List<ThreadReference> waitingThreads() throws IncompatibleThreadStateException {
         return Arrays.asList((ThreadReference[])jdwpMonitorInfo().waiters);
     }
 
-    public ThreadReference owningThread() throws IncompatibleThreadStateException {
+    @Override
+	public ThreadReference owningThread() throws IncompatibleThreadStateException {
         return jdwpMonitorInfo().owner;
     }
 
-    public int entryCount() throws IncompatibleThreadStateException {
+    @Override
+	public int entryCount() throws IncompatibleThreadStateException {
         return jdwpMonitorInfo().entryCount;
     }
 
 
-    public List<ObjectReference> referringObjects(long maxReferrers) {
+    @Override
+	public List<ObjectReference> referringObjects(long maxReferrers) {
         if (!vm.canGetInstanceInfo()) {
             throw new UnsupportedOperationException(
                 "target does not support getting referring objects");
@@ -550,7 +569,8 @@ public class ObjectReferenceImpl extends ValueImpl
         return referenceType().name().equals("java.lang.Class");
     }
 
-    ValueImpl prepareForAssignmentTo(ValueContainer destination)
+    @Override
+	ValueImpl prepareForAssignmentTo(ValueContainer destination)
                                  throws InvalidTypeException,
                                         ClassNotLoadedException {
 
@@ -593,11 +613,13 @@ public class ObjectReferenceImpl extends ValueImpl
     }
 
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "instance of " + referenceType().name() + "(id=" + uniqueID() + ")";
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.OBJECT;
     }
 }

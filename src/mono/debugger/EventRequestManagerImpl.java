@@ -78,11 +78,13 @@ class EventRequestManagerImpl extends MirrorImpl
     /*
      * Override superclass back to default equality
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return this == obj;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return System.identityHashCode(this);
     }
 
@@ -109,11 +111,13 @@ class EventRequestManagerImpl extends MirrorImpl
         /*
          * Override superclass back to default equality
          */
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             return this == obj;
         }
 
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return System.identityHashCode(this);
         }
 
@@ -146,19 +150,23 @@ class EventRequestManagerImpl extends MirrorImpl
             }
         }
 
-        public boolean isEnabled() {
+        @Override
+		public boolean isEnabled() {
             return isEnabled;
         }
 
-        public void enable() {
+        @Override
+		public void enable() {
             setEnabled(true);
         }
 
-        public void disable() {
+        @Override
+		public void disable() {
             setEnabled(false);
         }
 
-        public synchronized void setEnabled(boolean val) {
+        @Override
+		public synchronized void setEnabled(boolean val) {
             if (deleted) {
                 throw invalidState();
             } else {
@@ -172,7 +180,8 @@ class EventRequestManagerImpl extends MirrorImpl
             }
         }
 
-        public synchronized void addCountFilter(int count) {
+        @Override
+		public synchronized void addCountFilter(int count) {
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
@@ -182,14 +191,16 @@ class EventRequestManagerImpl extends MirrorImpl
             filters.add(JDWP.EventRequest.Set.Modifier.Count.create(count));
         }
 
-        public void setSuspendPolicy(int policy) {
+        @Override
+		public void setSuspendPolicy(int policy) {
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
             suspendPolicy = JDItoJDWPSuspendPolicy(policy);
         }
 
-        public int suspendPolicy() {
+        @Override
+		public int suspendPolicy() {
             return JDWPtoJDISuspendPolicy(suspendPolicy);
         }
 
@@ -238,7 +249,8 @@ class EventRequestManagerImpl extends MirrorImpl
          * @return the value of this property or null
          * @see #putProperty
          */
-        public final Object getProperty(Object key) {
+        @Override
+		public final Object getProperty(Object key) {
             if (clientProperties == null) {
                 return null;
             } else {
@@ -251,7 +263,8 @@ class EventRequestManagerImpl extends MirrorImpl
          *
          * @see #getProperty
          */
-        public final void putProperty(Object key, Object value) {
+        @Override
+		public final void putProperty(Object key, Object value) {
             if (value != null) {
                 getProperties().put(key, value);
             } else {
@@ -329,15 +342,18 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        public Location location() {
+        @Override
+		public Location location() {
             return location;
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.BREAKPOINT;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "breakpoint request " + location() + state();
         }
     }
@@ -348,11 +364,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.ASSEMBLY_LOAD;
         }
 
-        public synchronized void addSourceNameFilter(String sourceNamePattern) {
+        @Override
+		public synchronized void addSourceNameFilter(String sourceNamePattern) {
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
@@ -368,7 +386,8 @@ class EventRequestManagerImpl extends MirrorImpl
                                       .create(sourceNamePattern));
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "class prepare request " + state();
         }
     }
@@ -379,11 +398,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.ASSEMBLY_UNLOAD;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "class unload request " + state();
         }
     }
@@ -412,23 +433,28 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        public ReferenceType exception() {
+        @Override
+		public ReferenceType exception() {
             return exception;
         }
 
-        public boolean notifyCaught() {
+        @Override
+		public boolean notifyCaught() {
             return caught;
         }
 
-        public boolean notifyUncaught() {
+        @Override
+		public boolean notifyUncaught() {
             return uncaught;
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.EXCEPTION;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "exception request " + exception() + state();
         }
     }
@@ -439,11 +465,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.METHOD_ENTRY;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "method entry request " + state();
         }
     }
@@ -471,11 +499,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return EventRequestManagerImpl.methodExitEventCmd;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "method exit request " + state();
         }
     }
@@ -486,11 +516,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.MONITOR_CONTENDED_ENTER;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "monitor contended enter request " + state();
         }
     }
@@ -501,11 +533,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.MONITOR_CONTENDED_ENTERED;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "monitor contended entered request " + state();
         }
     }
@@ -516,11 +550,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.MONITOR_WAIT;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "monitor wait request " + state();
         }
     }
@@ -531,11 +567,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.MONITOR_WAITED;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "monitor waited request " + state();
         }
     }
@@ -601,23 +639,28 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
 
         }
-        public int depth() {
+        @Override
+		public int depth() {
             return depth;
         }
 
-        public int size() {
+        @Override
+		public int size() {
             return size;
         }
 
-        public ThreadReference thread() {
+        @Override
+		public ThreadReference thread() {
             return thread;
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.SINGLE_STEP;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "step request " + thread() + state();
         }
     }
@@ -628,11 +671,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.THREAD_DEATH;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "thread death request " + state();
         }
     }
@@ -643,11 +688,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.THREAD_START;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "thread start request " + state();
         }
     }
@@ -664,7 +711,8 @@ class EventRequestManagerImpl extends MirrorImpl
                     ((FieldImpl)field).ref()));
         }
 
-        public Field field() {
+        @Override
+		public Field field() {
             return field;
         }
     }
@@ -676,11 +724,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.FIELD_ACCESS;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "access watchpoint request " + field + state();
         }
     }
@@ -692,11 +742,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.FIELD_MODIFICATION;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "modification watchpoint request " + field + state();
         }
     }
@@ -707,11 +759,13 @@ class EventRequestManagerImpl extends MirrorImpl
             requestList().add(this);
         }
 
-        int eventCmd() {
+        @Override
+		int eventCmd() {
             return JDWP.EventKind.VM_DEATH;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return "VM death request " + state();
         }
     }
@@ -741,44 +795,53 @@ class EventRequestManagerImpl extends MirrorImpl
         }
     }
 
-    public ClassPrepareRequest createClassPrepareRequest() {
+    @Override
+	public ClassPrepareRequest createClassPrepareRequest() {
         return new ClassPrepareRequestImpl();
     }
 
-    public ClassUnloadRequest createClassUnloadRequest() {
+    @Override
+	public ClassUnloadRequest createClassUnloadRequest() {
         return new ClassUnloadRequestImpl();
     }
 
-    public ExceptionRequest createExceptionRequest(ReferenceType refType,
+    @Override
+	public ExceptionRequest createExceptionRequest(ReferenceType refType,
                                                    boolean notifyCaught,
                                                    boolean notifyUncaught) {
         validateMirrorOrNull(refType);
         return new ExceptionRequestImpl(refType, notifyCaught, notifyUncaught);
     }
 
-    public StepRequest createStepRequest(ThreadReference thread,
+    @Override
+	public StepRequest createStepRequest(ThreadReference thread,
                                          int size, int depth) {
         validateMirror(thread);
         return new StepRequestImpl(thread, size, depth);
     }
 
-    public ThreadDeathRequest createThreadDeathRequest() {
+    @Override
+	public ThreadDeathRequest createThreadDeathRequest() {
         return new ThreadDeathRequestImpl();
     }
 
-    public ThreadStartRequest createThreadStartRequest() {
+    @Override
+	public ThreadStartRequest createThreadStartRequest() {
         return new ThreadStartRequestImpl();
     }
 
-    public MethodEntryRequest createMethodEntryRequest() {
+    @Override
+	public MethodEntryRequest createMethodEntryRequest() {
         return new MethodEntryRequestImpl();
     }
 
-    public MethodExitRequest createMethodExitRequest() {
+    @Override
+	public MethodExitRequest createMethodExitRequest() {
         return new MethodExitRequestImpl();
     }
 
-    public MonitorContendedEnterRequest createMonitorContendedEnterRequest() {
+    @Override
+	public MonitorContendedEnterRequest createMonitorContendedEnterRequest() {
         if (!vm.canRequestMonitorEvents()) {
             throw new UnsupportedOperationException(
           "target VM does not support requesting Monitor events");
@@ -786,7 +849,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new MonitorContendedEnterRequestImpl();
     }
 
-    public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest() {
+    @Override
+	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest() {
         if (!vm.canRequestMonitorEvents()) {
             throw new UnsupportedOperationException(
           "target VM does not support requesting Monitor events");
@@ -794,7 +858,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new MonitorContendedEnteredRequestImpl();
     }
 
-    public MonitorWaitRequest createMonitorWaitRequest() {
+    @Override
+	public MonitorWaitRequest createMonitorWaitRequest() {
         if (!vm.canRequestMonitorEvents()) {
             throw new UnsupportedOperationException(
           "target VM does not support requesting Monitor events");
@@ -802,7 +867,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new MonitorWaitRequestImpl();
     }
 
-    public MonitorWaitedRequest createMonitorWaitedRequest() {
+    @Override
+	public MonitorWaitedRequest createMonitorWaitedRequest() {
         if (!vm.canRequestMonitorEvents()) {
             throw new UnsupportedOperationException(
           "target VM does not support requesting Monitor events");
@@ -810,7 +876,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new MonitorWaitedRequestImpl();
     }
 
-    public BreakpointRequest createBreakpointRequest(Location location) {
+    @Override
+	public BreakpointRequest createBreakpointRequest(Location location) {
         validateMirror(location);
         if (location.codeIndex() == -1) {
             throw new NativeMethodException("Cannot set breakpoints on native methods");
@@ -818,7 +885,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new BreakpointRequestImpl(location);
     }
 
-    public AccessWatchpointRequest
+    @Override
+	public AccessWatchpointRequest
                               createAccessWatchpointRequest(Field field) {
         validateMirror(field);
         if (!vm.canWatchFieldAccess()) {
@@ -828,7 +896,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new AccessWatchpointRequestImpl(field);
     }
 
-    public ModificationWatchpointRequest
+    @Override
+	public ModificationWatchpointRequest
                         createModificationWatchpointRequest(Field field) {
         validateMirror(field);
         if (!vm.canWatchFieldModification()) {
@@ -838,7 +907,8 @@ class EventRequestManagerImpl extends MirrorImpl
         return new ModificationWatchpointRequestImpl(field);
     }
 
-    public VMDeathRequest createVMDeathRequest() {
+    @Override
+	public VMDeathRequest createVMDeathRequest() {
         if (!vm.canRequestVMDeathEvent()) {
             throw new UnsupportedOperationException(
           "target VM does not support requesting VM death events");
@@ -846,12 +916,14 @@ class EventRequestManagerImpl extends MirrorImpl
         return new VMDeathRequestImpl();
     }
 
-    public void deleteEventRequest(EventRequest eventRequest) {
+    @Override
+	public void deleteEventRequest(EventRequest eventRequest) {
         validateMirror(eventRequest);
         ((EventRequestImpl)eventRequest).delete();
     }
 
-    public void deleteEventRequests(List<? extends EventRequest> eventRequests) {
+    @Override
+	public void deleteEventRequests(List<? extends EventRequest> eventRequests) {
         validateMirrors(eventRequests);
         // copy the eventRequests to avoid ConcurrentModificationException
         Iterator<? extends EventRequest> iter = (new ArrayList<EventRequest>(eventRequests)).iterator();
@@ -860,7 +932,8 @@ class EventRequestManagerImpl extends MirrorImpl
         }
     }
 
-    public void deleteAllBreakpoints() {
+    @Override
+	public void deleteAllBreakpoints() {
         requestList(JDWP.EventKind.BREAKPOINT).clear();
 
         try {
@@ -870,68 +943,84 @@ class EventRequestManagerImpl extends MirrorImpl
         }
     }
 
-    public List<StepRequest> stepRequests() {
+    @Override
+	public List<StepRequest> stepRequests() {
         return (List<StepRequest>)unmodifiableRequestList(JDWP.EventKind.SINGLE_STEP);
     }
 
-    public List<ClassPrepareRequest> classPrepareRequests() {
+    @Override
+	public List<ClassPrepareRequest> classPrepareRequests() {
         return (List<ClassPrepareRequest>)unmodifiableRequestList(JDWP.EventKind.ASSEMBLY_LOAD);
     }
 
-    public List<ClassUnloadRequest> classUnloadRequests() {
+    @Override
+	public List<ClassUnloadRequest> classUnloadRequests() {
         return (List<ClassUnloadRequest>)unmodifiableRequestList(JDWP.EventKind.ASSEMBLY_UNLOAD);
     }
 
-    public List<ThreadStartRequest> threadStartRequests() {
+    @Override
+	public List<ThreadStartRequest> threadStartRequests() {
         return (List<ThreadStartRequest>)unmodifiableRequestList(JDWP.EventKind.THREAD_START);
     }
 
-    public List<ThreadDeathRequest> threadDeathRequests() {
+    @Override
+	public List<ThreadDeathRequest> threadDeathRequests() {
         return (List<ThreadDeathRequest>)unmodifiableRequestList(JDWP.EventKind.THREAD_DEATH);
     }
 
-    public List<ExceptionRequest> exceptionRequests() {
+    @Override
+	public List<ExceptionRequest> exceptionRequests() {
         return (List<ExceptionRequest>)unmodifiableRequestList(JDWP.EventKind.EXCEPTION);
     }
 
-    public List<BreakpointRequest> breakpointRequests() {
+    @Override
+	public List<BreakpointRequest> breakpointRequests() {
         return (List<BreakpointRequest>)unmodifiableRequestList(JDWP.EventKind.BREAKPOINT);
     }
 
-    public List<AccessWatchpointRequest> accessWatchpointRequests() {
+    @Override
+	public List<AccessWatchpointRequest> accessWatchpointRequests() {
         return (List<AccessWatchpointRequest>)unmodifiableRequestList(JDWP.EventKind.FIELD_ACCESS);
     }
 
-    public List<ModificationWatchpointRequest> modificationWatchpointRequests() {
+    @Override
+	public List<ModificationWatchpointRequest> modificationWatchpointRequests() {
         return (List<ModificationWatchpointRequest>)unmodifiableRequestList(JDWP.EventKind.FIELD_MODIFICATION);
     }
 
-    public List<MethodEntryRequest> methodEntryRequests() {
+    @Override
+	public List<MethodEntryRequest> methodEntryRequests() {
         return (List<MethodEntryRequest>)unmodifiableRequestList(JDWP.EventKind.METHOD_ENTRY);
     }
 
-    public List<MethodExitRequest> methodExitRequests() {
+    @Override
+	public List<MethodExitRequest> methodExitRequests() {
         return (List<MethodExitRequest>)unmodifiableRequestList(
                                EventRequestManagerImpl.methodExitEventCmd);
     }
 
-    public List<MonitorContendedEnterRequest> monitorContendedEnterRequests() {
+    @Override
+	public List<MonitorContendedEnterRequest> monitorContendedEnterRequests() {
         return (List<MonitorContendedEnterRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_CONTENDED_ENTER);
     }
 
-    public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests() {
+    @Override
+	public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests() {
         return (List<MonitorContendedEnteredRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_CONTENDED_ENTERED);
     }
 
-    public List<MonitorWaitRequest> monitorWaitRequests() {
+    @Override
+	public List<MonitorWaitRequest> monitorWaitRequests() {
         return (List<MonitorWaitRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_WAIT);
     }
 
-    public List<MonitorWaitedRequest> monitorWaitedRequests() {
+    @Override
+	public List<MonitorWaitedRequest> monitorWaitedRequests() {
         return (List<MonitorWaitedRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_WAITED);
     }
 
-    public List<VMDeathRequest> vmDeathRequests() {
+    @Override
+	public List<VMDeathRequest> vmDeathRequests() {
         return (List<VMDeathRequest>)unmodifiableRequestList(JDWP.EventKind.VM_DEATH);
     }
 

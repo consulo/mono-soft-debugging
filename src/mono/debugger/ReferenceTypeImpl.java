@@ -25,10 +25,16 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.*;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class ReferenceTypeImpl extends TypeImpl
 implements ReferenceType {
@@ -123,7 +129,8 @@ implements ReferenceType {
         throw new IllegalArgumentException("Invalid field id: " + ref);
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof ReferenceTypeImpl)) {
             ReferenceTypeImpl other = (ReferenceTypeImpl)obj;
             return (ref() == other.ref()) &&
@@ -133,11 +140,13 @@ implements ReferenceType {
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return(int)ref();
     }
 
-    public int compareTo(ReferenceType object) {
+    @Override
+	public int compareTo(ReferenceType object) {
         /*
          * Note that it is critical that compareTo() == 0
          * implies that equals() == true. Otherwise, TreeSet
@@ -163,7 +172,8 @@ implements ReferenceType {
         return comp;
     }
 
-    public String signature() {
+    @Override
+	public String signature() {
         if (signature == null) {
             // Does not need synchronization, since worst-case
             // static info is fetched twice
@@ -185,7 +195,8 @@ implements ReferenceType {
         return signature;
     }
 
-    public String genericSignature() {
+    @Override
+	public String genericSignature() {
         // This gets both the signature and the generic signature
         if (vm.canGet1_5LanguageFeatures() && !genericSignatureGotten) {
             // Does not need synchronization, since worst-case
@@ -203,7 +214,8 @@ implements ReferenceType {
         return genericSignature;
     }
 
-    public ClassLoaderReference classLoader() {
+    @Override
+	public ClassLoaderReference classLoader() {
         if (!isClassLoaderCached) {
             // Does not need synchronization, since worst-case
             // static info is fetched twice
@@ -219,53 +231,61 @@ implements ReferenceType {
         return classLoader;
     }
 
-    public boolean isPublic() {
+    @Override
+	public boolean isPublic() {
         if (modifiers == -1)
             getModifiers();
 
         return((modifiers & VMModifiers.PUBLIC) > 0);
     }
 
-    public boolean isProtected() {
+    @Override
+	public boolean isProtected() {
         if (modifiers == -1)
             getModifiers();
 
         return((modifiers & VMModifiers.PROTECTED) > 0);
     }
 
-    public boolean isPrivate() {
+    @Override
+	public boolean isPrivate() {
         if (modifiers == -1)
             getModifiers();
 
         return((modifiers & VMModifiers.PRIVATE) > 0);
     }
 
-    public boolean isPackagePrivate() {
+    @Override
+	public boolean isPackagePrivate() {
         return !isPublic() && !isPrivate() && !isProtected();
     }
 
-    public boolean isAbstract() {
+    @Override
+	public boolean isAbstract() {
         if (modifiers == -1)
             getModifiers();
 
         return((modifiers & VMModifiers.ABSTRACT) > 0);
     }
 
-    public boolean isFinal() {
+    @Override
+	public boolean isFinal() {
         if (modifiers == -1)
             getModifiers();
 
         return((modifiers & VMModifiers.FINAL) > 0);
     }
 
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         if (modifiers == -1)
             getModifiers();
 
         return((modifiers & VMModifiers.STATIC) > 0);
     }
 
-    public boolean isPrepared() {
+    @Override
+	public boolean isPrepared() {
         // This ref type may have been prepared before we were getting
         // events, so get it once.  After that,
         // this status flag is updated through the ClassPrepareEvent,
@@ -276,7 +296,8 @@ implements ReferenceType {
         return isPrepared;
     }
 
-    public boolean isVerified() {
+    @Override
+	public boolean isVerified() {
         // Once true, it never resets, so we don't need to update
         if ((status & JDWP.ClassStatus.VERIFIED) == 0) {
             updateStatus();
@@ -284,7 +305,8 @@ implements ReferenceType {
         return (status & JDWP.ClassStatus.VERIFIED) != 0;
     }
 
-    public boolean isInitialized() {
+    @Override
+	public boolean isInitialized() {
         // Once initialization succeeds or fails, it never resets,
         // so we don't need to update
         if ((status & INITIALIZED_OR_FAILED) == 0) {
@@ -293,7 +315,8 @@ implements ReferenceType {
         return (status & JDWP.ClassStatus.INITIALIZED) != 0;
     }
 
-    public boolean failedToInitialize() {
+    @Override
+	public boolean failedToInitialize() {
         // Once initialization succeeds or fails, it never resets,
         // so we don't need to update
         if ((status & INITIALIZED_OR_FAILED) == 0) {
@@ -302,7 +325,8 @@ implements ReferenceType {
         return (status & JDWP.ClassStatus.ERROR) != 0;
     }
 
-    public List<Field> fields() {
+    @Override
+	public List<Field> fields() {
         List<Field> fields = (fieldsRef == null) ? null : fieldsRef.get();
         if (fields == null) {
             if (vm.canGet1_5LanguageFeatures()) {
@@ -370,7 +394,8 @@ implements ReferenceType {
         }
     }
 
-    public List<Field> visibleFields() {
+    @Override
+	public List<Field> visibleFields() {
         /*
          * Maintain two different collections of visible fields. The
          * list maintains a reasonable order for return. The
@@ -426,14 +451,16 @@ implements ReferenceType {
             }
         }
     }
-    public List<Field> allFields() {
+    @Override
+	public List<Field> allFields() {
         List<Field> fieldList = new ArrayList<Field>();
         Set<ReferenceType> typeSet = new HashSet<ReferenceType>();
         addAllFields(fieldList, typeSet);
         return fieldList;
     }
 
-    public Field fieldByName(String fieldName) {
+    @Override
+	public Field fieldByName(String fieldName) {
         List<Field> searchList = visibleFields();
 
         for (int i=0; i<searchList.size(); i++) {
@@ -447,7 +474,8 @@ implements ReferenceType {
         return null;
     }
 
-    public List<Method> methods() {
+    @Override
+	public List<Method> methods() {
         List<Method> methods = (methodsRef == null) ? null : methodsRef.get();
         if (methods == null) {
             if (!vm.canGet1_5LanguageFeatures()) {
@@ -513,7 +541,8 @@ implements ReferenceType {
 
     abstract void addVisibleMethods(Map<String, Method> methodMap);
 
-    public List<Method> visibleMethods() {
+    @Override
+	public List<Method> visibleMethods() {
         /*
          * Build a collection of all visible methods. The hash
          * map allows us to do this efficiently by keying on the
@@ -533,9 +562,11 @@ implements ReferenceType {
         return list;
     }
 
-    abstract public List<Method> allMethods();
+    @Override
+	abstract public List<Method> allMethods();
 
-    public List<Method> methodsByName(String name) {
+    @Override
+	public List<Method> methodsByName(String name) {
         List<Method> methods = visibleMethods();
         ArrayList<Method> retList = new ArrayList<Method>(methods.size());
         for (Method candidate : methods) {
@@ -547,7 +578,8 @@ implements ReferenceType {
         return retList;
     }
 
-    public List<Method> methodsByName(String name, String signature) {
+    @Override
+	public List<Method> methodsByName(String name, String signature) {
         List<Method> methods = visibleMethods();
         ArrayList<Method> retList = new ArrayList<Method>(methods.size());
         for (Method candidate : methods) {
@@ -571,7 +603,8 @@ implements ReferenceType {
         return Arrays.asList((InterfaceType[])intfs);
     }
 
-    public List<ReferenceType> nestedTypes() {
+    @Override
+	public List<ReferenceType> nestedTypes() {
         List<ReferenceType> all = vm.allClasses();
         List<ReferenceType> nested = new ArrayList<ReferenceType>();
         String outername = name();
@@ -592,7 +625,8 @@ implements ReferenceType {
         return nested;
     }
 
-    public Value getValue(Field sig) {
+    @Override
+	public Value getValue(Field sig) {
         List<Field> list = new ArrayList<Field>(1);
         list.add(sig);
         Map<Field, Value> map = getValues(list);
@@ -621,7 +655,8 @@ implements ReferenceType {
     /**
      * Returns a map of field values
      */
-    public Map<Field,Value> getValues(List<? extends Field> theFields) {
+    @Override
+	public Map<Field,Value> getValues(List<? extends Field> theFields) {
         validateMirrors(theFields);
 
         int size = theFields.size();
@@ -664,7 +699,8 @@ implements ReferenceType {
         return map;
     }
 
-    public ClassObjectReference classObject() {
+    @Override
+	public ClassObjectReference classObject() {
         if (classObject == null) {
             // Are classObjects unique for an Object, or
             // created each time? Is this spec'ed?
@@ -690,11 +726,13 @@ implements ReferenceType {
         return sde.stratum(stratumID);
     }
 
-    public String sourceName() throws AbsentInformationException {
+    @Override
+	public String sourceName() throws AbsentInformationException {
         return sourceNames(vm.getDefaultStratum()).get(0);
     }
 
-    public List<String> sourceNames(String stratumID)
+    @Override
+	public List<String> sourceNames(String stratumID)
                                 throws AbsentInformationException {
         SDE.Stratum stratum = stratum(stratumID);
         if (stratum.isJava()) {
@@ -705,7 +743,8 @@ implements ReferenceType {
         return stratum.sourceNames(this);
     }
 
-    public List<String> sourcePaths(String stratumID)
+    @Override
+	public List<String> sourcePaths(String stratumID)
                                 throws AbsentInformationException {
         SDE.Stratum stratum = stratum(stratumID);
         if (stratum.isJava()) {
@@ -765,7 +804,8 @@ implements ReferenceType {
         return baseSourceDir;
     }
 
-    public String sourceDebugExtension()
+    @Override
+	public String sourceDebugExtension()
                            throws AbsentInformationException {
         if (!vm.canGetSourceDebugExtension()) {
             throw new UnsupportedOperationException();
@@ -803,7 +843,8 @@ implements ReferenceType {
         return sde;
     }
 
-    public List<String> availableStrata() {
+    @Override
+	public List<String> availableStrata() {
         SDE sde = sourceDebugExtensionInfo();
         if (sde.isValid()) {
             return sde.availableStrata();
@@ -817,7 +858,8 @@ implements ReferenceType {
     /**
      * Always returns non-null stratumID
      */
-    public String defaultStratum() {
+    @Override
+	public String defaultStratum() {
         SDE sdei = sourceDebugExtensionInfo();
         if (sdei.isValid()) {
             return sdei.defaultStratumId;
@@ -826,19 +868,22 @@ implements ReferenceType {
         }
     }
 
-    public int modifiers() {
+    @Override
+	public int modifiers() {
         if (modifiers == -1)
             getModifiers();
 
         return modifiers;
     }
 
-    public List<Location> allLineLocations()
+    @Override
+	public List<Location> allLineLocations()
                             throws AbsentInformationException {
         return allLineLocations(vm.getDefaultStratum(), null);
     }
 
-    public List<Location> allLineLocations(String stratumID, String sourceName)
+    @Override
+	public List<Location> allLineLocations(String stratumID, String sourceName)
                             throws AbsentInformationException {
         boolean someAbsent = false; // A method that should have info, didn't
         SDE.Stratum stratum = stratum(stratumID);
@@ -864,14 +909,16 @@ implements ReferenceType {
         return list;
     }
 
-    public List<Location> locationsOfLine(int lineNumber)
+    @Override
+	public List<Location> locationsOfLine(int lineNumber)
                            throws AbsentInformationException {
         return locationsOfLine(vm.getDefaultStratum(),
                                null,
                                lineNumber);
     }
 
-    public List<Location> locationsOfLine(String stratumID,
+    @Override
+	public List<Location> locationsOfLine(String stratumID,
                                 String sourceName,
                                 int lineNumber)
                            throws AbsentInformationException {
@@ -908,7 +955,8 @@ implements ReferenceType {
         return list;
     }
 
-    public List<ObjectReference> instances(long maxInstances) {
+    @Override
+	public List<ObjectReference> instances(long maxInstances) {
         if (!vm.canGetInstanceInfo()) {
             throw new UnsupportedOperationException(
                 "target does not support getting instances");
@@ -957,7 +1005,8 @@ implements ReferenceType {
         }
     }
 
-    public int majorVersion() {
+    @Override
+	public int majorVersion() {
         try {
             getClassFileVersion();
         } catch (RuntimeException exc) {
@@ -966,7 +1015,8 @@ implements ReferenceType {
         return majorVersion;
     }
 
-    public int minorVersion() {
+    @Override
+	public int minorVersion() {
         try {
             getClassFileVersion();
         } catch (RuntimeException exc) {
@@ -1003,7 +1053,8 @@ implements ReferenceType {
         }
     }
 
-    public int constantPoolCount() {
+    @Override
+	public int constantPoolCount() {
         try {
             getConstantPoolInfo();
         } catch (RuntimeException exc) {
@@ -1012,7 +1063,8 @@ implements ReferenceType {
         return constanPoolCount;
     }
 
-    public byte[] constantPool() {
+    @Override
+	public byte[] constantPool() {
         try {
             getConstantPoolInfo();
         } catch (RuntimeException exc) {

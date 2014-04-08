@@ -409,7 +409,8 @@ public interface Method extends TypeComponent, Locatable, Comparable<Method> {
      * this is an abstract method; native methods will return a
      * Location object whose codeIndex is -1.
      */
-    Location location();
+	@Override
+	Location location();
 
     /**
      * Compares the specified Object with this method for equality.
@@ -418,12 +419,14 @@ public interface Method extends TypeComponent, Locatable, Comparable<Method> {
      * mirror the same method (declared in the same class or interface, in
      * the same VM).
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this Method.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

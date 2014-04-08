@@ -46,7 +46,8 @@ public class InternalEventHandler implements Runnable
         thread.start();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         if ((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0) {
             vm.printTrace("Internal event handler running");
         }

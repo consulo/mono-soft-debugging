@@ -38,7 +38,8 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
         List<ReferenceType> visibleClasses = null;
     }
 
-    protected ObjectReferenceImpl.Cache newCache() {
+    @Override
+	protected ObjectReferenceImpl.Cache newCache() {
         return new Cache();
     }
 
@@ -47,11 +48,13 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
         vm.state().addListener(this);
     }
 
-    protected String description() {
+    @Override
+	protected String description() {
         return "ClassLoaderReference " + uniqueID();
     }
 
-    public List<ReferenceType> definedClasses() {
+    @Override
+	public List<ReferenceType> definedClasses() {
         ArrayList<ReferenceType> definedClasses = new ArrayList<ReferenceType>();
         for (ReferenceType type :  vm.allClasses()) {
             if (type.isPrepared() &&
@@ -62,7 +65,8 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
         return definedClasses;
     }
 
-    public List<ReferenceType> visibleClasses() {
+    @Override
+	public List<ReferenceType> visibleClasses() {
         List<ReferenceType> classes = null;
         try {
             Cache local = (Cache)getCache();
@@ -108,7 +112,8 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
                                          "Class " + parser.typeName() + " not loaded");
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.CLASS_LOADER;
     }
 }

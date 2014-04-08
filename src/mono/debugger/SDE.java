@@ -170,7 +170,8 @@ class SDE {
             this.jplsLine = jplsLine;
         }
 
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             if (obj instanceof LineStratum) {
                 LineStratum other = (LineStratum)obj;
                 return (lti == other.lti) &&

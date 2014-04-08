@@ -59,7 +59,8 @@ public class GenericListeningConnector
     {
         transportService = ts;
         transport = new Transport() {
-                public String name() {
+                @Override
+				public String name() {
                     return transportService.name();
                 }
             };
@@ -115,7 +116,8 @@ public class GenericListeningConnector
         return listener.address();
     }
 
-    public String
+    @Override
+	public String
         startListening(Map<String,? extends Connector.Argument> args)
         throws IOException, IllegalConnectorArgumentsException
     {
@@ -123,7 +125,8 @@ public class GenericListeningConnector
         return startListening(address, args);
     }
 
-    public void stopListening(Map<String,? extends Connector.Argument> args)
+    @Override
+	public void stopListening(Map<String,? extends Connector.Argument> args)
         throws IOException, IllegalConnectorArgumentsException
     {
         TransportService.ListenKey listener = listenMap.get(args);
@@ -135,7 +138,8 @@ public class GenericListeningConnector
         listenMap.remove(args);
     }
 
-    public VirtualMachine
+    @Override
+	public VirtualMachine
         accept(Map<String,? extends Connector.Argument> args)
         throws IOException, IllegalConnectorArgumentsException
     {
@@ -164,19 +168,23 @@ public class GenericListeningConnector
         return Bootstrap.virtualMachineManager().createVirtualMachine(connection);
     }
 
-    public boolean supportsMultipleConnections() {
+    @Override
+	public boolean supportsMultipleConnections() {
         return transportService.capabilities().supportsMultipleConnections();
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return transport.name() + "Listen";
     }
 
-    public String description() {
+    @Override
+	public String description() {
         return transportService.description();
     }
 
-    public Transport transport() {
+    @Override
+	public Transport transport() {
         return transport;
     }
 

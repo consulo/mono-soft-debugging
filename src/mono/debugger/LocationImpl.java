@@ -61,7 +61,8 @@ public class LocationImpl extends MirrorImpl implements Location {
         this.methodRef = methodRef;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof Location)) {
             Location other = (Location)obj;
             return (method().equals(other.method())) &&
@@ -72,14 +73,16 @@ public class LocationImpl extends MirrorImpl implements Location {
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: better hash code?
          */
         return method().hashCode() + (int)codeIndex();
     }
 
-    public int compareTo(Location object) {
+    @Override
+	public int compareTo(Location object) {
         LocationImpl other = (LocationImpl)object;
         int rc = method().compareTo(other.method());
         if (rc == 0) {
@@ -94,11 +97,13 @@ public class LocationImpl extends MirrorImpl implements Location {
         return rc;
     }
 
-    public ReferenceType declaringType() {
+    @Override
+	public ReferenceType declaringType() {
         return declaringType;
     }
 
-    public Method method() {
+    @Override
+	public Method method() {
         if (method == null) {
             method = declaringType.getMethodMirror(methodRef);
             if (method.isNative()) {
@@ -108,7 +113,8 @@ public class LocationImpl extends MirrorImpl implements Location {
         return method;
     }
 
-    public long codeIndex() {
+    @Override
+	public long codeIndex() {
         method();  // be sure information is up-to-date
         return codeIndex;
     }
@@ -177,11 +183,13 @@ public class LocationImpl extends MirrorImpl implements Location {
         baseLineInfo = lineInfo;
     }
 
-    public String sourceName() throws AbsentInformationException {
+    @Override
+	public String sourceName() throws AbsentInformationException {
         return sourceName(vm.getDefaultStratum());
     }
 
-    public String sourceName(String stratumID)
+    @Override
+	public String sourceName(String stratumID)
                                throws AbsentInformationException {
         return sourceName(declaringType.stratum(stratumID));
     }
@@ -191,11 +199,13 @@ public class LocationImpl extends MirrorImpl implements Location {
         return getLineInfo(stratum).liSourceName();
     }
 
-    public String sourcePath() throws AbsentInformationException {
+    @Override
+	public String sourcePath() throws AbsentInformationException {
         return sourcePath(vm.getDefaultStratum());
     }
 
-    public String sourcePath(String stratumID)
+    @Override
+	public String sourcePath(String stratumID)
                                throws AbsentInformationException {
         return sourcePath(declaringType.stratum(stratumID));
     }
@@ -205,11 +215,13 @@ public class LocationImpl extends MirrorImpl implements Location {
         return getLineInfo(stratum).liSourcePath();
     }
 
-    public int lineNumber() {
+    @Override
+	public int lineNumber() {
         return lineNumber(vm.getDefaultStratum());
     }
 
-    public int lineNumber(String stratumID) {
+    @Override
+	public int lineNumber(String stratumID) {
         return lineNumber(declaringType.stratum(stratumID));
     }
 
@@ -217,7 +229,8 @@ public class LocationImpl extends MirrorImpl implements Location {
         return getLineInfo(stratum).liLineNumber();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         if (lineNumber() == -1) {
             return method().toString() + "+" + codeIndex();
         } else {

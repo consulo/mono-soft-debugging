@@ -34,14 +34,22 @@ public abstract class PrimitiveValueImpl extends ValueImpl
         super(aVm);
     }
 
-    abstract public boolean booleanValue();
-    abstract public byte byteValue();
-    abstract public char charValue();
-    abstract public short shortValue();
-    abstract public int intValue();
-    abstract public long longValue();
-    abstract public float floatValue();
-    abstract public double doubleValue();
+    @Override
+	abstract public boolean booleanValue();
+    @Override
+	abstract public byte byteValue();
+    @Override
+	abstract public char charValue();
+    @Override
+	abstract public short shortValue();
+    @Override
+	abstract public int intValue();
+    @Override
+	abstract public long longValue();
+    @Override
+	abstract public float floatValue();
+    @Override
+	abstract public double doubleValue();
 
     /*
      * The checked versions of the value accessors throw
@@ -91,7 +99,8 @@ public abstract class PrimitiveValueImpl extends ValueImpl
         return doubleValue();
     }
 
-    ValueImpl prepareForAssignmentTo(ValueContainer destination)
+    @Override
+	ValueImpl prepareForAssignmentTo(ValueContainer destination)
                     throws InvalidTypeException {
 
         return convertForAssignmentTo(destination);

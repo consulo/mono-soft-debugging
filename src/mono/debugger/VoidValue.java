@@ -40,12 +40,14 @@ public interface VoidValue extends Value {
      * @return true if the Object is a VoidValue; false
      * otherwise.
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this VoidValue.
      *
      * @return the hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

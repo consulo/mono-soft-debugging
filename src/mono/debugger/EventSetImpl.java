@@ -55,7 +55,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
     private byte suspendPolicy;
     private EventSetImpl internalEventSet;
 
-    public String toString() {
+    @Override
+	public String toString() {
         String string = "event set, policy:" + suspendPolicy +
                         ", count:" + this.size() + " = {";
         boolean first = true;
@@ -93,11 +94,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
         /*
          * Override superclass back to default equality
          */
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             return this == obj;
         }
 
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return System.identityHashCode(this);
         }
 
@@ -111,7 +114,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.request = null;
         }
 
-        public EventRequest request() {
+        @Override
+		public EventRequest request() {
             return request;
         }
 
@@ -163,7 +167,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
 
         abstract String eventName();
 
-        public String toString() {
+        @Override
+		public String toString() {
             return eventName();
         }
 
@@ -182,7 +187,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             return thread;
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return eventName() + " in thread " + thread.name();
         }
     }
@@ -198,7 +204,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.location = location;
         }
 
-        public Location location() {
+        @Override
+		public Location location() {
             return location;
         }
 
@@ -209,7 +216,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             return location.method();
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return eventName() + "@" +
                    ((location() == null) ? " null" : location().toString()) +
                    " in thread " + thread().name();
@@ -222,7 +230,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID, evt.thread, evt.location);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "BreakpointEvent";
         }
     }
@@ -232,7 +241,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID, evt.thread, evt.location);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "StepEvent";
         }
     }
@@ -243,7 +253,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID, evt.thread, evt.location);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "MethodEntryEvent";
         }
     }
@@ -261,11 +272,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             returnVal = evt.value;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "MethodExitEvent";
         }
 
-        public Value returnValue() {
+        @Override
+		public Value returnValue() {
             if (!this.vm.canGetMethodReturnValues()) {
                 throw new UnsupportedOperationException(
                 "target does not support return values in MethodExit events");
@@ -284,11 +297,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.monitor = evt.object;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "MonitorContendedEnter";
         }
 
-        public ObjectReference  monitor() {
+        @Override
+		public ObjectReference  monitor() {
             return monitor;
         };
 
@@ -303,11 +318,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.monitor = evt.object;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "MonitorContendedEntered";
         }
 
-        public ObjectReference  monitor() {
+        @Override
+		public ObjectReference  monitor() {
             return monitor;
         };
 
@@ -324,15 +341,18 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.timeout = evt.timeout;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "MonitorWait";
         }
 
-        public ObjectReference  monitor() {
+        @Override
+		public ObjectReference  monitor() {
             return monitor;
         };
 
-        public long timeout() {
+        @Override
+		public long timeout() {
             return timeout;
         }
     }
@@ -348,15 +368,18 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.timed_out = evt.timed_out;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "MonitorWaited";
         }
 
-        public ObjectReference  monitor() {
+        @Override
+		public ObjectReference  monitor() {
             return monitor;
         };
 
-        public boolean timedout() {
+        @Override
+		public boolean timedout() {
             return timed_out;
         }
     }
@@ -370,11 +393,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             referenceType = this.vm.referenceType(evt.typeID);
         }
 
-        public ReferenceType referenceType() {
+        @Override
+		public ReferenceType referenceType() {
             return referenceType;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "ClassPrepareEvent";
         }
     }
@@ -387,10 +412,12 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
 			referenceType = this.vm.referenceType(evt.typeID);
         }
 
+		@Override
 		public ReferenceType referenceType() {
 			return referenceType;
 		}
 
+		@Override
 		String eventName() {
 			return "ClassUnloadEvent";
 		}
@@ -407,15 +434,18 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.catchLocation = evt.catchLocation;
         }
 
-        public ObjectReference exception() {
+        @Override
+		public ObjectReference exception() {
             return exception;
         }
 
-        public Location catchLocation() {
+        @Override
+		public Location catchLocation() {
             return catchLocation;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "ExceptionEvent";
         }
     }
@@ -426,7 +456,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID, evt.thread);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "ThreadDeathEvent";
         }
     }
@@ -437,7 +468,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID, evt.thread);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "ThreadStartEvent";
         }
     }
@@ -448,7 +480,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID, evt.thread);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "VMStartEvent";
         }
     }
@@ -459,7 +492,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super(evt, evt.requestID);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "VMDeathEvent";
         }
     }
@@ -471,7 +505,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             super((byte)JDWP.EventKind.VM_DISCONNECTED);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "VMDisconnectEvent";
         }
     }
@@ -494,18 +529,21 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.object = object;
         }
 
-        public Field field() {
+        @Override
+		public Field field() {
             if (field == null) {
                 field = refType.getFieldMirror(fieldID);
             }
             return field;
         }
 
-        public ObjectReference object() {
+        @Override
+		public ObjectReference object() {
             return object;
         }
 
-        public Value valueCurrent() {
+        @Override
+		public Value valueCurrent() {
             if (object == null) {
                 return refType.getValue(field());
             } else {
@@ -522,7 +560,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
                   evt.refTypeTag, evt.typeID, evt.fieldID, evt.object);
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "AccessWatchpoint";
         }
     }
@@ -538,11 +577,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             this.newValue = evt.valueToBe;
         }
 
-        public Value valueToBe() {
+        @Override
+		public Value valueToBe() {
             return newValue;
         }
 
-        String eventName() {
+        @Override
+		String eventName() {
             return "ModificationWatchpoint";
         }
     }
@@ -772,11 +813,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
         }
     }
 
-    public VirtualMachine virtualMachine() {
+    @Override
+	public VirtualMachine virtualMachine() {
         return vm;
     }
 
-    public int suspendPolicy() {
+    @Override
+	public int suspendPolicy() {
         return EventRequestManagerImpl.JDWPtoJDISuspendPolicy(suspendPolicy);
     }
 
@@ -789,7 +832,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
         return null;
     }
 
-    public void resume() {
+    @Override
+	public void resume() {
         switch (suspendPolicy()) {
             case EventRequest.SUSPEND_ALL:
                 vm.resume();
@@ -809,11 +853,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
         }
     }
 
-    public Iterator<Event> iterator() {
+    @Override
+	public Iterator<Event> iterator() {
         return new Itr();
     }
 
-    public EventIterator eventIterator() {
+    @Override
+	public EventIterator eventIterator() {
         return new Itr();
     }
 
@@ -823,11 +869,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
          */
         int cursor = 0;
 
-        public boolean hasNext() {
+        @Override
+		public boolean hasNext() {
             return cursor != size();
         }
 
-        public Event next() {
+        @Override
+		public Event next() {
             try {
                 Event nxt = get(cursor);
                 ++cursor;
@@ -837,33 +885,41 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
             }
         }
 
-        public Event nextEvent() {
+        @Override
+		public Event nextEvent() {
             return next();
         }
 
-        public void remove() {
+        @Override
+		public void remove() {
             throw new UnsupportedOperationException();
         }
     }
 
    /* below make this unmodifiable */
 
-    public boolean add(Event o){
+    @Override
+	public boolean add(Event o){
         throw new UnsupportedOperationException();
     }
-    public boolean remove(Object o) {
+    @Override
+	public boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }
-    public boolean addAll(Collection<? extends Event> coll) {
+    @Override
+	public boolean addAll(Collection<? extends Event> coll) {
         throw new UnsupportedOperationException();
     }
-    public boolean removeAll(Collection<?> coll) {
+    @Override
+	public boolean removeAll(Collection<?> coll) {
         throw new UnsupportedOperationException();
     }
-    public boolean retainAll(Collection<?> coll) {
+    @Override
+	public boolean retainAll(Collection<?> coll) {
         throw new UnsupportedOperationException();
     }
-    public void clear() {
+    @Override
+	public void clear() {
         throw new UnsupportedOperationException();
     }
 }

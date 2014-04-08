@@ -54,7 +54,8 @@ public class MonitorInfoImpl extends MirrorImpl
      * Must be synchronized since we must protect against
      * sending defunct (isValid == false) stack ids to the back-end.
      */
-    public boolean threadResumable(ThreadAction action) {
+    @Override
+	public boolean threadResumable(ThreadAction action) {
         synchronized (vm.state()) {
             if (isValid) {
                 isValid = false;
@@ -72,17 +73,20 @@ public class MonitorInfoImpl extends MirrorImpl
         }
     }
 
-    public ObjectReference monitor() {
+    @Override
+	public ObjectReference monitor() {
         validateMonitorInfo();
         return monitor;
     }
 
-    public int stackDepth() {
+    @Override
+	public int stackDepth() {
         validateMonitorInfo();
         return stack_depth;
     }
 
-    public ThreadReference thread() {
+    @Override
+	public ThreadReference thread() {
         validateMonitorInfo();
         return thread;
     }

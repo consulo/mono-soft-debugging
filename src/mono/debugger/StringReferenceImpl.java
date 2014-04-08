@@ -36,7 +36,8 @@ public class StringReferenceImpl extends ObjectReferenceImpl
         super(aVm,aRef);
     }
 
-    public String value() {
+    @Override
+	public String value() {
         if(value == null) {
             // Does not need synchronization, since worst-case
             // static info is fetched twice
@@ -50,11 +51,13 @@ public class StringReferenceImpl extends ObjectReferenceImpl
         return value;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "\"" + value() + "\"";
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.STRING;
     }
 }

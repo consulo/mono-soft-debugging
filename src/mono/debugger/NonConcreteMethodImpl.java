@@ -54,7 +54,8 @@ public class NonConcreteMethodImpl extends MethodImpl {
               genericSignature, modifiers);
     }
 
-    public Location location() {
+    @Override
+	public Location location() {
         if (isAbstract()) {
             return null;
         }
@@ -64,49 +65,59 @@ public class NonConcreteMethodImpl extends MethodImpl {
         return location;
     }
 
-    public List<Location> allLineLocations(String stratumID,
+    @Override
+	public List<Location> allLineLocations(String stratumID,
                                  String sourceName) {
         return new ArrayList<Location>(0);
     }
 
-    public List<Location> allLineLocations(SDE.Stratum stratum,
+    @Override
+	public List<Location> allLineLocations(SDE.Stratum stratum,
                                  String sourceName) {
         return new ArrayList<Location>(0);
     }
 
-    public List<Location> locationsOfLine(String stratumID,
+    @Override
+	public List<Location> locationsOfLine(String stratumID,
                                 String sourceName,
                                 int lineNumber) {
         return new ArrayList<Location>(0);
     }
 
-    public List<Location> locationsOfLine(SDE.Stratum stratum,
+    @Override
+	public List<Location> locationsOfLine(SDE.Stratum stratum,
                                 String sourceName,
                                 int lineNumber) {
         return new ArrayList<Location>(0);
     }
 
-    public Location locationOfCodeIndex(long codeIndex) {
+    @Override
+	public Location locationOfCodeIndex(long codeIndex) {
         return null;
     }
 
-    public List<LocalVariable> variables() throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> variables() throws AbsentInformationException {
         throw new AbsentInformationException();
     }
 
-    public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException {
         throw new AbsentInformationException();
     }
 
-    public List<LocalVariable> arguments() throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> arguments() throws AbsentInformationException {
         throw new AbsentInformationException();
     }
 
-    public byte[] bytecodes() {
+    @Override
+	public byte[] bytecodes() {
         return new byte[0];
     }
 
-    int argSlotCount() throws AbsentInformationException {
+    @Override
+	int argSlotCount() throws AbsentInformationException {
         throw new InternalException("should not get here");
     }
 }

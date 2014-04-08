@@ -52,7 +52,8 @@ public class SunCommandLineLauncher extends AbstractLauncher implements Launchin
         return transportService;
     }
 
-    public Transport transport() {
+    @Override
+	public Transport transport() {
         return transport;
     }
 
@@ -67,7 +68,8 @@ public class SunCommandLineLauncher extends AbstractLauncher implements Launchin
             Class<?> c = Class.forName("mono.debugger.SharedMemoryTransportService");
             transportService = (TransportService)c.newInstance();
             transport = new Transport() {
-                public String name() {
+                @Override
+				public String name() {
                     return "dt_shmem";
                 }
             };
@@ -80,7 +82,8 @@ public class SunCommandLineLauncher extends AbstractLauncher implements Launchin
         if (transportService == null) {
             transportService = new SocketTransportService();
             transport = new Transport() {
-                public String name() {
+                @Override
+				public String name() {
                     return "dt_socket";
                 }
             };
@@ -136,7 +139,8 @@ public class SunCommandLineLauncher extends AbstractLauncher implements Launchin
         return false;
     }
 
-    public VirtualMachine
+    @Override
+	public VirtualMachine
         launch(Map<String,? extends Connector.Argument> arguments)
         throws IOException, IllegalConnectorArgumentsException,
                VMStartException
@@ -241,11 +245,13 @@ public class SunCommandLineLauncher extends AbstractLauncher implements Launchin
         return vm;
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return "mono.debugger.CommandLineLaunch";
     }
 
-    public String description() {
+    @Override
+	public String description() {
         return getString("sun.description");
 
     }

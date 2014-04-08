@@ -38,7 +38,8 @@ abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveType {
      */
     abstract PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException;
 
-    public String toString() {
+    @Override
+	public String toString() {
         return name();
     }
 }

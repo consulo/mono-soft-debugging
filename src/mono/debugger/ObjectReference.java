@@ -433,12 +433,14 @@ public interface ObjectReference extends Value
      * ObjectReferences belong to the same VM, and if applying the
      * "==" operator on the mirrored objects in that VM evaluates to true.
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this ObjectReference.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

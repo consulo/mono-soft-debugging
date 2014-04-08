@@ -68,7 +68,8 @@ public class ProcessAttachingConnector
             0, Integer.MAX_VALUE);
 
         transport = new Transport() {
-            public String name() {
+            @Override
+			public String name() {
                 return "local";
             }
         };
@@ -78,7 +79,8 @@ public class ProcessAttachingConnector
     /**
      * Attach to a target VM using the specified address and Connector arguments.
      */
-    public VirtualMachine attach(Map<String,? extends Connector.Argument> args)
+    @Override
+	public VirtualMachine attach(Map<String,? extends Connector.Argument> args)
                 throws IOException, IllegalConnectorArgumentsException
     {
         String pid = argument(ARG_PID, args).value();
@@ -139,18 +141,22 @@ public class ProcessAttachingConnector
         return Bootstrap.virtualMachineManager().createVirtualMachine(connection);
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return "mono.debugger.ProcessAttach";
     }
 
-    public String description() {
+    @Override
+	public String description() {
         return getString("process_attaching.description");
     }
 
-    public Transport transport() {
+    @Override
+	public Transport transport() {
         if (transport == null) {
             return new Transport() {
-                public String name() {
+                @Override
+				public String name() {
                     return "local";
                 }
             };

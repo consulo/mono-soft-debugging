@@ -67,7 +67,8 @@ public class SocketAttachingConnector extends GenericAttachingConnector {
             0, Integer.MAX_VALUE);
 
         transport = new Transport() {
-            public String name() {
+            @Override
+			public String name() {
                 return "dt_socket";     // for compatability reasons
             }
         };
@@ -78,7 +79,8 @@ public class SocketAttachingConnector extends GenericAttachingConnector {
      * Create an "address" from the hostname and port connector
      * arguments and attach to the target VM.
      */
-    public VirtualMachine
+    @Override
+	public VirtualMachine
         attach(Map<String,? extends Connector.Argument> arguments)
         throws IOException, IllegalConnectorArgumentsException
     {
@@ -90,11 +92,13 @@ public class SocketAttachingConnector extends GenericAttachingConnector {
         return super.attach(address, arguments);
     }
 
-    public String name() {
+    @Override
+	public String name() {
        return "mono.debugger.SocketAttach";
     }
 
-    public String description() {
+    @Override
+	public String description() {
        return getString("socket_attaching.description");
     }
 }

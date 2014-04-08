@@ -104,7 +104,8 @@ public class TargetVM implements Runnable {
         }
     }
 
-    public void run() {
+    @Override
+	public void run() {
         if ((vm.traceFlags & VirtualMachine.TRACE_SENDS) != 0) {
             vm.printTrace("Target VM interface thread running");
         }
@@ -345,7 +346,8 @@ public class TargetVM implements Runnable {
             notifyAll();
         }
 
-        public void run() {
+        @Override
+		public void run() {
             while(true) {
                 int currentRequest;
                 synchronized(this) {

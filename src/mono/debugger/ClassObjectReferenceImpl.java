@@ -33,7 +33,8 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl
         super(vm, ref);
     }
 
-    public ReferenceType reflectedType() {
+    @Override
+	public ReferenceType reflectedType() {
         if (reflectedType == null) {
             try {
                 JDWP.ClassObjectReference.ReflectedType reply =
@@ -47,11 +48,13 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl
         return reflectedType;
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.CLASS_OBJECT;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "instance of " + referenceType().name() +
                "(reflected class=" + reflectedType().name() + ", " + "id=" + uniqueID() + ")";
     }

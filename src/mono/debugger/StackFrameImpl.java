@@ -63,7 +63,8 @@ public class StackFrameImpl extends MirrorImpl
      * Must be synchronized since we must protect against
      * sending defunct (isValid == false) stack ids to the back-end.
      */
-    public boolean threadResumable(ThreadAction action) {
+    @Override
+	public boolean threadResumable(ThreadAction action) {
         synchronized (vm.state()) {
             if (isValid) {
                 isValid = false;
@@ -85,7 +86,8 @@ public class StackFrameImpl extends MirrorImpl
      * Return the frame location.
      * Need not be synchronized since it cannot be provably stale.
      */
-    public Location location() {
+    @Override
+	public Location location() {
         validateStackFrame();
         return location;
     }
@@ -94,12 +96,14 @@ public class StackFrameImpl extends MirrorImpl
      * Return the thread holding the frame.
      * Need not be synchronized since it cannot be provably stale.
      */
-    public ThreadReference thread() {
+    @Override
+	public ThreadReference thread() {
         validateStackFrame();
         return thread;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof StackFrameImpl)) {
             StackFrameImpl other = (StackFrameImpl)obj;
             return (id == other.id) &&
@@ -111,11 +115,13 @@ public class StackFrameImpl extends MirrorImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return (thread().hashCode() << 4) + ((int)id);
     }
 
-    public ObjectReference thisObject() {
+    @Override
+	public ObjectReference thisObject() {
         validateStackFrame();
         MethodImpl currentMethod = (MethodImpl)location.method();
         if (currentMethod.isStatic() || currentMethod.isNative()) {
@@ -177,7 +183,8 @@ public class StackFrameImpl extends MirrorImpl
      * Return the list of visible variable in the frame.
      * Need not be synchronized since it cannot be provably stale.
      */
-    public List<LocalVariable> visibleVariables() throws AbsentInformationException {
+    @Override
+	public List<LocalVariable> visibleVariables() throws AbsentInformationException {
         validateStackFrame();
         createVisibleVariables();
         List<LocalVariable> mapAsList = new ArrayList<LocalVariable>(visibleVariables.values());
@@ -189,19 +196,22 @@ public class StackFrameImpl extends MirrorImpl
      * Return a particular variable in the frame.
      * Need not be synchronized since it cannot be provably stale.
      */
-    public LocalVariable visibleVariableByName(String name) throws AbsentInformationException  {
+    @Override
+	public LocalVariable visibleVariableByName(String name) throws AbsentInformationException  {
         validateStackFrame();
         createVisibleVariables();
         return visibleVariables.get(name);
     }
 
-    public Value getValue(LocalVariable variable) {
+    @Override
+	public Value getValue(LocalVariable variable) {
         List<LocalVariable> list = new ArrayList<LocalVariable>(1);
         list.add(variable);
         return getValues(list).get(variable);
     }
 
-    public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) {
+    @Override
+	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) {
         validateStackFrame();
         validateMirrors(variables);
 
@@ -254,7 +264,8 @@ public class StackFrameImpl extends MirrorImpl
         return map;
     }
 
-    public void setValue(LocalVariable variableIntf, Value valueIntf)
+    @Override
+	public void setValue(LocalVariable variableIntf, Value valueIntf)
         throws InvalidTypeException, ClassNotLoadedException {
 
         validateStackFrame();
@@ -315,7 +326,8 @@ public class StackFrameImpl extends MirrorImpl
         }
     }
 
-    public List<Value> getArgumentValues() {
+    @Override
+	public List<Value> getArgumentValues() {
         validateStackFrame();
         MethodImpl mmm = (MethodImpl)location.method();
         List<String> argSigs = mmm.argumentSignatures();
@@ -371,7 +383,8 @@ public class StackFrameImpl extends MirrorImpl
         // flush caches and disable caching until command completion
         CommandSender sender =
             new CommandSender() {
-                public PacketStream send() {
+                @Override
+				public PacketStream send() {
                     return JDWP.StackFrame.PopFrames.enqueueCommand(vm,
                                  thread, id);
                 }
@@ -398,7 +411,8 @@ public class StackFrameImpl extends MirrorImpl
         vm.state().freeze();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
        return location.toString() + " in thread " + thread.toString();
     }
 }

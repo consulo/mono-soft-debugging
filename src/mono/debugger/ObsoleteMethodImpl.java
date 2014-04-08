@@ -42,31 +42,38 @@ public class ObsoleteMethodImpl extends NonConcreteMethodImpl {
         super(vm, declaringType, 0, "<obsolete>", "", null, 0);
     }
 
-    public boolean isObsolete() {
+    @Override
+	public boolean isObsolete() {
         return true;
     }
 
-    public String returnTypeName() {
+    @Override
+	public String returnTypeName() {
         return "<unknown>";
     }
 
-    public Type returnType() throws ClassNotLoadedException {
+    @Override
+	public Type returnType() throws ClassNotLoadedException {
         throw new ClassNotLoadedException("type unknown");
     }
 
-    public List<String> argumentTypeNames() {
+    @Override
+	public List<String> argumentTypeNames() {
         return new ArrayList<String>();
     }
 
-    public List<String> argumentSignatures() {
+    @Override
+	public List<String> argumentSignatures() {
         return new ArrayList<String>();
     }
 
-    Type argumentType(int index) throws ClassNotLoadedException {
+    @Override
+	Type argumentType(int index) throws ClassNotLoadedException {
         throw new ClassNotLoadedException("type unknown");
     }
 
-    public List<Type> argumentTypes() throws ClassNotLoadedException {
+    @Override
+	public List<Type> argumentTypes() throws ClassNotLoadedException {
         return new ArrayList<Type>();
     }
 

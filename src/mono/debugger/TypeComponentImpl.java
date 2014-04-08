@@ -57,52 +57,64 @@ abstract public class TypeComponentImpl extends MirrorImpl
         this.modifiers = modifiers;
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return name;
     }
 
-    public String signature() {
+    @Override
+	public String signature() {
         return signature;
     }
-    public String genericSignature() {
+    @Override
+	public String genericSignature() {
         return genericSignature;
     }
 
-    public int modifiers() {
+    @Override
+	public int modifiers() {
         return modifiers;
     }
 
-    public ReferenceType declaringType() {
+    @Override
+	public ReferenceType declaringType() {
         return declaringType;
     }
 
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         return isModifierSet(VMModifiers.STATIC);
     }
 
-    public boolean isFinal() {
+    @Override
+	public boolean isFinal() {
         return isModifierSet(VMModifiers.FINAL);
     }
 
-    public boolean isPrivate() {
+    @Override
+	public boolean isPrivate() {
         return isModifierSet(VMModifiers.PRIVATE);
     }
 
-    public boolean isPackagePrivate() {
+    @Override
+	public boolean isPackagePrivate() {
         return !isModifierSet(VMModifiers.PRIVATE
                               | VMModifiers.PROTECTED
                               | VMModifiers.PUBLIC);
     }
 
-    public boolean isProtected() {
+    @Override
+	public boolean isProtected() {
         return isModifierSet(VMModifiers.PROTECTED);
     }
 
-    public boolean isPublic() {
+    @Override
+	public boolean isPublic() {
         return isModifierSet(VMModifiers.PUBLIC);
     }
 
-    public boolean isSynthetic() {
+    @Override
+	public boolean isSynthetic() {
         return isModifierSet(VMModifiers.SYNTHETIC);
     }
 

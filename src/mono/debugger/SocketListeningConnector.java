@@ -58,14 +58,16 @@ public class SocketListeningConnector extends GenericListeningConnector {
             false);
 
         transport = new Transport() {
-            public String name() {
+            @Override
+			public String name() {
                 return "dt_socket";     // for compatability reasons
             }
         };
     }
 
 
-    public String
+    @Override
+	public String
         startListening(Map<String,? extends Connector.Argument> args)
         throws IOException, IllegalConnectorArgumentsException
     {
@@ -86,11 +88,13 @@ public class SocketListeningConnector extends GenericListeningConnector {
         return super.startListening(localaddr, args);
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return "mono.debugger.SocketListen";
     }
 
-    public String description() {
+    @Override
+	public String description() {
         return getString("socket_listening.description");
     }
 }

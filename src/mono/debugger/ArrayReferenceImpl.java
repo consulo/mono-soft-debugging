@@ -41,7 +41,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
         super(aVm,aRef);
     }
 
-    protected ClassTypeImpl invokableReferenceType(Method method) {
+    @Override
+	protected ClassTypeImpl invokableReferenceType(Method method) {
         // The method has to be a method on Object since
         // arrays don't have methods nor any other 'superclasses'
         // So, use the ClassTypeImpl for Object instead of
@@ -57,7 +58,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
      * Return array length.
      * Need not be synchronized since it cannot be provably stale.
      */
-    public int length() {
+    @Override
+	public int length() {
         if(length == -1) {
             try {
                 length = JDWP.ArrayReference.Length.
@@ -69,12 +71,14 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
         return length;
     }
 
-    public Value getValue(int index) {
+    @Override
+	public Value getValue(int index) {
         List<Value> list = getValues(index, 1);
         return list.get(0);
     }
 
-    public List<Value> getValues() {
+    @Override
+	public List<Value> getValues() {
         return getValues(0, -1);
     }
 
@@ -106,7 +110,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
         return (T)x;
     }
 
-    public List<Value> getValues(int index, int length) {
+    @Override
+	public List<Value> getValues(int index, int length) {
         if (length == -1) { // -1 means the rest of the array
            length = length() - index;
         }
@@ -125,7 +130,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
         return vals;
     }
 
-    public void setValue(int index, Value value)
+    @Override
+	public void setValue(int index, Value value)
             throws InvalidTypeException,
                    ClassNotLoadedException {
         List<Value> list = new ArrayList<Value>(1);
@@ -133,13 +139,15 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
         setValues(index, list, 0, 1);
     }
 
-    public void setValues(List<? extends Value> values)
+    @Override
+	public void setValues(List<? extends Value> values)
             throws InvalidTypeException,
                    ClassNotLoadedException {
         setValues(0, values, 0, -1);
     }
 
-    public void setValues(int index, List<? extends Value> values,
+    @Override
+	public void setValues(int index, List<? extends Value> values,
                           int srcIndex, int length)
             throws InvalidTypeException,
                    ClassNotLoadedException {
@@ -202,16 +210,19 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "instance of " + arrayType().componentTypeName() +
                "[" + length() + "] (id=" + uniqueID() + ")";
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.ARRAY;
     }
 
-    void validateAssignment(ValueContainer destination)
+    @Override
+	void validateAssignment(ValueContainer destination)
                             throws InvalidTypeException, ClassNotLoadedException {
         try {
             super.validateAssignment(destination);
@@ -267,16 +278,20 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
      * of this array. In the future we may need to expand its use.
      */
     class Component implements ValueContainer {
-        public Type type() throws ClassNotLoadedException {
+        @Override
+		public Type type() throws ClassNotLoadedException {
             return arrayType().componentType();
         }
-        public String typeName() {
+        @Override
+		public String typeName() {
             return arrayType().componentTypeName();
         }
-        public String signature() {
+        @Override
+		public String signature() {
             return arrayType().componentSignature();
         }
-        public Type findType(String signature) throws ClassNotLoadedException {
+        @Override
+		public Type findType(String signature) throws ClassNotLoadedException {
             return arrayType().findComponentType(signature);
         }
     }

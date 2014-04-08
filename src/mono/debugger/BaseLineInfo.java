@@ -37,20 +37,24 @@ class BaseLineInfo implements LineInfo {
         this.declaringType = declaringType;
     }
 
-    public String liStratum() {
+    @Override
+	public String liStratum() {
         return SDE.BASE_STRATUM_NAME;
     }
 
-    public int liLineNumber() {
+    @Override
+	public int liLineNumber() {
         return lineNumber;
     }
 
-    public String liSourceName()
+    @Override
+	public String liSourceName()
                             throws AbsentInformationException {
         return declaringType.baseSourceName();
     }
 
-    public String liSourcePath()
+    @Override
+	public String liSourcePath()
                             throws AbsentInformationException {
         return declaringType.baseSourcePath();
     }

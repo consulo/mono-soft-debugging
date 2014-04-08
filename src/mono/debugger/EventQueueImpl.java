@@ -51,11 +51,13 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
     /*
      * Override superclass back to default equality
      */
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return this == obj;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return System.identityHashCode(this);
     }
 
@@ -78,7 +80,8 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
         }
     }
 
-    public EventSet remove() throws InterruptedException {
+    @Override
+	public EventSet remove() throws InterruptedException {
         return remove(0);
     }
 
@@ -86,7 +89,8 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
      * Filter out events not for user's eyes.
      * Then filter out empty sets.
      */
-    public EventSet remove(long timeout) throws InterruptedException {
+    @Override
+	public EventSet remove(long timeout) throws InterruptedException {
         if (timeout < 0) {
             throw new IllegalArgumentException("Timeout cannot be negative");
         }
@@ -226,7 +230,8 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
             return timedOut;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             try {
                 Thread.sleep(timeout);
                 EventQueueImpl queue = EventQueueImpl.this;

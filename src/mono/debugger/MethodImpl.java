@@ -76,7 +76,8 @@ public abstract class MethodImpl extends TypeComponentImpl
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof MethodImpl)) {
             MethodImpl other = (MethodImpl)obj;
             return (declaringType().equals(other.declaringType())) &&
@@ -87,29 +88,34 @@ public abstract class MethodImpl extends TypeComponentImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return (int)ref();
     }
 
-    public final List<Location> allLineLocations()
+    @Override
+	public final List<Location> allLineLocations()
                            throws AbsentInformationException {
         return allLineLocations(vm.getDefaultStratum(), null);
     }
 
-    public List<Location> allLineLocations(String stratumID,
+    @Override
+	public List<Location> allLineLocations(String stratumID,
                                  String sourceName)
                            throws AbsentInformationException {
         return allLineLocations(declaringType.stratum(stratumID),
                                 sourceName);
     }
 
-    public final List<Location> locationsOfLine(int lineNumber)
+    @Override
+	public final List<Location> locationsOfLine(int lineNumber)
                            throws AbsentInformationException {
         return locationsOfLine(vm.getDefaultStratum(),
                                null, lineNumber);
     }
 
-    public List<Location> locationsOfLine(String stratumID,
+    @Override
+	public List<Location> locationsOfLine(String stratumID,
                                 String sourceName,
                                 int lineNumber)
                            throws AbsentInformationException {
@@ -131,7 +137,8 @@ public abstract class MethodImpl extends TypeComponentImpl
      * @return a text representation of the declared return type
      * of this method.
      */
-    public String returnTypeName() {
+    @Override
+	public String returnTypeName() {
         return signatureParser.typeName();
     }
 
@@ -139,7 +146,8 @@ public abstract class MethodImpl extends TypeComponentImpl
         return signatureParser.signature();
     }
 
-    public Type returnType() throws ClassNotLoadedException {
+    @Override
+	public Type returnType() throws ClassNotLoadedException {
         return findType(returnSignature());
     }
 
@@ -148,7 +156,8 @@ public abstract class MethodImpl extends TypeComponentImpl
         return enclosing.findType(signature);
     }
 
-    public List<String> argumentTypeNames() {
+    @Override
+	public List<String> argumentTypeNames() {
         return signatureParser.argumentTypeNames();
     }
 
@@ -162,7 +171,8 @@ public abstract class MethodImpl extends TypeComponentImpl
         return enclosing.findType(signature);
     }
 
-    public List<Type> argumentTypes() throws ClassNotLoadedException {
+    @Override
+	public List<Type> argumentTypes() throws ClassNotLoadedException {
         int size = argumentSignatures().size();
         ArrayList<Type> types = new ArrayList<Type>(size);
         for (int i = 0; i < size; i++) {
@@ -173,7 +183,8 @@ public abstract class MethodImpl extends TypeComponentImpl
         return types;
     }
 
-    public int compareTo(Method method) {
+    @Override
+	public int compareTo(Method method) {
         ReferenceTypeImpl declaringType = (ReferenceTypeImpl)declaringType();
         int rc = declaringType.compareTo(method.declaringType());
         if (rc == 0) {
@@ -183,35 +194,43 @@ public abstract class MethodImpl extends TypeComponentImpl
         return rc;
     }
 
-    public boolean isAbstract() {
+    @Override
+	public boolean isAbstract() {
         return isModifierSet(VMModifiers.ABSTRACT);
     }
 
-    public boolean isSynchronized() {
+    @Override
+	public boolean isSynchronized() {
         return isModifierSet(VMModifiers.SYNCHRONIZED);
     }
 
-    public boolean isNative() {
+    @Override
+	public boolean isNative() {
         return isModifierSet(VMModifiers.NATIVE);
     }
 
-    public boolean isVarArgs() {
+    @Override
+	public boolean isVarArgs() {
         return isModifierSet(VMModifiers.VARARGS);
     }
 
-    public boolean isBridge() {
+    @Override
+	public boolean isBridge() {
         return isModifierSet(VMModifiers.BRIDGE);
     }
 
-    public boolean isConstructor() {
+    @Override
+	public boolean isConstructor() {
         return name().equals("<init>");
     }
 
-    public boolean isStaticInitializer() {
+    @Override
+	public boolean isStaticInitializer() {
         return name().equals("<clinit>");
     }
 
-    public boolean isObsolete() {
+    @Override
+	public boolean isObsolete() {
         try {
             return JDWP.Method.IsObsolete.process(vm,
                                     declaringType, ref).isObsolete;
@@ -228,16 +247,20 @@ public abstract class MethodImpl extends TypeComponentImpl
     class ReturnContainer implements ValueContainer {
         ReturnContainer() {
         }
-        public Type type() throws ClassNotLoadedException {
+        @Override
+		public Type type() throws ClassNotLoadedException {
             return returnType();
         }
-        public String typeName(){
+        @Override
+		public String typeName(){
             return returnTypeName();
         }
-        public String signature() {
+        @Override
+		public String signature() {
             return returnSignature(); //type().signature();
         }
-        public Type findType(String signature) throws ClassNotLoadedException {
+        @Override
+		public Type findType(String signature) throws ClassNotLoadedException {
             return MethodImpl.this.findType(signature);
         }
     }
@@ -259,16 +282,20 @@ public abstract class MethodImpl extends TypeComponentImpl
         ArgumentContainer(int index) {
             this.index = index;
         }
-        public Type type() throws ClassNotLoadedException {
+        @Override
+		public Type type() throws ClassNotLoadedException {
             return argumentType(index);
         }
-        public String typeName(){
+        @Override
+		public String typeName(){
             return argumentTypeNames().get(index);
         }
-        public String signature() {
+        @Override
+		public String signature() {
             return argumentSignatures().get(index);
         }
-        public Type findType(String signature) throws ClassNotLoadedException {
+        @Override
+		public Type findType(String signature) throws ClassNotLoadedException {
             return MethodImpl.this.findType(signature);
         }
     }
@@ -379,7 +406,8 @@ public abstract class MethodImpl extends TypeComponentImpl
         return arguments;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(declaringType().name());
         sb.append(".");

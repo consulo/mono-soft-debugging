@@ -77,7 +77,8 @@ public interface StackFrame extends Mirror, Locatable
      * invalid. Once the frame's thread is resumed, the stack frame is
      * no longer valid.
      */
-    Location location();
+	@Override
+	Location location();
 
     /**
      * Returns the thread under which this frame's method is running.

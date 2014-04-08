@@ -37,7 +37,8 @@ public class ByteValueImpl extends PrimitiveValueImpl
         value = aValue;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof ByteValue)) {
             return (value == ((ByteValue)obj).value())
                    && super.equals(obj);
@@ -46,60 +47,73 @@ public class ByteValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: Better hash code
          */
         return intValue();
     }
 
-    public int compareTo(ByteValue obj) {
+    @Override
+	public int compareTo(ByteValue obj) {
         byte other = obj.value();
         return value() - other;
     }
 
 
-    public Type type() {
+    @Override
+	public Type type() {
         return vm.theByteType();
     }
 
-    public byte value() {
+    @Override
+	public byte value() {
         return value;
     }
 
-    public boolean booleanValue() {
+    @Override
+	public boolean booleanValue() {
         return(value == 0)?false:true;
     }
 
-    public byte byteValue() {
+    @Override
+	public byte byteValue() {
         return value;
     }
 
-    public char charValue() {
+    @Override
+	public char charValue() {
         return(char)value;
     }
 
-    public short shortValue() {
+    @Override
+	public short shortValue() {
         return(short)value;
     }
 
-    public int intValue() {
+    @Override
+	public int intValue() {
         return(int)value;
     }
 
-    public long longValue() {
+    @Override
+	public long longValue() {
         return(long)value;
     }
 
-    public float floatValue() {
+    @Override
+	public float floatValue() {
         return(float)value;
     }
 
-    public double doubleValue() {
+    @Override
+	public double doubleValue() {
         return(double)value;
     }
 
-    char checkedCharValue() throws InvalidTypeException {
+    @Override
+	char checkedCharValue() throws InvalidTypeException {
         if ((value > Character.MAX_VALUE) || (value < Character.MIN_VALUE)) {
             throw new InvalidTypeException("Can't convert " + value + " to char");
         } else {
@@ -107,11 +121,13 @@ public class ByteValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "" + value;
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.BYTE;
     }
 }

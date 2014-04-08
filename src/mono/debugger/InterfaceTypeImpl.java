@@ -43,7 +43,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         super(aVm, aRef);
     }
 
-    public List<InterfaceType> superinterfaces() {
+    @Override
+	public List<InterfaceType> superinterfaces() {
         List<InterfaceType> superinterfaces = (superinterfacesRef == null) ? null :
                                      superinterfacesRef.get();
         if (superinterfaces == null) {
@@ -54,7 +55,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         return superinterfaces;
     }
 
-    public List<InterfaceType> subinterfaces() {
+    @Override
+	public List<InterfaceType> subinterfaces() {
         List<InterfaceType> subs = new ArrayList<InterfaceType>();
         for (ReferenceType refType : vm.allClasses()) {
             if (refType instanceof InterfaceType) {
@@ -67,7 +69,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         return subs;
     }
 
-    public List<ClassType> implementors() {
+    @Override
+	public List<ClassType> implementors() {
         List<ClassType> implementors = new ArrayList<ClassType>();
         for (ReferenceType refType : vm.allClasses()) {
             if (refType instanceof ClassType) {
@@ -80,7 +83,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         return implementors;
     }
 
-    void addVisibleMethods(Map<String, Method> methodMap) {
+    @Override
+	void addVisibleMethods(Map<String, Method> methodMap) {
         /*
          * Add methods from
          * parent types first, so that the methods in this class will
@@ -94,7 +98,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         addToMethodMap(methodMap, methods());
     }
 
-    public List<Method> allMethods() {
+    @Override
+	public List<Method> allMethods() {
         ArrayList<Method> list = new ArrayList<Method>(methods());
 
         /*
@@ -151,7 +156,8 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    boolean isAssignableTo(ReferenceType type) {
+    @Override
+	boolean isAssignableTo(ReferenceType type) {
 
         // Exact match?
         if (this.equals(type)) {
@@ -168,15 +174,18 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    List<InterfaceType> inheritedTypes() {
+    @Override
+	List<InterfaceType> inheritedTypes() {
         return superinterfaces();
     }
 
-    public boolean isInitialized() {
+    @Override
+	public boolean isInitialized() {
         return isPrepared();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
        return "interface " + name() + " (" + loaderString() + ")";
     }
 }

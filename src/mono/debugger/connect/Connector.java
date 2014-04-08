@@ -168,7 +168,8 @@ public interface Connector {
          * representation of a boolean value.
          * @see #stringValueOf(boolean)
          */
-        boolean isValid(String value);
+		@Override
+		boolean isValid(String value);
 
         /**
          * Return the string representation of the <code>value</code>
@@ -211,7 +212,8 @@ public interface Connector {
          * @return <code>true</code> if value represents an int that is
          * <code>{@link #min()} &lt;= value &lt;= {@link #max()}</code>
          */
-        boolean isValid(String value);
+		@Override
+		boolean isValid(String value);
 
         /**
          * Performs basic sanity check of argument.
@@ -262,7 +264,8 @@ public interface Connector {
          * Performs basic sanity check of argument.
          * @return <code>true</code> always
          */
-        boolean isValid(String value);
+		@Override
+		boolean isValid(String value);
     }
 
     /**
@@ -280,6 +283,7 @@ public interface Connector {
          * Performs basic sanity check of argument.
          * @return <code>true</code> if value is one of {@link #choices()}.
          */
-        boolean isValid(String value);
+		@Override
+		boolean isValid(String value);
     }
 }

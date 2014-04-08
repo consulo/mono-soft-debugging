@@ -60,7 +60,8 @@ public class GenericAttachingConnector
     {
         transportService = ts;
         transport = new Transport() {
-                public String name() {
+                @Override
+				public String name() {
                     // delegate name to the transport service
                     return transportService.name();
                 }
@@ -122,7 +123,8 @@ public class GenericAttachingConnector
      * of the target VM is specified by the <code>address</code> connector
      * argument.
      */
-    public VirtualMachine
+    @Override
+	public VirtualMachine
         attach(Map<String,? extends Connector.Argument> args)
         throws IOException, IllegalConnectorArgumentsException
     {
@@ -130,15 +132,18 @@ public class GenericAttachingConnector
         return attach(address, args);
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return transport.name() + "Attach";
     }
 
-    public String description() {
+    @Override
+	public String description() {
         return transportService.description();
     }
 
-    public Transport transport() {
+    @Override
+	public Transport transport() {
         return transport;
     }
 

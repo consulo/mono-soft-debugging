@@ -41,7 +41,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
         JDWP.ThreadGroupReference.Children kids = null;
     }
 
-    protected ObjectReferenceImpl.Cache newCache() {
+    @Override
+	protected ObjectReferenceImpl.Cache newCache() {
         return new Cache();
     }
 
@@ -50,11 +51,13 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
         vm.state().addListener(this);
     }
 
-    protected String description() {
+    @Override
+	protected String description() {
         return "ThreadGroupReference " + uniqueID();
     }
 
-    public String name() {
+    @Override
+	public String name() {
         if (name == null) {
             // Does not need synchronization, since worst-case
             // static info is fetched twice (Thread group name
@@ -69,7 +72,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
         return name;
     }
 
-    public ThreadGroupReference parent() {
+    @Override
+	public ThreadGroupReference parent() {
         if (!triedParent) {
             // Does not need synchronization, since worst-case
             // static info is fetched twice (Thread group parent cannot
@@ -85,7 +89,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
        return parent;
     }
 
-    public void suspend() {
+    @Override
+	public void suspend() {
         for (ThreadReference thread : threads()) {
             thread.suspend();
         }
@@ -95,7 +100,8 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public void resume() {
+    @Override
+	public void resume() {
         for (ThreadReference thread : threads()) {
             thread.resume();
         }
@@ -130,20 +136,24 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
         return kids;
     }
 
-    public List<ThreadReference> threads() {
+    @Override
+	public List<ThreadReference> threads() {
         return Arrays.asList((ThreadReference[])kids().childThreads);
     }
 
-    public List<ThreadGroupReference> threadGroups() {
+    @Override
+	public List<ThreadGroupReference> threadGroups() {
         return Arrays.asList((ThreadGroupReference[])kids().childGroups);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "instance of " + referenceType().name() +
                "(name='" + name() + "', " + "id=" + uniqueID() + ")";
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.THREAD_GROUP;
     }
 }

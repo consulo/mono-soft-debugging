@@ -37,7 +37,8 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         super(aVm, aRef);
     }
 
-    public ArrayReference newInstance(int length) {
+    @Override
+	public ArrayReference newInstance(int length) {
         try {
             return (ArrayReference)JDWP.ArrayType.NewInstance.
                                        process(vm, this, length).newArray;
@@ -46,11 +47,13 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public String componentSignature() {
+    @Override
+	public String componentSignature() {
         return signature().substring(1); // Just skip the leading '['
     }
 
-    public String componentTypeName() {
+    @Override
+	public String componentTypeName() {
         JNITypeParser parser = new JNITypeParser(componentSignature());
         return parser.typeName();
     }
@@ -59,11 +62,13 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         return findType(componentSignature());
     }
 
-    void addVisibleMethods(Map<String, Method> map) {
+    @Override
+	void addVisibleMethods(Map<String, Method> map) {
         // arrays don't have methods
     }
 
-    public List<Method> allMethods() {
+    @Override
+	public List<Method> allMethods() {
         return new ArrayList<Method>(0);   // arrays don't have methods
     }
 
@@ -100,7 +105,8 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public Type componentType() throws ClassNotLoadedException {
+    @Override
+	public Type componentType() throws ClassNotLoadedException {
         return findComponentType(componentSignature());
     }
 
@@ -126,7 +132,8 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
      * Return true if an instance of the  given reference type
      * can be assigned to a variable of this type
      */
-    boolean isAssignableTo(ReferenceType destType) {
+	@Override
+	boolean isAssignableTo(ReferenceType destType) {
         if (destType instanceof ArrayType) {
             try {
                 Type destComponentType = ((ArrayType)destType).componentType();
@@ -145,11 +152,13 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    List<ReferenceType> inheritedTypes() {
+    @Override
+	List<ReferenceType> inheritedTypes() {
         return new ArrayList<ReferenceType>(0);
     }
 
-    void getModifiers() {
+    @Override
+	void getModifiers() {
         if (modifiers != -1) {
             return;
         }
@@ -178,7 +187,8 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
        return "array class " + name() + " (" + loaderString() + ")";
     }
 
@@ -186,14 +196,20 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
      * Save a pointless trip over the wire for these methods
      * which have undefined results for arrays.
      */
-    public boolean isPrepared() { return true; }
-    public boolean isVerified() { return true; }
-    public boolean isInitialized() { return true; }
-    public boolean failedToInitialize() { return false; }
-    public boolean isAbstract() { return false; }
+    @Override
+	public boolean isPrepared() { return true; }
+    @Override
+	public boolean isVerified() { return true; }
+    @Override
+	public boolean isInitialized() { return true; }
+    @Override
+	public boolean failedToInitialize() { return false; }
+    @Override
+	public boolean isAbstract() { return false; }
 
     /*
      * Defined always to be true for arrays
      */
-    public boolean isFinal() { return true; }
+    @Override
+	public boolean isFinal() { return true; }
 }

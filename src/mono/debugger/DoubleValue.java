@@ -50,12 +50,14 @@ public interface DoubleValue extends PrimitiveValue, Comparable<DoubleValue>
      * to the two mirrored primitives would evaluate to true; false
      * otherwise.
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this DoubleValue.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

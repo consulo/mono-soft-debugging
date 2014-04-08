@@ -37,7 +37,8 @@ public class BooleanValueImpl extends PrimitiveValueImpl
         value = aValue;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof BooleanValue)) {
             return (value == ((BooleanValue)obj).value())
                    && super.equals(obj);
@@ -46,58 +47,71 @@ public class BooleanValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: Better hash code
          */
         return intValue();
     }
 
-    public Type type() {
+    @Override
+	public Type type() {
         return vm.theBooleanType();
     }
 
-    public boolean value() {
+    @Override
+	public boolean value() {
         return value;
     }
 
-    public boolean booleanValue() {
+    @Override
+	public boolean booleanValue() {
         return value;
     }
 
-    public byte byteValue() {
+    @Override
+	public byte byteValue() {
         return(byte)((value)?1:0);
     }
 
-    public char charValue() {
+    @Override
+	public char charValue() {
         return(char)((value)?1:0);
     }
 
-    public short shortValue() {
+    @Override
+	public short shortValue() {
         return(short)((value)?1:0);
     }
 
-    public int intValue() {
+    @Override
+	public int intValue() {
         return (value)?1:0;
     }
 
-    public long longValue() {
+    @Override
+	public long longValue() {
         return(long)((value)?1:0);
     }
 
-    public float floatValue() {
+    @Override
+	public float floatValue() {
         return(float)((value)?1.0:0.0);
     }
 
-    public double doubleValue() {
+    @Override
+	public double doubleValue() {
         return (value)?1.0:0.0;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "" + value;
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.BOOLEAN;
     }
 }

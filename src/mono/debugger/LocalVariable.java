@@ -142,12 +142,14 @@ public interface LocalVariable extends Mirror, Comparable<LocalVariable> {
      * {@link Method#equals}), and if both LocalVariables mirror
      * the same declaration within that method
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this LocalVariable.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

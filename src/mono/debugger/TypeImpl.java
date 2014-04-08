@@ -36,9 +36,11 @@ public abstract class TypeImpl extends MirrorImpl implements Type
         super(vm);
     }
 
-    public abstract String signature();
+    @Override
+	public abstract String signature();
 
-    public String name() {
+    @Override
+	public String name() {
         if (myName == null) {
             JNITypeParser parser = new JNITypeParser(signature());
             myName = parser.typeName();
@@ -46,7 +48,8 @@ public abstract class TypeImpl extends MirrorImpl implements Type
         return myName;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof Type)) {
             Type other = (Type)obj;
             return signature().equals(other.signature()) &&
@@ -56,7 +59,8 @@ public abstract class TypeImpl extends MirrorImpl implements Type
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return signature().hashCode();
     }
 }

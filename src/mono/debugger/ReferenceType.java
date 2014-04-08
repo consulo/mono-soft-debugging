@@ -92,7 +92,8 @@ public interface ReferenceType
      * represented by {@link java.lang.Integer#TYPE Integer.TYPE}.
      * @return a string containing the type name.
      */
-    String name();
+	@Override
+	String name();
 
     /**
      * Gets the generic signature for this type if there is one.
@@ -722,14 +723,16 @@ public interface ReferenceType
      * ReferenceTypes belong to the same VM, and if they mirror classes
      * which correspond to the same instance of java.lang.Class in that VM.
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this ObjectReference.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 
     /**
      * Returns the class major version number, as defined in the class file format

@@ -42,11 +42,13 @@ abstract class MirrorImpl extends Object implements Mirror {
         vm = (VirtualMachineImpl)aVm;
     }
 
-    public VirtualMachine virtualMachine() {
+    @Override
+	public VirtualMachine virtualMachine() {
         return vm;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof Mirror)) {
             Mirror other = (Mirror)obj;
             return vm.equals(other.virtualMachine());
@@ -55,7 +57,8 @@ abstract class MirrorImpl extends Object implements Mirror {
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return vm.hashCode();
     }
 

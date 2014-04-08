@@ -161,18 +161,21 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
 
     }
 
-    public LaunchingConnector defaultConnector() {
+    @Override
+	public LaunchingConnector defaultConnector() {
         if (defaultConnector == null) {
             throw new Error("no default LaunchingConnector");
         }
         return defaultConnector;
     }
 
-    public void setDefaultConnector(LaunchingConnector connector) {
+    @Override
+	public void setDefaultConnector(LaunchingConnector connector) {
         defaultConnector = connector;
     }
 
-    public List<LaunchingConnector> launchingConnectors() {
+    @Override
+	public List<LaunchingConnector> launchingConnectors() {
         List<LaunchingConnector> launchingConnectors = new ArrayList<LaunchingConnector>(connectors.size());
         for (Connector connector: connectors) {
             if (connector instanceof LaunchingConnector) {
@@ -182,7 +185,8 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
         return Collections.unmodifiableList(launchingConnectors);
     }
 
-    public List<AttachingConnector> attachingConnectors() {
+    @Override
+	public List<AttachingConnector> attachingConnectors() {
         List<AttachingConnector> attachingConnectors = new ArrayList<AttachingConnector>(connectors.size());
         for (Connector connector: connectors) {
             if (connector instanceof AttachingConnector) {
@@ -192,7 +196,8 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
         return Collections.unmodifiableList(attachingConnectors);
     }
 
-    public List<ListeningConnector> listeningConnectors() {
+    @Override
+	public List<ListeningConnector> listeningConnectors() {
         List<ListeningConnector> listeningConnectors = new ArrayList<ListeningConnector>(connectors.size());
         for (Connector connector: connectors) {
             if (connector instanceof ListeningConnector) {
@@ -202,23 +207,28 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
         return Collections.unmodifiableList(listeningConnectors);
     }
 
-    public List<Connector> allConnectors() {
+    @Override
+	public List<Connector> allConnectors() {
         return Collections.unmodifiableList(connectors);
     }
 
-    public List<VirtualMachine> connectedVirtualMachines() {
+    @Override
+	public List<VirtualMachine> connectedVirtualMachines() {
         return Collections.unmodifiableList(targets);
     }
 
-    public void addConnector(Connector connector) {
+    @Override
+	public void addConnector(Connector connector) {
         connectors.add(connector);
     }
 
-    public void removeConnector(Connector connector) {
+    @Override
+	public void removeConnector(Connector connector) {
         connectors.remove(connector);
     }
 
-    public synchronized VirtualMachine createVirtualMachine(
+    @Override
+	public synchronized VirtualMachine createVirtualMachine(
                                         Connection connection,
                                         Process process) throws IOException {
 
@@ -237,7 +247,8 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
         return vm;
     }
 
-    public VirtualMachine createVirtualMachine(Connection connection) throws IOException {
+    @Override
+	public VirtualMachine createVirtualMachine(Connection connection) throws IOException {
         return createVirtualMachine(connection, null);
     }
 
@@ -249,11 +260,13 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
         targets.remove(vm);
     }
 
-    public int majorInterfaceVersion() {
+    @Override
+	public int majorInterfaceVersion() {
         return majorVersion;
     }
 
-    public int minorInterfaceVersion() {
+    @Override
+	public int minorInterfaceVersion() {
         return minorVersion;
     }
 

@@ -56,7 +56,8 @@ public class LocalVariableImpl extends MirrorImpl
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof LocalVariableImpl)) {
             LocalVariableImpl other = (LocalVariableImpl)obj;
             return ((slot() == other.slot()) &&
@@ -68,14 +69,16 @@ public class LocalVariableImpl extends MirrorImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: Better hash code
          */
         return ((scopeStart.hashCode() << 4) + slot());
     }
 
-    public int compareTo(LocalVariable object) {
+    @Override
+	public int compareTo(LocalVariable object) {
         LocalVariableImpl other = (LocalVariableImpl)object;
 
         int rc = scopeStart.compareTo(other.scopeStart);
@@ -85,7 +88,8 @@ public class LocalVariableImpl extends MirrorImpl
         return rc;
     }
 
-    public String name() {
+    @Override
+	public String name() {
         return name;
     }
 
@@ -93,29 +97,35 @@ public class LocalVariableImpl extends MirrorImpl
      * @return a text representation of the declared type
      * of this variable.
      */
-    public String typeName() {
+    @Override
+	public String typeName() {
         JNITypeParser parser = new JNITypeParser(signature);
         return parser.typeName();
     }
 
-    public Type type() throws ClassNotLoadedException {
+    @Override
+	public Type type() throws ClassNotLoadedException {
         return findType(signature());
     }
 
-    public Type findType(String signature) throws ClassNotLoadedException {
+    @Override
+	public Type findType(String signature) throws ClassNotLoadedException {
         ReferenceTypeImpl enclosing = (ReferenceTypeImpl)method.declaringType();
         return enclosing.findType(signature);
     }
 
-    public String signature() {
+    @Override
+	public String signature() {
         return signature;
     }
 
-    public String genericSignature() {
+    @Override
+	public String genericSignature() {
         return genericSignature;
     }
 
-    public boolean isVisible(StackFrame frame) {
+    @Override
+	public boolean isVisible(StackFrame frame) {
         validateMirror(frame);
         Method frameMethod = frame.location().method();
 
@@ -135,7 +145,8 @@ public class LocalVariableImpl extends MirrorImpl
              && (scopeEnd.compareTo(frame.location()) >= 0));
     }
 
-    public boolean isArgument() {
+    @Override
+	public boolean isArgument() {
         try {
             MethodImpl method = (MethodImpl)scopeStart.method();
             return (slot < method.argSlotCount());
@@ -171,7 +182,8 @@ public class LocalVariableImpl extends MirrorImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
        return name() + " in " + method.toString() +
               "@" + scopeStart.toString();
     }

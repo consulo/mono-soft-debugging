@@ -107,7 +107,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
     private static class Cache extends ObjectReferenceImpl.Cache {
         String name = null;
     }
-    protected ObjectReferenceImpl.Cache newCache() {
+    @Override
+	protected ObjectReferenceImpl.Cache newCache() {
         return new Cache();
     }
 
@@ -121,14 +122,16 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         vm.state().addListener(this);
     }
 
-    protected String description() {
+    @Override
+	protected String description() {
         return "ThreadReference " + uniqueID();
     }
 
     /*
      * VMListener implementation
      */
-    public boolean vmNotSuspended(VMAction action) {
+    @Override
+	public boolean vmNotSuspended(VMAction action) {
         if (action.resumingThread() == null) {
             // all threads are being resumed
             synchronized (vm.state()) {
@@ -155,7 +158,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
      * because the name can change via Thread.setName arbitrarily while this
      * thread is running.
      */
-    public String name() {
+    @Override
+	public String name() {
         String name = null;
         try {
             Cache local = (Cache)getCache();
@@ -188,7 +192,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public void suspend() {
+    @Override
+	public void suspend() {
         try {
             JDWP.ThreadReference.Suspend.process(vm, this);
         } catch (JDWPException exc) {
@@ -198,7 +203,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         // will be called.
     }
 
-    public void resume() {
+    @Override
+	public void resume() {
         /*
          * If it's a zombie, we can just update internal state without
          * going to back end.
@@ -221,7 +227,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public int suspendCount() {
+    @Override
+	public int suspendCount() {
         /*
          * If it's a zombie, we maintain the count in the front end.
          */
@@ -236,7 +243,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public void stop(ObjectReference throwable) throws InvalidTypeException {
+    @Override
+	public void stop(ObjectReference throwable) throws InvalidTypeException {
         validateMirror(throwable);
         // Verify that the given object is a Throwable instance
         List<ReferenceType> list = vm.getTypes("java.lang.Throwable", addedListener);
@@ -254,7 +262,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public void interrupt() {
+    @Override
+	public void interrupt() {
         try {
             JDWP.ThreadReference.Interrupt.process(vm, this);
         } catch (JDWPException exc) {
@@ -279,16 +288,19 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return myStatus;
     }
 
-    public int status() {
+    @Override
+	public int status() {
         return jdwpStatus().threadStatus;
     }
 
-    public boolean isSuspended() {
+    @Override
+	public boolean isSuspended() {
         return ((suspendedZombieCount > 0) ||
                 ((jdwpStatus().suspendStatus & SUSPEND_STATUS_SUSPENDED) != 0));
     }
 
-    public boolean isAtBreakpoint() {
+    @Override
+	public boolean isAtBreakpoint() {
         /*
          * TO DO: This fails to take filters into account.
          */
@@ -312,7 +324,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public ThreadGroupReference threadGroup() {
+    @Override
+	public ThreadGroupReference threadGroup() {
         /*
          * Thread group can't change, so it's cached once and for all.
          */
@@ -327,7 +340,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return threadGroup;
     }
 
-    public int frameCount() throws IncompatibleThreadStateException  {
+    @Override
+	public int frameCount() throws IncompatibleThreadStateException  {
         LocalCache snapshot = localCache;
         try {
             if (snapshot.frameCount == -1) {
@@ -346,11 +360,13 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return snapshot.frameCount;
     }
 
-    public List<StackFrame> frames() throws IncompatibleThreadStateException  {
+    @Override
+	public List<StackFrame> frames() throws IncompatibleThreadStateException  {
         return privateFrames(0, -1);
     }
 
-    public StackFrame frame(int index) throws IncompatibleThreadStateException  {
+    @Override
+	public StackFrame frame(int index) throws IncompatibleThreadStateException  {
         List<StackFrame> list = privateFrames(index, 1);
         return list.get(0);
     }
@@ -378,7 +394,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return ((start + length) <= (snapshot.framesStart + snapshot.framesLength));
     }
 
-    public List<StackFrame> frames(int start, int length)
+    @Override
+	public List<StackFrame> frames(int start, int length)
                               throws IncompatibleThreadStateException  {
         if (length < 0) {
             throw new IndexOutOfBoundsException(
@@ -439,7 +456,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public List<ObjectReference> ownedMonitors()  throws IncompatibleThreadStateException  {
+    @Override
+	public List<ObjectReference> ownedMonitors()  throws IncompatibleThreadStateException  {
         LocalCache snapshot = localCache;
         try {
             if (snapshot.ownedMonitors == null) {
@@ -464,7 +482,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return snapshot.ownedMonitors;
     }
 
-    public ObjectReference currentContendedMonitor()
+    @Override
+	public ObjectReference currentContendedMonitor()
                               throws IncompatibleThreadStateException  {
         LocalCache snapshot = localCache;
         try {
@@ -492,7 +511,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return snapshot.contendedMonitor;
     }
 
-    public List<MonitorInfo> ownedMonitorsAndFrames()  throws IncompatibleThreadStateException  {
+    @Override
+	public List<MonitorInfo> ownedMonitorsAndFrames()  throws IncompatibleThreadStateException  {
         LocalCache snapshot = localCache;
         try {
             if (snapshot.ownedMonitorsInfo == null) {
@@ -527,7 +547,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         return snapshot.ownedMonitorsInfo;
     }
 
-    public void popFrames(StackFrame frame) throws IncompatibleThreadStateException {
+    @Override
+	public void popFrames(StackFrame frame) throws IncompatibleThreadStateException {
         // Note that interface-wise this functionality belongs
         // here in ThreadReference, but implementation-wise it
         // belongs in StackFrame, so we just forward it.
@@ -541,7 +562,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         ((StackFrameImpl)frame).pop();
     }
 
-    public void forceEarlyReturn(Value  returnValue) throws InvalidTypeException,
+    @Override
+	public void forceEarlyReturn(Value  returnValue) throws InvalidTypeException,
                                                             ClassNotLoadedException,
                                              IncompatibleThreadStateException {
         if (!vm.canForceEarlyReturn()) {
@@ -583,12 +605,14 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "instance of " + referenceType().name() +
                "(name='" + name() + "', " + "id=" + uniqueID() + ")";
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.THREAD;
     }
 

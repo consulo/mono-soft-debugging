@@ -33,11 +33,13 @@ public class IntegerTypeImpl extends PrimitiveTypeImpl implements IntegerType {
     }
 
 
-    public String signature() {
+    @Override
+	public String signature() {
         return String.valueOf((char)JDWP.Tag.INT);
     }
 
-    PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException {
+    @Override
+	PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException {
         return vm.mirrorOf(((PrimitiveValueImpl)value).checkedIntValue());
     }
 

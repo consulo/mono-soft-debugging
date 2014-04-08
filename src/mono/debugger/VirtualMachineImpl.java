@@ -148,7 +148,8 @@ class VirtualMachineImpl extends MirrorImpl
     /*
      * ThreadListener implementation
      */
-    public boolean threadResumable(ThreadAction action) {
+    @Override
+	public boolean threadResumable(ThreadAction action) {
         /*
          * If any thread is resumed, the VM is considered not suspended.
          * Just one thread is being resumed so pass it to thaw.
@@ -252,15 +253,18 @@ class VirtualMachineImpl extends MirrorImpl
          */
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return this == obj;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return System.identityHashCode(this);
     }
 
-    public List<ReferenceType> getTypes(String className, boolean ignoreCase) {
+    @Override
+	public List<ReferenceType> getTypes(String className, boolean ignoreCase) {
         validateVM();
         //String signature = JNITypeParser.typeNameToSignature(className);
         List<ReferenceType> list;
@@ -272,7 +276,8 @@ class VirtualMachineImpl extends MirrorImpl
         return Collections.unmodifiableList(list);
     }
 
-    public List<ReferenceType> allClasses() {
+    @Override
+	public List<ReferenceType> allClasses() {
         validateVM();
 
         if (!retrievedAllTypes) {
@@ -285,7 +290,8 @@ class VirtualMachineImpl extends MirrorImpl
         return Collections.unmodifiableList(a);
     }
 
-    public void
+    @Override
+	public void
         redefineClasses(Map<? extends ReferenceType,byte[]> classToBytes)
     {
         int cnt = classToBytes.size();
@@ -370,12 +376,14 @@ class VirtualMachineImpl extends MirrorImpl
         }
     }
 
-    public List<ThreadReference> allThreads() {
+    @Override
+	public List<ThreadReference> allThreads() {
         validateVM();
         return state.allThreads();
     }
 
-    public List<ThreadGroupReference> topLevelThreadGroups() {
+    @Override
+	public List<ThreadGroupReference> topLevelThreadGroups() {
         validateVM();
         return state.topLevelThreadGroups();
     }
@@ -397,7 +405,8 @@ class VirtualMachineImpl extends MirrorImpl
         state.freeze();
     }
 
-    public void suspend() {
+    @Override
+	public void suspend() {
         validateVM();
         try {
             JDWP.VirtualMachine.Suspend.process(vm);
@@ -407,11 +416,13 @@ class VirtualMachineImpl extends MirrorImpl
         notifySuspend();
     }
 
-    public void resume() {
+    @Override
+	public void resume() {
         validateVM();
         CommandSender sender =
             new CommandSender() {
-                public PacketStream send() {
+                @Override
+				public PacketStream send() {
                     return JDWP.VirtualMachine.Resume.enqueueCommand(vm);
                 }
         };
@@ -446,7 +457,8 @@ class VirtualMachineImpl extends MirrorImpl
         }
     }
 
-    public EventQueue eventQueue() {
+    @Override
+	public EventQueue eventQueue() {
         /*
          * No VM validation here. We allow access to the event queue
          * after disconnection, so that there is access to the terminating
@@ -455,7 +467,8 @@ class VirtualMachineImpl extends MirrorImpl
         return eventQueue;
     }
 
-    public EventRequestManager eventRequestManager() {
+    @Override
+	public EventRequestManager eventRequestManager() {
         validateVM();
         return eventRequestManager;
     }
@@ -464,47 +477,56 @@ class VirtualMachineImpl extends MirrorImpl
         return eventRequestManager;
     }
 
-    public BooleanValue mirrorOf(boolean value) {
+    @Override
+	public BooleanValue mirrorOf(boolean value) {
         validateVM();
         return new BooleanValueImpl(this,value);
     }
 
-    public ByteValue mirrorOf(byte value) {
+    @Override
+	public ByteValue mirrorOf(byte value) {
         validateVM();
         return new ByteValueImpl(this,value);
     }
 
-    public CharValue mirrorOf(char value) {
+    @Override
+	public CharValue mirrorOf(char value) {
         validateVM();
         return new CharValueImpl(this,value);
     }
 
-    public ShortValue mirrorOf(short value) {
+    @Override
+	public ShortValue mirrorOf(short value) {
         validateVM();
         return new ShortValueImpl(this,value);
     }
 
-    public IntegerValue mirrorOf(int value) {
+    @Override
+	public IntegerValue mirrorOf(int value) {
         validateVM();
         return new IntegerValueImpl(this,value);
     }
 
-    public LongValue mirrorOf(long value) {
+    @Override
+	public LongValue mirrorOf(long value) {
         validateVM();
         return new LongValueImpl(this,value);
     }
 
-    public FloatValue mirrorOf(float value) {
+    @Override
+	public FloatValue mirrorOf(float value) {
         validateVM();
         return new FloatValueImpl(this,value);
     }
 
-    public DoubleValue mirrorOf(double value) {
+    @Override
+	public DoubleValue mirrorOf(double value) {
         validateVM();
         return new DoubleValueImpl(this,value);
     }
 
-    public StringReference mirrorOf(String value) {
+    @Override
+	public StringReference mirrorOf(String value) {
         validateVM();
         try {
             return (StringReference)JDWP.VirtualMachine.CreateString.
@@ -514,14 +536,16 @@ class VirtualMachineImpl extends MirrorImpl
         }
     }
 
-    public VoidValue mirrorOfVoid() {
+    @Override
+	public VoidValue mirrorOfVoid() {
         if (voidVal == null) {
             voidVal = new VoidValueImpl(this);
         }
         return voidVal;
     }
 
-    public long[] instanceCounts(List<? extends ReferenceType> classes) {
+    @Override
+	public long[] instanceCounts(List<? extends ReferenceType> classes) {
         if (!canGetInstanceInfo()) {
             throw new UnsupportedOperationException(
                 "target does not support getting instances");
@@ -543,7 +567,8 @@ class VirtualMachineImpl extends MirrorImpl
         return retValue;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         validateVM();
         shutdown = true;
         try {
@@ -554,7 +579,8 @@ class VirtualMachineImpl extends MirrorImpl
         target.stopListening();
     }
 
-    public void exit(int exitCode) {
+    @Override
+	public void exit(int exitCode) {
         validateVM();
         shutdown = true;
         try {
@@ -565,7 +591,8 @@ class VirtualMachineImpl extends MirrorImpl
         target.stopListening();
     }
 
-    public Process process() {
+    @Override
+	public Process process() {
         validateVM();
         return process;
     }
@@ -581,7 +608,8 @@ class VirtualMachineImpl extends MirrorImpl
            throw exc.toJDIException();
        }
    }
-    public String description() {
+    @Override
+	public String description() {
         validateVM();
 
         return MessageFormat.format(vmManager.getString("version_format"),
@@ -590,41 +618,50 @@ class VirtualMachineImpl extends MirrorImpl
                                      versionInfo().description);
     }
 
-    public String version() {
+    @Override
+	public String version() {
         validateVM();
         return versionInfo().jdwpMajor + "." + versionInfo().jdwpMinor;
     }
 
-    public String name() {
+    @Override
+	public String name() {
         validateVM();
         return versionInfo().description;
     }
 
-    public boolean canWatchFieldModification() {
+    @Override
+	public boolean canWatchFieldModification() {
         validateVM();
         return capabilities().canWatchFieldModification;
     }
-    public boolean canWatchFieldAccess() {
+    @Override
+	public boolean canWatchFieldAccess() {
         validateVM();
         return capabilities().canWatchFieldAccess;
     }
-    public boolean canGetBytecodes() {
+    @Override
+	public boolean canGetBytecodes() {
         validateVM();
         return capabilities().canGetBytecodes;
     }
-    public boolean canGetSyntheticAttribute() {
+    @Override
+	public boolean canGetSyntheticAttribute() {
         validateVM();
         return capabilities().canGetSyntheticAttribute;
     }
-    public boolean canGetOwnedMonitorInfo() {
+    @Override
+	public boolean canGetOwnedMonitorInfo() {
         validateVM();
         return capabilities().canGetOwnedMonitorInfo;
     }
-    public boolean canGetCurrentContendedMonitor() {
+    @Override
+	public boolean canGetCurrentContendedMonitor() {
         validateVM();
         return capabilities().canGetCurrentContendedMonitor;
     }
-    public boolean canGetMonitorInfo() {
+    @Override
+	public boolean canGetMonitorInfo() {
         validateVM();
         return capabilities().canGetMonitorInfo;
     }
@@ -639,36 +676,43 @@ class VirtualMachineImpl extends MirrorImpl
             versionInfo().jdwpMinor >= 5;
     }
 
-    public boolean canUseInstanceFilters() {
+    @Override
+	public boolean canUseInstanceFilters() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canUseInstanceFilters;
     }
-    public boolean canRedefineClasses() {
+    @Override
+	public boolean canRedefineClasses() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canRedefineClasses;
     }
-    public boolean canAddMethod() {
+    @Override
+	public boolean canAddMethod() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canAddMethod;
     }
-    public boolean canUnrestrictedlyRedefineClasses() {
+    @Override
+	public boolean canUnrestrictedlyRedefineClasses() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canUnrestrictedlyRedefineClasses;
     }
-    public boolean canPopFrames() {
+    @Override
+	public boolean canPopFrames() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canPopFrames;
     }
-    public boolean canGetMethodReturnValues() {
+    @Override
+	public boolean canGetMethodReturnValues() {
         return versionInfo().jdwpMajor > 1 ||
             versionInfo().jdwpMinor >= 6;
     }
-    public boolean canGetInstanceInfo() {
+    @Override
+	public boolean canGetInstanceInfo() {
         if (versionInfo().jdwpMajor < 1 ||
             versionInfo().jdwpMinor < 6) {
             return false;
@@ -677,27 +721,32 @@ class VirtualMachineImpl extends MirrorImpl
         return hasNewCapabilities() &&
             capabilitiesNew().canGetInstanceInfo;
     }
-    public boolean canUseSourceNameFilters() {
+    @Override
+	public boolean canUseSourceNameFilters() {
         if (versionInfo().jdwpMajor < 1 ||
             versionInfo().jdwpMinor < 6) {
             return false;
         }
         return true;
     }
-    public boolean canForceEarlyReturn() {
+    @Override
+	public boolean canForceEarlyReturn() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canForceEarlyReturn;
     }
-    public boolean canBeModified() {
+    @Override
+	public boolean canBeModified() {
         return true;
     }
-    public boolean canGetSourceDebugExtension() {
+    @Override
+	public boolean canGetSourceDebugExtension() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canGetSourceDebugExtension;
     }
-    public boolean canGetClassFileVersion() {
+    @Override
+	public boolean canGetClassFileVersion() {
         if ( versionInfo().jdwpMajor < 1 &&
              versionInfo().jdwpMinor  < 6) {
             return false;
@@ -705,28 +754,33 @@ class VirtualMachineImpl extends MirrorImpl
             return true;
         }
     }
-    public boolean canGetConstantPool() {
+    @Override
+	public boolean canGetConstantPool() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canGetConstantPool;
     }
-    public boolean canRequestVMDeathEvent() {
+    @Override
+	public boolean canRequestVMDeathEvent() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canRequestVMDeathEvent;
     }
-    public boolean canRequestMonitorEvents() {
+    @Override
+	public boolean canRequestMonitorEvents() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canRequestMonitorEvents;
     }
-    public boolean canGetMonitorFrameInfo() {
+    @Override
+	public boolean canGetMonitorFrameInfo() {
         validateVM();
         return hasNewCapabilities() &&
             capabilitiesNew().canGetMonitorFrameInfo;
     }
 
-    public void setDebugTraceMode(int traceFlags) {
+    @Override
+	public void setDebugTraceMode(int traceFlags) {
         validateVM();
         this.traceFlags = traceFlags;
         this.traceReceives = (traceFlags & TRACE_RECEIVES) != 0;
@@ -1259,19 +1313,23 @@ class VirtualMachineImpl extends MirrorImpl
         return pathInfo;
     }
 
+   @Override
    public List<String> classPath() {
        return Arrays.asList(getClasspath().classpaths);
    }
 
+   @Override
    public List<String> bootClassPath() {
        return Arrays.asList(getClasspath().bootclasspaths);
    }
 
+   @Override
    public String baseDirectory() {
        return getClasspath().baseDir;
    }
 
-    public void setDefaultStratum(String stratum) {
+    @Override
+	public void setDefaultStratum(String stratum) {
         defaultStratum = stratum;
         if (stratum == null) {
             stratum = "";
@@ -1284,7 +1342,8 @@ class VirtualMachineImpl extends MirrorImpl
         }
     }
 
-    public String getDefaultStratum() {
+    @Override
+	public String getDefaultStratum() {
         return defaultStratum;
     }
 

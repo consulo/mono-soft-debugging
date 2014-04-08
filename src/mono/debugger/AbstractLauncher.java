@@ -39,13 +39,16 @@ import java.io.InterruptedIOException;
 
 abstract class AbstractLauncher extends ConnectorImpl implements LaunchingConnector {
 
-    abstract public VirtualMachine
+    @Override
+	abstract public VirtualMachine
         launch(Map<String,? extends Connector.Argument> arguments)
                                  throws IOException,
                                         IllegalConnectorArgumentsException,
                                         VMStartException;
-    abstract public String name();
-    abstract public String description();
+    @Override
+	abstract public String name();
+    @Override
+	abstract public String description();
 
     ThreadGroup grp;
 
@@ -230,7 +233,8 @@ abstract class AbstractLauncher extends ConnectorImpl implements LaunchingConnec
         Thread monitorTarget() {
             Thread thread = new Thread(grp,
                                        "launched target monitor") {
-                public void run() {
+                @Override
+				public void run() {
                     try {
                         process.waitFor();
                         /*
@@ -250,7 +254,8 @@ abstract class AbstractLauncher extends ConnectorImpl implements LaunchingConnec
         Thread acceptConnection() {
             Thread thread = new Thread(grp,
                                        "connection acceptor") {
-                public void run() {
+                @Override
+				public void run() {
                     try {
                         Connection connection = ts.accept(listenKey, 0, 0);
                         /*

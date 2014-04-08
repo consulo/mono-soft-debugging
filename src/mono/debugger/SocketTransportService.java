@@ -69,7 +69,8 @@ public class SocketTransportService extends TransportService {
          * Returns the string representation of the address that this
          * listen key represents.
          */
-        public String address() {
+        @Override
+		public String address() {
             InetAddress address = ss.getInetAddress();
 
             /*
@@ -117,7 +118,8 @@ public class SocketTransportService extends TransportService {
             return result + ":" + ss.getLocalPort();
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return address();
         }
     }
@@ -165,14 +167,16 @@ public class SocketTransportService extends TransportService {
     /**
      * The name of this transport service
      */
-    public String name() {
+    @Override
+	public String name() {
         return "Socket";
     }
 
     /**
      * Return localized description of this transport service
      */
-    public String description() {
+    @Override
+	public String description() {
         synchronized (this) {
             if (messages == null) {
                 messages = ResourceBundle.getBundle("mono.debugger.resources.jdi");
@@ -184,7 +188,8 @@ public class SocketTransportService extends TransportService {
     /**
      * Return the capabilities of this transport service
      */
-    public Capabilities capabilities() {
+    @Override
+	public Capabilities capabilities() {
         return new SocketTransportServiceCapabilities();
     }
 
@@ -193,7 +198,8 @@ public class SocketTransportService extends TransportService {
      * Attach to the specified address with optional attach and handshake
      * timeout.
      */
-    public Connection attach(String address, long attachTimeout, long handshakeTimeout)
+    @Override
+	public Connection attach(String address, long attachTimeout, long handshakeTimeout)
         throws IOException {
 
         if (address == null) {
@@ -268,7 +274,8 @@ public class SocketTransportService extends TransportService {
     /**
      * Listen on the specified address
      */
-    public ListenKey startListening(String address) throws IOException {
+    @Override
+	public ListenKey startListening(String address) throws IOException {
         // use ephemeral port if address isn't specified.
         if (address == null || address.length() == 0) {
             address = "0";
@@ -295,14 +302,16 @@ public class SocketTransportService extends TransportService {
     /**
      * Listen on the default address
      */
-    public ListenKey startListening() throws IOException {
+    @Override
+	public ListenKey startListening() throws IOException {
         return startListening(null, 0);
     }
 
     /**
      * Stop the listener
      */
-    public void stopListening(ListenKey listener) throws IOException {
+    @Override
+	public void stopListening(ListenKey listener) throws IOException {
         if (!(listener instanceof SocketListenKey)) {
             throw new IllegalArgumentException("Invalid listener");
         }
@@ -322,7 +331,8 @@ public class SocketTransportService extends TransportService {
     /**
      * Accept a connection from a debuggee and handshake with it.
      */
-    public Connection accept(ListenKey listener, long acceptTimeout, long handshakeTimeout) throws IOException {
+    @Override
+	public Connection accept(ListenKey listener, long acceptTimeout, long handshakeTimeout) throws IOException {
         if (acceptTimeout < 0 || handshakeTimeout < 0) {
             throw new IllegalArgumentException("timeout is negative");
         }
@@ -365,7 +375,8 @@ public class SocketTransportService extends TransportService {
         return new SocketConnection(s);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
        return name();
     }
 }
@@ -390,7 +401,8 @@ class SocketConnection extends Connection {
         socketOutput = socket.getOutputStream();
     }
 
-    public void close() throws IOException {
+    @Override
+	public void close() throws IOException {
         synchronized (closeLock) {
            if (closed) {
                 return;
@@ -402,13 +414,15 @@ class SocketConnection extends Connection {
         }
     }
 
-    public boolean isOpen() {
+    @Override
+	public boolean isOpen() {
         synchronized (closeLock) {
             return !closed;
         }
     }
 
-    public byte[] readPacket() throws IOException {
+    @Override
+	public byte[] readPacket() throws IOException {
         if (!isOpen()) {
             throw new ClosedConnectionException("connection is closed");
         }
@@ -475,7 +489,8 @@ class SocketConnection extends Connection {
         }
     }
 
-    public void writePacket(byte b[]) throws IOException {
+    @Override
+	public void writePacket(byte b[]) throws IOException {
         if (!isOpen()) {
             throw new ClosedConnectionException("connection is closed");
         }
@@ -526,19 +541,23 @@ class SocketConnection extends Connection {
  */
 class SocketTransportServiceCapabilities extends TransportService.Capabilities {
 
-    public boolean supportsMultipleConnections() {
+    @Override
+	public boolean supportsMultipleConnections() {
         return true;
     }
 
-    public boolean supportsAttachTimeout() {
+    @Override
+	public boolean supportsAttachTimeout() {
         return true;
     }
 
-    public boolean supportsAcceptTimeout() {
+    @Override
+	public boolean supportsAcceptTimeout() {
         return true;
     }
 
-    public boolean supportsHandshakeTimeout() {
+    @Override
+	public boolean supportsHandshakeTimeout() {
         return true;
     }
 

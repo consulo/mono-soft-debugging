@@ -33,22 +33,26 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
         super(aVm);
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         return (obj != null) && (obj instanceof VoidValue) && super.equals(obj);
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: Better hash code
          */
         return 47245;
     }
 
-    public Type type() {
+    @Override
+	public Type type() {
         return vm.theVoidType();
     }
 
-    ValueImpl prepareForAssignmentTo(ValueContainer destination)
+    @Override
+	ValueImpl prepareForAssignmentTo(ValueContainer destination)
                     throws InvalidTypeException {
         if ("void".equals(destination.typeName())) {
             return this;
@@ -56,11 +60,13 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
         throw new InvalidTypeException();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "<void value>";
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.VOID;
     }
 }

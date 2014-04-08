@@ -72,5 +72,6 @@ public interface Mirror {
      *
      * @return a string describing this mirror.
      */
-    String toString();
+	@Override
+	String toString();
 }

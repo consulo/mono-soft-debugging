@@ -250,12 +250,14 @@ public interface Location extends Mirror, Comparable<Location> {
      * @return true if the Object is a Location and if it refers to
      * the same point in the same VM as this Location.
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this Location.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

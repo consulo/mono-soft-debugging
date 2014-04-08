@@ -32,11 +32,13 @@ public class VoidTypeImpl extends TypeImpl implements VoidType {
         super(vm);
     }
 
-    public String signature() {
+    @Override
+	public String signature() {
         return String.valueOf((char)JDWP.Tag.VOID);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return name();
     }
 }

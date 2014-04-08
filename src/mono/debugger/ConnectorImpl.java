@@ -45,7 +45,8 @@ abstract class ConnectorImpl implements Connector {
     static String trueString = null;
     static String falseString;
 
-    public Map<String,Argument> defaultArguments() {
+    @Override
+	public Map<String,Argument> defaultArguments() {
         Map<String,Argument> defaults = new java.util.LinkedHashMap<String,Argument>();
         Collection<Argument> values = defaultArguments.values();
 
@@ -128,7 +129,8 @@ abstract class ConnectorImpl implements Connector {
         return messages.getString(key);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         String string = name() + " (defaults: ";
         Iterator<Argument> iter = defaultArguments().values().iterator();
         boolean first = true;
@@ -161,36 +163,44 @@ abstract class ConnectorImpl implements Connector {
             this.mustSpecify = mustSpecify;
         }
 
-        public abstract boolean isValid(String value);
+        @Override
+		public abstract boolean isValid(String value);
 
-        public String name() {
+        @Override
+		public String name() {
             return name;
         }
 
-        public String label() {
+        @Override
+		public String label() {
             return label;
         }
 
-        public String description() {
+        @Override
+		public String description() {
             return description;
         }
 
-        public String value() {
+        @Override
+		public String value() {
             return value;
         }
 
-        public void setValue(String value) {
+        @Override
+		public void setValue(String value) {
             if (value == null) {
                 throw new NullPointerException("Can't set null value");
             }
             this.value = value;
         }
 
-        public boolean mustSpecify() {
+        @Override
+		public boolean mustSpecify() {
             return mustSpecify;
         }
 
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             if ((obj != null) && (obj instanceof Connector.Argument)) {
                 Connector.Argument other = (Connector.Argument)obj;
                 return (name().equals(other.name())) &&
@@ -202,11 +212,13 @@ abstract class ConnectorImpl implements Connector {
             }
         }
 
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return description().hashCode();
         }
 
-        public Object clone() {
+        @Override
+		public Object clone() {
             try {
                 return super.clone();
             } catch (CloneNotSupportedException e) {
@@ -215,7 +227,8 @@ abstract class ConnectorImpl implements Connector {
             }
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return name() + "=" + value();
         }
     }
@@ -237,7 +250,8 @@ abstract class ConnectorImpl implements Connector {
         /**
          * Sets the value of the argument.
          */
-        public void setValue(boolean value) {
+        @Override
+		public void setValue(boolean value) {
             setValue(stringValueOf(value));
         }
 
@@ -247,7 +261,8 @@ abstract class ConnectorImpl implements Connector {
          * representation of a boolean value.
          * @see #stringValueOf(boolean)
          */
-        public boolean isValid(String value) {
+        @Override
+		public boolean isValid(String value) {
             return value.equals(trueString) || value.equals(falseString);
         }
 
@@ -258,7 +273,8 @@ abstract class ConnectorImpl implements Connector {
          * @return the localized String representation of the
          * boolean value.
          */
-        public String stringValueOf(boolean value) {
+        @Override
+		public String stringValueOf(boolean value) {
             return value? trueString : falseString;
         }
 
@@ -270,7 +286,8 @@ abstract class ConnectorImpl implements Connector {
          * the boolean returned by this method is undefined.
          * @return the value of the argument as a boolean.
          */
-        public boolean booleanValue() {
+        @Override
+		public boolean booleanValue() {
             return value().equals(trueString);
         }
     }
@@ -296,7 +313,8 @@ abstract class ConnectorImpl implements Connector {
          * when the connection is established - for example,
          * on {@link LaunchingConnector#launch}
          */
-        public void setValue(int value) {
+        @Override
+		public void setValue(int value) {
             setValue(stringValueOf(value));
         }
 
@@ -305,7 +323,8 @@ abstract class ConnectorImpl implements Connector {
          * @return <code>true</code> if value represents an int that is
          * <code>{@link #min()} &lt;= value &lt;= {@link #max()}</code>
          */
-        public boolean isValid(String value) {
+        @Override
+		public boolean isValid(String value) {
             if (value == null) {
                 return false;
             }
@@ -321,7 +340,8 @@ abstract class ConnectorImpl implements Connector {
          * @return <code>true</code> if
          * <code>{@link #min()} &lt;= value  &lt;= {@link #max()}</code>
          */
-        public boolean isValid(int value) {
+        @Override
+		public boolean isValid(int value) {
             return min <= value && value <= max;
         }
 
@@ -332,7 +352,8 @@ abstract class ConnectorImpl implements Connector {
          * @return the String representation of the
          * int value.
          */
-        public String stringValueOf(int value) {
+        @Override
+		public String stringValueOf(int value) {
             // *** Should this be internationalized????
             // *** Even Brian Beck was unsure if an Arabic programmer
             // *** would expect port numbers in Arabic numerals,
@@ -348,7 +369,8 @@ abstract class ConnectorImpl implements Connector {
          * the int returned by this method is undefined.
          * @return the value of the argument as a int.
          */
-        public int intValue() {
+        @Override
+		public int intValue() {
             if (value() == null) {
                 return 0;
             }
@@ -363,7 +385,8 @@ abstract class ConnectorImpl implements Connector {
          * The upper bound for the value.
          * @return the maximum allowed value for this argument.
          */
-        public int max() {
+        @Override
+		public int max() {
             return max;
         }
 
@@ -371,7 +394,8 @@ abstract class ConnectorImpl implements Connector {
          * The lower bound for the value.
          * @return the minimum allowed value for this argument.
          */
-        public int min() {
+        @Override
+		public int min() {
             return min;
         }
     }
@@ -389,7 +413,8 @@ abstract class ConnectorImpl implements Connector {
          * Performs basic sanity check of argument.
          * @return <code>true</code> always
          */
-        public boolean isValid(String value) {
+        @Override
+		public boolean isValid(String value) {
             return true;
         }
     }
@@ -410,7 +435,8 @@ abstract class ConnectorImpl implements Connector {
          * Return the possible values for the argument
          * @return {@link List} of {@link String}
          */
-        public List<String> choices() {
+        @Override
+		public List<String> choices() {
             return choices;
         }
 
@@ -418,7 +444,8 @@ abstract class ConnectorImpl implements Connector {
          * Performs basic sanity check of argument.
          * @return <code>true</code> if value is one of {@link #choices()}.
          */
-        public boolean isValid(String value) {
+        @Override
+		public boolean isValid(String value) {
             return choices.contains(value);
         }
     }

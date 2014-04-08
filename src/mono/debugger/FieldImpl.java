@@ -39,7 +39,8 @@ public class FieldImpl extends TypeComponentImpl
               genericSignature, modifiers);
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof FieldImpl)) {
             FieldImpl other = (FieldImpl)obj;
             return (declaringType().equals(other.declaringType())) &&
@@ -50,11 +51,13 @@ public class FieldImpl extends TypeComponentImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return (int)ref();
     }
 
-    public int compareTo(Field field) {
+    @Override
+	public int compareTo(Field field) {
         ReferenceTypeImpl declaringType = (ReferenceTypeImpl)declaringType();
         int rc = declaringType.compareTo(field.declaringType());
         if (rc == 0) {
@@ -64,11 +67,13 @@ public class FieldImpl extends TypeComponentImpl
         return rc;
     }
 
-    public Type type() throws ClassNotLoadedException {
+    @Override
+	public Type type() throws ClassNotLoadedException {
         return findType(signature());
     }
 
-    public Type findType(String signature) throws ClassNotLoadedException {
+    @Override
+	public Type findType(String signature) throws ClassNotLoadedException {
         ReferenceTypeImpl enclosing = (ReferenceTypeImpl)declaringType();
         return enclosing.findType(signature);
     }
@@ -77,24 +82,29 @@ public class FieldImpl extends TypeComponentImpl
      * @return a text representation of the declared type
      * of this field.
      */
-    public String typeName() {
+    @Override
+	public String typeName() {
         JNITypeParser parser = new JNITypeParser(signature());
         return parser.typeName();
     }
 
-    public boolean isTransient() {
+    @Override
+	public boolean isTransient() {
         return isModifierSet(VMModifiers.TRANSIENT);
     }
 
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isModifierSet(VMModifiers.VOLATILE);
     }
 
-    public boolean isEnumConstant() {
+    @Override
+	public boolean isEnumConstant() {
         return isModifierSet(VMModifiers.ENUM_CONSTANT);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer buf = new StringBuffer();
 
         buf.append(declaringType().name());

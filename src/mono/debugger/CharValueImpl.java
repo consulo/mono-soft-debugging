@@ -37,7 +37,8 @@ public class CharValueImpl extends PrimitiveValueImpl
         value = aValue;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
         if ((obj != null) && (obj instanceof CharValue)) {
             return (value == ((CharValue)obj).value()) &&
                    super.equals(obj);
@@ -46,63 +47,77 @@ public class CharValueImpl extends PrimitiveValueImpl
         }
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         /*
          * TO DO: Better hash code
          */
         return intValue();
     }
 
-    public int compareTo(CharValue obj) {
+    @Override
+	public int compareTo(CharValue obj) {
         char other = obj.value();
         return value() - other;
     }
 
-    public Type type() {
+    @Override
+	public Type type() {
         return vm.theCharType();
     }
 
-    public char value() {
+    @Override
+	public char value() {
         return value;
     }
 
-    public boolean booleanValue() {
+    @Override
+	public boolean booleanValue() {
         return(value == 0)?false:true;
     }
 
-    public byte byteValue() {
+    @Override
+	public byte byteValue() {
         return(byte)value;
     }
 
-    public char charValue() {
+    @Override
+	public char charValue() {
         return value;
     }
 
-    public short shortValue() {
+    @Override
+	public short shortValue() {
         return(short)value;
     }
 
-    public int intValue() {
+    @Override
+	public int intValue() {
         return(int)value;
     }
 
-    public long longValue() {
+    @Override
+	public long longValue() {
         return(long)value;
     }
 
-    public float floatValue() {
+    @Override
+	public float floatValue() {
         return(float)value;
     }
 
-    public double doubleValue() {
+    @Override
+	public double doubleValue() {
         return(double)value;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "" + value;
     }
 
-    byte checkedByteValue() throws InvalidTypeException {
+    @Override
+	byte checkedByteValue() throws InvalidTypeException {
         // Note: since char is unsigned, don't check against MIN_VALUE
         if (value > Byte.MAX_VALUE) {
             throw new InvalidTypeException("Can't convert " + value + " to byte");
@@ -111,7 +126,8 @@ public class CharValueImpl extends PrimitiveValueImpl
         }
     }
 
-    short checkedShortValue() throws InvalidTypeException {
+    @Override
+	short checkedShortValue() throws InvalidTypeException {
         // Note: since char is unsigned, don't check against MIN_VALUE
         if (value > Short.MAX_VALUE) {
             throw new InvalidTypeException("Can't convert " + value + " to short");
@@ -120,7 +136,8 @@ public class CharValueImpl extends PrimitiveValueImpl
         }
     }
 
-    byte typeValueKey() {
+    @Override
+	byte typeValueKey() {
         return JDWP.Tag.CHAR;
     }
 }

@@ -41,7 +41,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         super(aVm, aRef);
     }
 
-    public ClassType superclass() {
+    @Override
+	public ClassType superclass() {
         if(!cachedSuperclass)  {
             ClassTypeImpl sup = null;
             try {
@@ -65,7 +66,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return superclass;
     }
 
-    public List<InterfaceType> interfaces()  {
+    @Override
+	public List<InterfaceType> interfaces()  {
         if (interfaces == null) {
             interfaces = getInterfaces();
         }
@@ -88,13 +90,15 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public List<InterfaceType> allInterfaces()  {
+    @Override
+	public List<InterfaceType> allInterfaces()  {
         List<InterfaceType> all = new ArrayList<InterfaceType>();
         addInterfaces(all);
         return all;
     }
 
-    public List<ClassType> subclasses() {
+    @Override
+	public List<ClassType> subclasses() {
         List<ClassType> subs = new ArrayList<ClassType>();
         for (ReferenceType refType : vm.allClasses()) {
             if (refType instanceof ClassType) {
@@ -109,7 +113,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return subs;
     }
 
-    public boolean isEnum() {
+    @Override
+	public boolean isEnum() {
         ClassType superclass = superclass();
         if (superclass != null &&
             superclass.name().equals("java.lang.Enum")) {
@@ -118,7 +123,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return false;
     }
 
-    public void setValue(Field field, Value value)
+    @Override
+	public void setValue(Field field, Value value)
         throws InvalidTypeException, ClassNotLoadedException {
 
         validateMirror(field);
@@ -165,7 +171,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
                                    final int options) {
         CommandSender sender =
             new CommandSender() {
-                public PacketStream send() {
+                @Override
+				public PacketStream send() {
                     return JDWP.ClassType.InvokeMethod.enqueueCommand(
                                           vm, ClassTypeImpl.this, thread,
                                           method.ref(), args, options);
@@ -187,7 +194,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
                                    final int options) {
         CommandSender sender =
             new CommandSender() {
-                public PacketStream send() {
+                @Override
+				public PacketStream send() {
                     return JDWP.ClassType.NewInstance.enqueueCommand(
                                           vm, ClassTypeImpl.this, thread,
                                           method.ref(), args, options);
@@ -203,7 +211,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return stream;
     }
 
-    public Value invokeMethod(ThreadReference threadIntf, Method methodIntf,
+    @Override
+	public Value invokeMethod(ThreadReference threadIntf, Method methodIntf,
                               List<? extends Value> origArguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,
@@ -249,7 +258,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public ObjectReference newInstance(ThreadReference threadIntf,
+    @Override
+	public ObjectReference newInstance(ThreadReference threadIntf,
                                        Method methodIntf,
                                        List<? extends Value> origArguments,
                                        int options)
@@ -297,7 +307,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public Method concreteMethodByName(String name, String signature)  {
+    @Override
+	public Method concreteMethodByName(String name, String signature)  {
        Method method = null;
        for (Method candidate : visibleMethods()) {
            if (candidate.name().equals(name) &&
@@ -311,6 +322,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
        return method;
    }
 
+   @Override
    public List<Method> allMethods() {
         ArrayList<Method> list = new ArrayList<Method>(methods());
 
@@ -331,7 +343,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return list;
     }
 
-    List<ReferenceType> inheritedTypes() {
+    @Override
+	List<ReferenceType> inheritedTypes() {
         List<ReferenceType> inherited = new ArrayList<ReferenceType>();
         if (superclass() != null) {
             inherited.add(0, (ReferenceType)superclass()); /* insert at front */
@@ -382,7 +395,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    void addVisibleMethods(Map<String, Method> methodMap) {
+    @Override
+	void addVisibleMethods(Map<String, Method> methodMap) {
         /*
          * Add methods from
          * parent types first, so that the methods in this class will
@@ -403,7 +417,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         addToMethodMap(methodMap, methods());
     }
 
-    boolean isAssignableTo(ReferenceType type) {
+    @Override
+	boolean isAssignableTo(ReferenceType type) {
         ClassTypeImpl superclazz = (ClassTypeImpl)superclass();
         if (this.equals(type)) {
             return true;
@@ -422,7 +437,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
        return "class " + name() + " (" + loaderString() + ")";
     }
 }

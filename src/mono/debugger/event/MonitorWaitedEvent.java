@@ -47,7 +47,8 @@ public interface MonitorWaitedEvent extends LocatableEvent {
      * @return a {@link ThreadReference} which mirrors the event's thread in
      * the target VM.
      */
-    public ThreadReference thread();
+    @Override
+	public ThreadReference thread();
 
     /**
      * Returns the monitor object this thread waited on.

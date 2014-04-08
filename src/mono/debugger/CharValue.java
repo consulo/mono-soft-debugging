@@ -50,12 +50,14 @@ public interface CharValue extends PrimitiveValue, Comparable<CharValue>
      * to the two mirrored primitives would evaluate to true; false
      * otherwise.
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this CharValue.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }

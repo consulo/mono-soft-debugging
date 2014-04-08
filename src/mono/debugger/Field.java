@@ -124,12 +124,14 @@ public interface Field extends TypeComponent, Comparable<Field> {
      * mirror the same field (declared in the same class or interface, in
      * the same VM).
      */
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
     /**
      * Returns the hash code value for this Field.
      *
      * @return the integer hash code
      */
-    int hashCode();
+	@Override
+	int hashCode();
 }
