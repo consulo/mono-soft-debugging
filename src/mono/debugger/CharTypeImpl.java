@@ -25,22 +25,23 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
+public class CharTypeImpl extends PrimitiveTypeImpl implements CharType
+{
+	CharTypeImpl(VirtualMachine vm)
+	{
+		super(vm);
+	}
 
-public class CharTypeImpl extends PrimitiveTypeImpl implements CharType {
-    CharTypeImpl(VirtualMachine vm) {
-        super(vm);
-    }
 
+	@Override
+	public String signature()
+	{
+		return String.valueOf((char) JDWP.Tag.CHAR);
+	}
 
-    @Override
-	public String signature() {
-        return String.valueOf((char)JDWP.Tag.CHAR);
-    }
-
-    @Override
-	PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException {
-        return vm.mirrorOf(((PrimitiveValueImpl)value).checkedCharValue());
-    }
-
+	@Override
+	PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException
+	{
+		return vm.mirrorOf(((PrimitiveValueImpl) value).checkedCharValue());
+	}
 }

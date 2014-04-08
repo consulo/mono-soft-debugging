@@ -25,42 +25,46 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
 public abstract class TypeImpl extends MirrorImpl implements Type
 {
-    private String myName = null;
+	private String myName = null;
 
-    TypeImpl(VirtualMachine vm)
-    {
-        super(vm);
-    }
+	TypeImpl(VirtualMachine vm)
+	{
+		super(vm);
+	}
 
-    @Override
+	@Override
 	public abstract String signature();
 
-    @Override
-	public String name() {
-        if (myName == null) {
-            JNITypeParser parser = new JNITypeParser(signature());
-            myName = parser.typeName();
-        }
-        return myName;
-    }
+	@Override
+	public String name()
+	{
+		if(myName == null)
+		{
+			JNITypeParser parser = new JNITypeParser(signature());
+			myName = parser.typeName();
+		}
+		return myName;
+	}
 
-    @Override
-	public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof Type)) {
-            Type other = (Type)obj;
-            return signature().equals(other.signature()) &&
-                   super.equals(obj);
-        } else {
-            return false;
-        }
-    }
+	@Override
+	public boolean equals(Object obj)
+	{
+		if((obj != null) && (obj instanceof Type))
+		{
+			Type other = (Type) obj;
+			return signature().equals(other.signature()) && super.equals(obj);
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-    @Override
-	public int hashCode() {
-        return signature().hashCode();
-    }
+	@Override
+	public int hashCode()
+	{
+		return signature().hashCode();
+	}
 }

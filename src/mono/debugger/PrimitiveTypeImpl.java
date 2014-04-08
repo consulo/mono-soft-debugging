@@ -25,21 +25,22 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
+abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveType
+{
 
-abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveType {
+	PrimitiveTypeImpl(VirtualMachine vm)
+	{
+		super(vm);
+	}
 
-    PrimitiveTypeImpl(VirtualMachine vm) {
-        super(vm);
-    }
+	/*
+	 * Converts the given primitive value to a value of this type.
+	 */
+	abstract PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException;
 
-    /*
-     * Converts the given primitive value to a value of this type.
-     */
-    abstract PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException;
-
-    @Override
-	public String toString() {
-        return name();
-    }
+	@Override
+	public String toString()
+	{
+		return name();
+	}
 }

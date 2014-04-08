@@ -25,22 +25,24 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
+public class FloatTypeImpl extends PrimitiveTypeImpl implements FloatType
+{
+	FloatTypeImpl(VirtualMachine vm)
+	{
+		super(vm);
+	}
 
-public class FloatTypeImpl extends PrimitiveTypeImpl implements FloatType {
-    FloatTypeImpl(VirtualMachine vm) {
-        super(vm);
-    }
 
+	@Override
+	public String signature()
+	{
+		return String.valueOf((char) JDWP.Tag.FLOAT);
+	}
 
-    @Override
-	public String signature() {
-        return String.valueOf((char)JDWP.Tag.FLOAT);
-    }
-
-    @Override
-	PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException {
-        return vm.mirrorOf(((PrimitiveValueImpl)value).checkedFloatValue());
-    }
+	@Override
+	PrimitiveValue convert(PrimitiveValue value) throws InvalidTypeException
+	{
+		return vm.mirrorOf(((PrimitiveValueImpl) value).checkedFloatValue());
+	}
 
 }
