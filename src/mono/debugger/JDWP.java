@@ -2411,77 +2411,6 @@ public class JDWP
 		}
 
 		/**
-		 * Returns the interfaces declared as implemented by this class.
-		 * Interfaces indirectly implemented (extended by the implemented
-		 * interface or implemented by a superclass) are not included.
-		 */
-		static class Interfaces
-		{
-			static final int COMMAND = 10;
-
-			static Interfaces process(
-					VirtualMachineImpl vm, ReferenceTypeImpl refType) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, refType);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ReferenceTypeImpl refType)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ReferenceType.Interfaces" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 refType(ReferenceTypeImpl): " + (refType == null ? "NULL" : "ref=" + refType.ref()));
-				}
-				ps.writeClassRef(refType.ref());
-				ps.send();
-				return ps;
-			}
-
-			static Interfaces waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new Interfaces(vm, ps);
-			}
-
-
-			/**
-			 * The number of implemented interfaces
-			 */
-			final InterfaceTypeImpl[] interfaces;
-
-			private Interfaces(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ReferenceType.Interfaces" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "interfaces(InterfaceTypeImpl[]): " + "");
-				}
-				int interfacesCount = ps.readInt();
-				interfaces = new InterfaceTypeImpl[interfacesCount];
-				for(int i = 0; i < interfacesCount; i++)
-				{
-					interfaces[i] = vm.interfaceType(ps.readClassRef());
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "interfaces[i](InterfaceTypeImpl): " + (interfaces[i] == null ? "NULL" : "ref=" + interfaces[i].ref
-								()));
-					}
-				}
-			}
-		}
-
-		/**
 		 * Returns the class object corresponding to this type.
 		 */
 		static class ClassObject
@@ -9639,7 +9568,7 @@ public class JDWP
 	static class TypeTag
 	{
 		static final int CLASS = 1;
-		static final int INTERFACE = 2;
+
 		static final int ARRAY = 3;
 	}
 

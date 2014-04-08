@@ -361,11 +361,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
          */
 		if((options & INVOKE_NONVIRTUAL) != 0)
 		{
-			if(method.declaringType() instanceof InterfaceType)
-			{
-				throw new IllegalArgumentException("Interface method");
-			}
-			else if(method.isAbstract())
+			if(method.isAbstract())
 			{
 				throw new IllegalArgumentException("Abstract method");
 			}

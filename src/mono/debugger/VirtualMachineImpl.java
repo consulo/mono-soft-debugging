@@ -979,11 +979,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return (ClassTypeImpl) referenceType(ref, null);
 	}
 
-	InterfaceTypeImpl interfaceType(long ref)
-	{
-		return (InterfaceTypeImpl) referenceType(ref, null);
-	}
-
 	ArrayTypeImpl arrayType(long ref)
 	{
 		return (ArrayTypeImpl) referenceType(ref, null);

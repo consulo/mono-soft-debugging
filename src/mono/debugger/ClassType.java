@@ -52,32 +52,6 @@ public interface ClassType extends ReferenceType {
     ClassType superclass();
 
     /**
-     * Gets the interfaces directly implemented by this class.
-     * Only the interfaces that are declared with the "implements"
-     * keyword in this class are included.
-     *
-     * @return a List of {@link InterfaceType} objects each mirroring
-     * a direct interface this ClassType in the target VM.
-     * If none exist, returns a zero length List.
-     * @throws ClassNotPreparedException if this class not yet been
-     * prepared.
-     */
-    List<InterfaceType> interfaces();
-
-    /**
-     * Gets the interfaces directly and indirectly implemented
-     * by this class. Interfaces returned by {@link ClassType#interfaces}
-     * are returned as well all superinterfaces.
-     *
-     * @return a List of {@link InterfaceType} objects each mirroring
-     * an interface of this ClassType in the target VM.
-     * If none exist, returns a zero length List.
-     * @throws ClassNotPreparedException if this class not yet been
-     * prepared.
-     */
-    List<InterfaceType> allInterfaces();
-
-    /**
      * Gets the currently loaded, direct subclasses of this class.
      * No ordering of this list is guaranteed.
      *

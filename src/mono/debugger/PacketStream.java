@@ -216,11 +216,6 @@ class PacketStream
 		{
 			tag = JDWP.TypeTag.CLASS;
 		}
-		else if(refType instanceof InterfaceType)
-		{
-			// It's possible to have executable code in an interface
-			tag = JDWP.TypeTag.INTERFACE;
-		}
 		else
 		{
 			throw new InternalException("Invalid Location");

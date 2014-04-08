@@ -25,9 +25,9 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ClassTypeImpl extends ReferenceTypeImpl
     implements ClassType
@@ -35,7 +35,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     private boolean cachedSuperclass = false;
     private ClassType superclass = null;
     private int lastLine = -1;
-    private List<InterfaceType> interfaces = null;
+    private List<ClassType> interfaces = null;
 
     protected ClassTypeImpl(VirtualMachine aVm,long aRef) {
         super(aVm, aRef);
@@ -64,37 +64,6 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
 
         return superclass;
-    }
-
-    @Override
-	public List<InterfaceType> interfaces()  {
-        if (interfaces == null) {
-            interfaces = getInterfaces();
-        }
-        return interfaces;
-    }
-
-    void addInterfaces(List<InterfaceType> list) {
-        List<InterfaceType> immediate = interfaces();
-        list.addAll(interfaces());
-
-        Iterator<InterfaceType> iter = immediate.iterator();
-        while (iter.hasNext()) {
-            InterfaceTypeImpl interfaze = (InterfaceTypeImpl)iter.next();
-            interfaze.addSuperinterfaces(list);
-        }
-
-        ClassTypeImpl superclass = (ClassTypeImpl)superclass();
-        if (superclass != null) {
-            superclass.addInterfaces(list);
-        }
-    }
-
-    @Override
-	public List<InterfaceType> allInterfaces()  {
-        List<InterfaceType> all = new ArrayList<InterfaceType>();
-        addInterfaces(all);
-        return all;
     }
 
     @Override
@@ -331,15 +300,6 @@ public class ClassTypeImpl extends ReferenceTypeImpl
             list.addAll(clazz.methods());
             clazz = clazz.superclass();
         }
-
-        /*
-         * Avoid duplicate checking on each method by iterating through
-         * duplicate-free allInterfaces() rather than recursing
-         */
-        for (InterfaceType interfaze : allInterfaces()) {
-            list.addAll(interfaze.methods());
-        }
-
         return list;
     }
 
@@ -349,9 +309,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         if (superclass() != null) {
             inherited.add(0, (ReferenceType)superclass()); /* insert at front */
         }
-        for (ReferenceType rt : interfaces()) {
-            inherited.add(rt);
-        }
+
         return inherited;
     }
 
@@ -403,11 +361,6 @@ public class ClassTypeImpl extends ReferenceTypeImpl
          * overwrite them in the hash table
          */
 
-        Iterator<InterfaceType> iter = interfaces().iterator();
-        while (iter.hasNext()) {
-            InterfaceTypeImpl interfaze = (InterfaceTypeImpl)iter.next();
-            interfaze.addVisibleMethods(methodMap);
-        }
 
         ClassTypeImpl clazz = (ClassTypeImpl)superclass();
         if (clazz != null) {
@@ -425,14 +378,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         } else if ((superclazz != null) && superclazz.isAssignableTo(type)) {
             return true;
         } else {
-            List<InterfaceType> interfaces = interfaces();
-            Iterator<InterfaceType> iter = interfaces.iterator();
-            while (iter.hasNext()) {
-                InterfaceTypeImpl interfaze = (InterfaceTypeImpl)iter.next();
-                if (interfaze.isAssignableTo(type)) {
-                    return true;
-                }
-            }
+
             return false;
         }
     }

@@ -690,20 +690,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return retList;
 	}
 
-	List<InterfaceType> getInterfaces()
-	{
-		InterfaceTypeImpl[] intfs;
-		try
-		{
-			intfs = JDWP.ReferenceType.Interfaces.
-					process(vm, this).interfaces;
-		}
-		catch(JDWPException exc)
-		{
-			throw exc.toJDIException();
-		}
-		return Arrays.asList((InterfaceType[]) intfs);
-	}
 
 	@Override
 	public List<ReferenceType> nestedTypes()
