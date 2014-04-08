@@ -367,8 +367,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
 
         ClassPrepareEventImpl(JDWP.Event.Composite.Events.ClassPrepare evt) {
             super(evt, evt.requestID, evt.thread);
-            referenceType = this.vm.referenceType(evt.typeID, evt.signature);
-            ((ReferenceTypeImpl)referenceType).setStatus(evt.status);
+            referenceType = this.vm.referenceType(evt.typeID);
         }
 
         public ReferenceType referenceType() {
@@ -380,26 +379,21 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
         }
     }
 
-    class ClassUnloadEventImpl extends EventImpl implements ClassUnloadEvent {
-        private String classSignature;
+    class ClassUnloadEventImpl extends ThreadedEventImpl implements ClassUnloadEvent {
+		private ReferenceType referenceType;
 
         ClassUnloadEventImpl(JDWP.Event.Composite.Events.ClassUnload evt) {
-            super(evt, evt.requestID);
-            this.classSignature = evt.signature;
+			super(evt, evt.requestID, evt.thread);
+			referenceType = this.vm.referenceType(evt.typeID);
         }
 
-        public String className() {
-            return classSignature.substring(1, classSignature.length()-1)
-                .replace('/', '.');
-        }
+		public ReferenceType referenceType() {
+			return referenceType;
+		}
 
-        public String classSignature() {
-            return classSignature;
-        }
-
-        String eventName() {
-            return "ClassUnloadEvent";
-        }
+		String eventName() {
+			return "ClassUnloadEvent";
+		}
     }
 
     class ExceptionEventImpl extends LocatableEventImpl
@@ -738,11 +732,11 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet {
                 return new StepEventImpl(
                       (JDWP.Event.Composite.Events.SingleStep)comm);
 
-            case JDWP.EventKind.CLASS_PREPARE:
+            case JDWP.EventKind.ASSEMBLY_LOAD:
                 return new ClassPrepareEventImpl(
                       (JDWP.Event.Composite.Events.ClassPrepare)comm);
 
-            case JDWP.EventKind.CLASS_UNLOAD:
+            case JDWP.EventKind.ASSEMBLY_UNLOAD:
                 return new ClassUnloadEventImpl(
                       (JDWP.Event.Composite.Events.ClassUnload)comm);
 

@@ -25,9 +25,11 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import mono.debugger.event.*;
-import java.util.*;
+import mono.debugger.event.ClassPrepareEvent;
+import mono.debugger.event.ClassUnloadEvent;
+import mono.debugger.event.Event;
+import mono.debugger.event.EventIterator;
+import mono.debugger.event.EventSet;
 
 public class InternalEventHandler implements Runnable
 {
@@ -57,11 +59,11 @@ public class InternalEventHandler implements Runnable
                         Event event = it.nextEvent();
                         if (event instanceof ClassUnloadEvent) {
                             ClassUnloadEvent cuEvent = (ClassUnloadEvent)event;
-                            vm.removeReferenceType(cuEvent.classSignature());
+                            vm.removeReferenceType(cuEvent.referenceType());
 
                             if ((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0) {
                                 vm.printTrace("Handled Unload Event for " +
-                                              cuEvent.classSignature());
+                                              cuEvent.referenceType());
                             }
                         } else if (event instanceof ClassPrepareEvent) {
                             ClassPrepareEvent cpEvent = (ClassPrepareEvent)event;

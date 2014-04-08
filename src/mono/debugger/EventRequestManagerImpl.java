@@ -32,13 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import mono.debugger.Field;
-import mono.debugger.Location;
-import mono.debugger.NativeMethodException;
-import mono.debugger.ObjectReference;
-import mono.debugger.ReferenceType;
-import mono.debugger.ThreadReference;
-import mono.debugger.VirtualMachine;
 import mono.debugger.request.*;
 
 /**
@@ -356,7 +349,7 @@ class EventRequestManagerImpl extends MirrorImpl
         }
 
         int eventCmd() {
-            return JDWP.EventKind.CLASS_PREPARE;
+            return JDWP.EventKind.ASSEMBLY_LOAD;
         }
 
         public synchronized void addSourceNameFilter(String sourceNamePattern) {
@@ -387,7 +380,7 @@ class EventRequestManagerImpl extends MirrorImpl
         }
 
         int eventCmd() {
-            return JDWP.EventKind.CLASS_UNLOAD;
+            return JDWP.EventKind.ASSEMBLY_UNLOAD;
         }
 
         public String toString() {
@@ -882,11 +875,11 @@ class EventRequestManagerImpl extends MirrorImpl
     }
 
     public List<ClassPrepareRequest> classPrepareRequests() {
-        return (List<ClassPrepareRequest>)unmodifiableRequestList(JDWP.EventKind.CLASS_PREPARE);
+        return (List<ClassPrepareRequest>)unmodifiableRequestList(JDWP.EventKind.ASSEMBLY_LOAD);
     }
 
     public List<ClassUnloadRequest> classUnloadRequests() {
-        return (List<ClassUnloadRequest>)unmodifiableRequestList(JDWP.EventKind.CLASS_UNLOAD);
+        return (List<ClassUnloadRequest>)unmodifiableRequestList(JDWP.EventKind.ASSEMBLY_UNLOAD);
     }
 
     public List<ThreadStartRequest> threadStartRequests() {

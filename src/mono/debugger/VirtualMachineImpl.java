@@ -771,40 +771,13 @@ class VirtualMachineImpl extends MirrorImpl
         return type;
     }
 
-    synchronized void removeReferenceType(String signature) {
+    synchronized void removeReferenceType(ReferenceType signature) {
         if (typesByID == null) {
             return;
         }
-        /*
-         * There can be multiple classes with the same name. Since
-         * we can't differentiate here, we first remove all
-         * matching classes from our cache...
-         */
-        Iterator<ReferenceType> iter = typesBySignature.iterator();
-        int matches = 0;
-        while (iter.hasNext()) {
-            ReferenceTypeImpl type = (ReferenceTypeImpl)iter.next();
-            int comp = signature.compareTo(type.signature());
-            if (comp == 0) {
-                matches++;
-                iter.remove();
-                typesByID.remove(new Long(type.ref()));
-                if ((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0) {
-                   vm.printTrace("Uncaching ReferenceType, sig=" + signature +
-                                 ", id=" + type.ref());
-                }
-/* fix for 4359077 , don't break out. list is no longer sorted
-        in the order we think
- */
-            }
-        }
 
-        /*
-         * ...and if there was more than one, re-retrieve the classes
-         * with that name
-         */
-        if (matches > 1) {
-            retrieveClassesBySignature(signature, true);
+        if (typesByID.remove(((ReferenceTypeImpl)signature).ref()) != null) {
+            retrieveClassesBySignature(signature.name(), true);
         }
     }
 

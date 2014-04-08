@@ -7093,10 +7093,10 @@ class JDWP {
 						case JDWP.EventKind.THREAD_DEATH:
 							aEventsCommon = new ThreadDeath(vm, ps);
 							break;
-						case JDWP.EventKind.CLASS_PREPARE:
+						case JDWP.EventKind.ASSEMBLY_LOAD:
 							aEventsCommon = new ClassPrepare(vm, ps);
 							break;
-						case JDWP.EventKind.CLASS_UNLOAD:
+						case JDWP.EventKind.ASSEMBLY_UNLOAD:
 							aEventsCommon = new ClassUnload(vm, ps);
 							break;
 						case JDWP.EventKind.FIELD_ACCESS:
@@ -7796,7 +7796,7 @@ class JDWP {
 				 * java.lang.Integer.TYPE). 
 				 */
 				static class ClassPrepare extends EventsCommon {
-					static final byte ALT_ID = JDWP.EventKind.CLASS_PREPARE;
+					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_LOAD;
 					byte eventKind() {
 						return ALT_ID;
 					}
@@ -7826,26 +7826,10 @@ class JDWP {
 					final ThreadReferenceImpl thread;
 
 					/**
-					 * Kind of reference type. 
-					 * See <a href="#JDWP_TypeTag">JDWP.TypeTag</a>
-					 */
-					final byte refTypeTag;
-
-					/**
 					 * Type being prepared
 					 */
 					final long typeID;
 
-					/**
-					 * Type signature
-					 */
-					final String signature;
-
-					/**
-					 * Status of type. 
-					 * See <a href="#JDWP_ClassStatus">JDWP.ClassStatus</a>
-					 */
-					final int status;
 
 					ClassPrepare(VirtualMachineImpl vm, PacketStream ps) {
 						requestID = ps.readInt();
@@ -7856,21 +7840,9 @@ class JDWP {
 						if (vm.traceReceives) {
 							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread==null?"NULL":"ref="+thread.ref()));
 						}
-						refTypeTag = ps.readByte();
-						if (vm.traceReceives) {
-							vm.printReceiveTrace(6, "refTypeTag(byte): " + refTypeTag);
-						}
 						typeID = ps.readClassRef();
 						if (vm.traceReceives) {
 							vm.printReceiveTrace(6, "typeID(long): " + "ref="+typeID);
-						}
-						signature = ps.readString();
-						if (vm.traceReceives) {
-							vm.printReceiveTrace(6, "signature(String): " + signature);
-						}
-						status = ps.readInt();
-						if (vm.traceReceives) {
-							vm.printReceiveTrace(6, "status(int): " + status);
 						}
 					}
 				}
@@ -7882,29 +7854,33 @@ class JDWP {
 				 * garbage collection, so unload information is greatly limited.	
 				 */
 				static class ClassUnload extends EventsCommon {
-					static final byte ALT_ID = JDWP.EventKind.CLASS_UNLOAD;
+					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_UNLOAD;
 					byte eventKind() {
 						return ALT_ID;
 					}
 
-					/**
-					 * Request that generated event
-					 */
+
 					final int requestID;
 
+					final ThreadReferenceImpl thread;
+
 					/**
-					 * Type signature
+					 * Type being prepared
 					 */
-					final String signature;
+					final long typeID;
 
 					ClassUnload(VirtualMachineImpl vm, PacketStream ps) {
 						requestID = ps.readInt();
 						if (vm.traceReceives) {
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						signature = ps.readString();
+						thread = ps.readThreadReference();
 						if (vm.traceReceives) {
-							vm.printReceiveTrace(6, "signature(String): " + signature);
+							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread==null?"NULL":"ref="+thread.ref()));
+						}
+						typeID = ps.readClassRef();
+						if (vm.traceReceives) {
+							vm.printReceiveTrace(6, "typeID(long): " + "ref="+typeID);
 						}
 					}
 				}
@@ -8205,9 +8181,10 @@ class JDWP {
 		static final int THREAD_START = 6;
 		static final int THREAD_DEATH = 7;
 		static final int THREAD_END = 7;
-		static final int CLASS_PREPARE = 8;
-		static final int CLASS_UNLOAD = 9;
-		static final int CLASS_LOAD = 10;
+
+		static final int ASSEMBLY_LOAD = 8;
+		static final int ASSEMBLY_UNLOAD = 9;
+
 		static final int FIELD_ACCESS = 20;
 		static final int FIELD_MODIFICATION = 21;
 		static final int EXCEPTION_CATCH = 30;
