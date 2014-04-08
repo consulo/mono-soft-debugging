@@ -23,6 +23,9 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
+		accept.suspend();
+
+		System.out.println(accept.description());
 
 		accept.resume();
 
@@ -30,7 +33,6 @@ public class Main
 		Thread.sleep(10000L);
 
 		System.out.println("try to pause");
-		accept.suspend();
 
 		Thread.sleep(50000L);
 	}

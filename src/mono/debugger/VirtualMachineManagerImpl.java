@@ -25,19 +25,20 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import mono.debugger.connect.*;
-import mono.debugger.connect.spi.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.io.IOException;
-
 import java.util.ServiceLoader;
+
+import mono.debugger.connect.AttachingConnector;
+import mono.debugger.connect.Connector;
+import mono.debugger.connect.LaunchingConnector;
+import mono.debugger.connect.ListeningConnector;
+import mono.debugger.connect.spi.Connection;
+import mono.debugger.connect.spi.TransportService;
 
 /* Public for use by mono.debugger.Bootstrap */
 public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
@@ -276,7 +277,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
 
     String getString(String key) {
         if (messages == null) {
-            messages = ResourceBundle.getBundle("mono.debugger.resources.jdi");
+            messages = ResourceBundle.getBundle("resources.jdi");
         }
         return messages.getString(key);
     }
