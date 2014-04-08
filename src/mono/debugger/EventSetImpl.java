@@ -535,35 +535,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 	}
 
-	class VMStartEventImpl extends ThreadedEventImpl implements VMStartEvent
-	{
-		VMStartEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.VMStart evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "VMStartEvent";
-		}
-	}
-
-	public static class VMDeathEventImpl extends EventImpl implements VMDeathEvent
-	{
-
-		public VMDeathEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.VMDeath evt)
-		{
-			super(virtualMachine, evt, evt.requestID);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "VMDeathEvent";
-		}
-	}
-
 	public static class VMDisconnectEventImpl extends EventImpl implements VMDisconnectEvent
 	{
 		public VMDisconnectEventImpl(VirtualMachine virtualMachine)
@@ -842,7 +813,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		JDWP.Event.Composite.Events.EventsCommon comm = evt.aEventsCommon;
 		switch(evt.eventKind)
 		{
-			case JDWP.EventKind.THREAD_START:
+			/*case JDWP.EventKind.THREAD_START:
 				return new ThreadStartEventImpl(vm, (JDWP.Event.Composite.Events.ThreadStart) comm);
 
 			case JDWP.EventKind.THREAD_END:
@@ -871,14 +842,14 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 			case JDWP.EventKind.SINGLE_STEP:
 				return new StepEventImpl(vm, (JDWP.Event.Composite.Events.SingleStep) comm);
-
+                                                */
 			case JDWP.EventKind.ASSEMBLY_LOAD:
 				return new AssemblyLoadEvent(vm, (JDWP.Event.Composite.Events.AssemblyLoad) comm);
 
 			case JDWP.EventKind.ASSEMBLY_UNLOAD:
 				return new AssemblyUnloadEvent(vm, (JDWP.Event.Composite.Events.AssemblyUnLoad) comm);
 
-			case JDWP.EventKind.MONITOR_CONTENDED_ENTER:
+		/*	case JDWP.EventKind.MONITOR_CONTENDED_ENTER:
 				return new MonitorContendedEnterEventImpl(vm, (JDWP.Event.Composite.Events.MonitorContendedEnter) comm);
 
 			case JDWP.EventKind.MONITOR_CONTENDED_ENTERED:
@@ -889,17 +860,16 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 			case JDWP.EventKind.MONITOR_WAITED:
 				return new MonitorWaitedEventImpl(vm, (JDWP.Event.Composite.Events.MonitorWaited) comm);
-
+                */
 			case JDWP.EventKind.VM_START:
-				return new VMStartEventImpl(vm, (JDWP.Event.Composite.Events.VMStart) comm);
+				return new VMStartEvent(vm, (JDWP.Event.Composite.Events.VMStart) comm);
 
 			case JDWP.EventKind.VM_DEATH:
-				return new VMDeathEventImpl(vm, (JDWP.Event.Composite.Events.VMDeath) comm);
+				return new VMDeathEvent(vm, (JDWP.Event.Composite.Events.VMDeath) comm);
 
 			default:
 				// Ignore unknown event types
-				System.err.println("Ignoring event cmd " +
-						evt.eventKind + " from the VM");
+				System.err.println("Ignoring event cmd " + evt.eventKind + " from the VM");
 				return null;
 		}
 	}

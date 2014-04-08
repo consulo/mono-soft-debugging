@@ -25,7 +25,9 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
+import mono.debugger.EventSetImpl;
+import mono.debugger.JDWP;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of initialization of a target VM.  This event is
@@ -43,12 +45,16 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface VMStartEvent extends Event {
-    /**
-     * Returns the initial thread of the VM which has started.
-     *
-     * @return a {@link ThreadReference} which mirrors the event's thread in
-     * the target VM.
-     */
-    public ThreadReference thread();
+public class VMStartEvent extends EventSetImpl.ThreadedEventImpl
+{
+	public VMStartEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.VMStart evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread);
+	}
+
+	@Override
+	public String eventName()
+	{
+		return "VMStartEvent";
+	}
 }

@@ -68,5 +68,16 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface VMDeathEvent extends Event {
+public class VMDeathEvent extends EventSetImpl.EventImpl
+{
+	public VMDeathEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.VMDeath evt)
+	{
+		super(virtualMachine, evt, evt.requestID);
+	}
+
+	@Override
+	public String eventName()
+	{
+		return "VMDeathEvent";
+	}
 }
