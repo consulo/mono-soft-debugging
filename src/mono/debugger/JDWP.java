@@ -370,33 +370,38 @@ class JDWP {
 		 * counted. If a particular thread is suspended n times, it must 
 		 * resumed n times before it will continue. 
 		 */
-		static class Resume {
-			static final int COMMAND = 9;
+		static class Resume
+		{
+			static final int COMMAND = 4;
 
-			static Resume process(VirtualMachineImpl vm)
-					throws JDWPException {
+			static Resume process(VirtualMachineImpl vm) throws JDWPException
+			{
 				PacketStream ps = enqueueCommand(vm);
 				return waitForReply(vm, ps);
 			}
 
-			static PacketStream enqueueCommand(VirtualMachineImpl vm) {
+			static PacketStream enqueueCommand(VirtualMachineImpl vm)
+			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if ((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0) {
+				if ((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
+				{
 					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Resume"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:""));
 				}
 				ps.send();
 				return ps;
 			}
 
-			static Resume waitForReply(VirtualMachineImpl vm, PacketStream ps)
-					throws JDWPException {
+			static Resume waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
+			{
 				ps.waitForReply();
 				return new Resume(vm, ps);
 			}
 
 
-			private Resume(VirtualMachineImpl vm, PacketStream ps) {
-				if (vm.traceReceives) {
+			private Resume(VirtualMachineImpl vm, PacketStream ps)
+			{
+				if (vm.traceReceives)
+				{
 					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Resume"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:"")+(ps.pkt.errorCode!=0?", ERROR CODE=" + ps.pkt.errorCode:""));
 				}
 			}
@@ -4576,7 +4581,7 @@ class JDWP {
 		 * Returns the thread name. 
 		 */
 		static class Name {
-			static final int COMMAND = 1;
+			static final int COMMAND = 2;
 
 			static Name process(VirtualMachineImpl vm,
 					ThreadReferenceImpl thread)
@@ -4588,13 +4593,15 @@ class JDWP {
 			static PacketStream enqueueCommand(VirtualMachineImpl vm,
 					ThreadReferenceImpl thread) {
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if ((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0) {
+				if ((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
+				{
 					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Name"+(ps.pkt.flags!=0?", FLAGS=" + ps.pkt.flags:""));
 				}
-				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0) {
+				if ((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
+				{
 					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread==null?"NULL":"ref="+thread.ref()));
 				}
-				ps.writeObjectRef(thread.ref());
+				ps.writeId(thread.ref());
 				ps.send();
 				return ps;
 			}

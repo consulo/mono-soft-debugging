@@ -23,8 +23,7 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		//accept.suspend();
-		//System.out.println("virtualMachine suspended ");
+		accept.resume();
 		Thread.sleep(50000L);
 	}
 }

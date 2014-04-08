@@ -118,6 +118,11 @@ class PacketStream {
         writeLong(Double.doubleToLongBits(data));
     }
 
+	public void writeId(long data)
+	{
+		writeInt((int)data);
+	}
+
     void writeID(int size, long data) {
         switch (size) {
             case 8:
@@ -138,6 +143,7 @@ class PacketStream {
         writeObjectRef(0);
     }
 
+	@Deprecated
     void writeObjectRef(long data) {
         writeID(vm.sizeofObjectRef, data);
     }
