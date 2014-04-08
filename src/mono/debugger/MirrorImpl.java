@@ -25,87 +25,102 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
 import java.util.Collection;
 import java.util.Iterator;
 
-abstract class MirrorImpl extends Object implements Mirror {
+public abstract class MirrorImpl implements Mirror
+{
+	protected VirtualMachineImpl vm;
 
-    protected VirtualMachineImpl vm;
+	public MirrorImpl(VirtualMachine aVm)
+	{
+		// Yes, its a bit of a hack. But by doing it this
+		// way, this is the only place we have to change
+		// typing to substitute a new impl.
+		vm = (VirtualMachineImpl) aVm;
+	}
 
-    MirrorImpl(VirtualMachine aVm) {
-        super();
+	@Override
+	public VirtualMachine virtualMachine()
+	{
+		return vm;
+	}
 
-        // Yes, its a bit of a hack. But by doing it this
-        // way, this is the only place we have to change
-        // typing to substitute a new impl.
-        vm = (VirtualMachineImpl)aVm;
-    }
+	@Override
+	public boolean equals(Object obj)
+	{
+		if((obj != null) && (obj instanceof Mirror))
+		{
+			Mirror other = (Mirror) obj;
+			return vm.equals(other.virtualMachine());
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-    @Override
-	public VirtualMachine virtualMachine() {
-        return vm;
-    }
+	@Override
+	public int hashCode()
+	{
+		return vm.hashCode();
+	}
 
-    @Override
-	public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof Mirror)) {
-            Mirror other = (Mirror)obj;
-            return vm.equals(other.virtualMachine());
-        } else {
-            return false;
-        }
-    }
+	/**
+	 * Throw NullPointerException on null mirror.
+	 * Throw VMMismatchException on wrong VM.
+	 */
+	void validateMirror(Mirror mirror)
+	{
+		if(!vm.equals(mirror.virtualMachine()))
+		{
+			throw new VMMismatchException(mirror.toString());
+		}
+	}
 
-    @Override
-	public int hashCode() {
-        return vm.hashCode();
-    }
+	/**
+	 * Allow null mirror.
+	 * Throw VMMismatchException on wrong VM.
+	 */
+	void validateMirrorOrNull(Mirror mirror)
+	{
+		if((mirror != null) && !vm.equals(mirror.virtualMachine()))
+		{
+			throw new VMMismatchException(mirror.toString());
+		}
+	}
 
-    /**
-     * Throw NullPointerException on null mirror.
-     * Throw VMMismatchException on wrong VM.
-     */
-    void validateMirror(Mirror mirror) {
-        if (!vm.equals(mirror.virtualMachine())) {
-            throw new VMMismatchException(mirror.toString());
-        }
-    }
+	/**
+	 * Throw NullPointerException on null mirrors.
+	 * Throw VMMismatchException on wrong VM.
+	 */
+	void validateMirrors(Collection<? extends Mirror> mirrors)
+	{
+		Iterator<? extends Mirror> iter = mirrors.iterator();
+		while(iter.hasNext())
+		{
+			MirrorImpl mirror = (MirrorImpl) iter.next();
+			if(!vm.equals(mirror.vm))
+			{
+				throw new VMMismatchException(mirror.toString());
+			}
+		}
+	}
 
-    /**
-     * Allow null mirror.
-     * Throw VMMismatchException on wrong VM.
-     */
-    void validateMirrorOrNull(Mirror mirror) {
-        if ((mirror != null) && !vm.equals(mirror.virtualMachine())) {
-            throw new VMMismatchException(mirror.toString());
-        }
-    }
-
-    /**
-     * Throw NullPointerException on null mirrors.
-     * Throw VMMismatchException on wrong VM.
-     */
-    void validateMirrors(Collection<? extends Mirror> mirrors) {
-        Iterator<? extends Mirror> iter = mirrors.iterator();
-        while (iter.hasNext()) {
-            MirrorImpl mirror = (MirrorImpl)iter.next();
-            if (!vm.equals(mirror.vm)) {
-                throw new VMMismatchException(mirror.toString());
-            }
-        }
-    }
-    /**
-     * Allow null mirrors.
-     * Throw VMMismatchException on wrong VM.
-     */
-    void validateMirrorsOrNulls(Collection<? extends Mirror> mirrors) {
-        Iterator<? extends Mirror> iter = mirrors.iterator();
-        while (iter.hasNext()) {
-            MirrorImpl mirror = (MirrorImpl)iter.next();
-            if ((mirror != null) && !vm.equals(mirror.vm)) {
-                throw new VMMismatchException(mirror.toString());
-            }
-        }
-    }
+	/**
+	 * Allow null mirrors.
+	 * Throw VMMismatchException on wrong VM.
+	 */
+	void validateMirrorsOrNulls(Collection<? extends Mirror> mirrors)
+	{
+		Iterator<? extends Mirror> iter = mirrors.iterator();
+		while(iter.hasNext())
+		{
+			MirrorImpl mirror = (MirrorImpl) iter.next();
+			if((mirror != null) && !vm.equals(mirror.vm))
+			{
+				throw new VMMismatchException(mirror.toString());
+			}
+		}
+	}
 }

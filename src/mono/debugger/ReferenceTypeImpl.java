@@ -76,6 +76,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	// bits set when initialization was attempted (succeeded or failed)
 	private static final int INITIALIZED_OR_FAILED = JDWP.ClassStatus.INITIALIZED | JDWP.ClassStatus.ERROR;
 
+	private JDWP.ReferenceType.Info myInfo;
 
 	protected ReferenceTypeImpl(VirtualMachine aVm, long aRef)
 	{
@@ -161,7 +162,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public int compareTo(ReferenceType object)
 	{
 		/*
-         * Note that it is critical that compareTo() == 0
+		 * Note that it is critical that compareTo() == 0
          * implies that equals() == true. Otherwise, TreeSet
          * will collapse classes.
          *
@@ -191,32 +192,29 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public String signature()
 	{
-		if(signature == null)
+		return name();
+	}
+
+	@Override
+	public String name()
+	{
+		return getInfo().fullName;
+	}
+
+	private JDWP.ReferenceType.Info getInfo()
+	{
+		if(myInfo == null)
 		{
-			// Does not need synchronization, since worst-case
-			// static info is fetched twice
-			if(vm.canGet1_5LanguageFeatures())
+			try
 			{
-                /*
-                 * we might as well get both the signature and the
-                 * generic signature.
-                 */
-				genericSignature();
+				myInfo = JDWP.ReferenceType.Info.process(vm, this);
 			}
-			else
+			catch(JDWPException exc)
 			{
-				try
-				{
-					signature = JDWP.ReferenceType.Signature.
-							process(vm, this).signature;
-				}
-				catch(JDWPException exc)
-				{
-					throw exc.toJDIException();
-				}
+				throw exc.toJDIException();
 			}
 		}
-		return signature;
+		return myInfo;
 	}
 
 	@Override

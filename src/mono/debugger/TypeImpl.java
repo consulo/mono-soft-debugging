@@ -27,7 +27,7 @@ package mono.debugger;
 
 public abstract class TypeImpl extends MirrorImpl implements Type
 {
-	private String myName = null;
+	protected String myName = null;
 
 	TypeImpl(VirtualMachine vm)
 	{
