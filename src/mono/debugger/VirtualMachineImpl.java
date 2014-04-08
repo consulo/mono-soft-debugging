@@ -44,7 +44,7 @@ import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequest;
 import mono.debugger.request.EventRequestManager;
 
-class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
+public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
 {
 	final int sequenceNumber;
 

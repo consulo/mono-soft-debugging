@@ -6,7 +6,7 @@ import java.util.List;
 public class JDWP
 {
 
-	static class VirtualMachine
+	public static class VirtualMachine
 	{
 		static final int COMMAND_SET = 1;
 
@@ -95,11 +95,11 @@ public class JDWP
 		 * The search is confined to loaded classes only; no attempt is made
 		 * to load a class of the given signature.
 		 */
-		static class GetTypes
+		public static class GetTypes
 		{
 			static final int COMMAND = 12;
 
-			static GetTypes process(VirtualMachineImpl vm, String signature, boolean ignoreCase) throws JDWPException
+			public static GetTypes process(VirtualMachineImpl vm, String signature, boolean ignoreCase) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, signature, ignoreCase);
 				return waitForReply(vm, ps);
