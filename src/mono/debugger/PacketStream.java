@@ -454,7 +454,7 @@ public class PacketStream
 	ThreadReferenceImpl readThreadReference()
 	{
 		long ref = readObjectRef();
-		return vm.threadMirror(ref);
+		return new ThreadReferenceImpl(vm, ref); //FIXME [VISTALL] test variable
 	}
 
 	public AssemblyMirror readAssemblyReference()
