@@ -32,7 +32,15 @@ public class LocationImpl extends MirrorImpl implements Location
 	private long methodRef;
 	private long codeIndex;
 	private LineInfo baseLineInfo = null;
-	private LineInfo otherLineInfo = null;
+
+	public LocationImpl(VirtualMachine vm, long methodRef, long codeIndex)
+	{
+		super(vm);
+
+		this.methodRef = methodRef;
+		this.codeIndex = method.isNative() ? -1 : codeIndex;
+		this.declaringType = (ReferenceTypeImpl) method.declaringType();
+	}
 
 	public LocationImpl(VirtualMachine vm, Method method, long codeIndex)
 	{
@@ -157,12 +165,6 @@ public class LocationImpl extends MirrorImpl implements Location
 	LineInfo getLineInfo()
 	{
 		return getBaseLineInfo();
-
-	}
-
-	void addStratumLineInfo(LineInfo lineInfo)
-	{
-		otherLineInfo = lineInfo;
 	}
 
 	void addBaseLineInfo(LineInfo lineInfo)

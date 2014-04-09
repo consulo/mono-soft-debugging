@@ -12,6 +12,15 @@
         </content>
         <orderEntry type="module-extension-sdk" extension-id="java" />
         <orderEntry type="sourceFolder" forTests="false" />
+        <orderEntry type="module-library">
+          <library>
+            <CLASSES>
+              <root url="jar://$MODULE_DIR$/lib/annotations.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES />
+          </library>
+        </orderEntry>
       </module>
     </modules>
   </component>

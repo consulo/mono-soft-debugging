@@ -1,7 +1,9 @@
 package test;
 
+import java.util.List;
 import java.util.Map;
 
+import mono.debugger.ReferenceType;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
@@ -23,21 +25,8 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		System.out.println(accept.name());
-		System.out.println(accept.version());
+		List<ReferenceType> types = accept.findTypes("System.Int32", true);
 
-		//accept.resume();
-	   /*
-		System.out.println(accept.description());
-
-
-		System.out.println("waiting 10 sec and suspend");
-
-		Thread.sleep(10000L);
-
-		System.out.println("try to pause");
-
-		accept.suspend();  */
 
 		Thread.sleep(50000L);
 	}
