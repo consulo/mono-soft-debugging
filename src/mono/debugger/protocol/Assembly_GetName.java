@@ -1,6 +1,6 @@
 package mono.debugger.protocol;
 
-import mono.debugger.AssemblyReference;
+import mono.debugger.AssemblyMirror;
 import mono.debugger.JDWPException;
 import mono.debugger.PacketStream;
 import mono.debugger.VirtualMachineImpl;
@@ -13,13 +13,13 @@ public class Assembly_GetName implements Assembly
 {
 	static final int COMMAND = 6;
 
-	public static Assembly_GetName process(VirtualMachineImpl vm, AssemblyReference assemblyReference) throws JDWPException
+	public static Assembly_GetName process(VirtualMachineImpl vm, AssemblyMirror assemblyMirror) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, assemblyReference);
+		PacketStream ps = enqueueCommand(vm, assemblyMirror);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, AssemblyReference assemblyReference)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, AssemblyMirror assemblyMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -29,9 +29,9 @@ public class Assembly_GetName implements Assembly
 		}
 		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 		{
-			ps.vm.printTrace("Sending:                 assembly(AssemblyReference): " + "ref=" + assemblyReference.ref());
+			ps.vm.printTrace("Sending:                 assembly(AssemblyReference): " + "ref=" + assemblyMirror.id());
 		}
-		ps.writeId(assemblyReference.ref());
+		ps.writeId(assemblyMirror);
 		ps.send();
 		return ps;
 	}

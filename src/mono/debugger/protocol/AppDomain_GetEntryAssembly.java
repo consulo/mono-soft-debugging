@@ -1,7 +1,7 @@
 package mono.debugger.protocol;
 
-import mono.debugger.AppDomainReference;
-import mono.debugger.AssemblyReference;
+import mono.debugger.AppDomainMirror;
+import mono.debugger.AssemblyMirror;
 import mono.debugger.JDWPException;
 import mono.debugger.PacketStream;
 import mono.debugger.VirtualMachineImpl;
@@ -14,20 +14,20 @@ public class AppDomain_GetEntryAssembly implements AppDomain
 {
 	static final int COMMAND = 4;
 
-	public static AppDomain_GetEntryAssembly process(VirtualMachineImpl vm, AppDomainReference appDomainReference) throws JDWPException
+	public static AppDomain_GetEntryAssembly process(VirtualMachineImpl vm, AppDomainMirror appDomainMirror) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, appDomainReference);
+		PacketStream ps = enqueueCommand(vm, appDomainMirror);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, AppDomainReference appDomainReference)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, AppDomainMirror appDomainMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
 		{
 			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") AppDomain_GetEntryAssembly" + (ps.pkt.flags != 0 ? ", " +"" + "FLAGS=" + ps.pkt.flags : ""));
 		}
-		ps.writeId(appDomainReference.ref());
+		ps.writeId(appDomainMirror);
 		ps.send();
 		return ps;
 	}
@@ -38,7 +38,7 @@ public class AppDomain_GetEntryAssembly implements AppDomain
 		return new AppDomain_GetEntryAssembly(vm, ps);
 	}
 
-	public AssemblyReference assembly;
+	public AssemblyMirror assembly;
 
 	private AppDomain_GetEntryAssembly(VirtualMachineImpl vm, PacketStream ps)
 	{

@@ -3971,9 +3971,9 @@ public class JDWP
 				}
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + thread.ref());
 				}
-				ps.writeId(thread.ref());
+				ps.writeId(thread);
 				ps.send();
 				return ps;
 			}
@@ -4027,7 +4027,7 @@ public class JDWP
 				{
 					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + "ref=" + thread.ref());
 				}
-				ps.writeId(thread.ref());
+				ps.writeId(thread);
 				ps.send();
 				return ps;
 			}
@@ -6375,7 +6375,7 @@ public class JDWP
 
 					public final ThreadReferenceImpl thread;
 
-					public final AssemblyReference assembly;
+					public final AssemblyMirror assembly;
 
 
 					public AssemblyLoad(VirtualMachineImpl vm, PacketStream ps)
@@ -6393,7 +6393,7 @@ public class JDWP
 						assembly = ps.readAssemblyReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.ref()));
+							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.id()));
 						}
 					}
 				}
@@ -6415,7 +6415,7 @@ public class JDWP
 
 					public final ThreadReferenceImpl thread;
 
-					public final AssemblyReference assembly;
+					public final AssemblyMirror assembly;
 
 					public AssemblyUnLoad(VirtualMachineImpl vm, PacketStream ps)
 					{
@@ -6432,7 +6432,7 @@ public class JDWP
 						assembly = ps.readAssemblyReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.ref()));
+							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.id()));
 						}
 					}
 				}
@@ -6746,10 +6746,6 @@ public class JDWP
 
 
 		static final int CLASS_OBJECT = 99;
-
-		// dummy
-		static final int ASSEMBLY = 100000000;
-		static final int APP_DOMAIN = 100000001;
 	}
 
 	static class StepDepth

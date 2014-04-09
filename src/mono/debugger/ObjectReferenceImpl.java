@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, VMListener
+public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, VMListener, MirrorWithId
 {
 	protected long ref;
 
@@ -500,6 +500,12 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	}
 
 	public long ref()
+	{
+		return ref;
+	}
+
+	@Override
+	public long id()
 	{
 		return ref;
 	}

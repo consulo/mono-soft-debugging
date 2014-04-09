@@ -1,6 +1,6 @@
 package mono.debugger.protocol;
 
-import mono.debugger.AppDomainReference;
+import mono.debugger.AppDomainMirror;
 import mono.debugger.JDWPException;
 import mono.debugger.PacketStream;
 import mono.debugger.VirtualMachineImpl;
@@ -36,7 +36,7 @@ public class AppDomain_GetRootDomain implements AppDomain
 		return new AppDomain_GetRootDomain(vm, ps);
 	}
 
-	public AppDomainReference appDomainReference;
+	public AppDomainMirror myAppDomainMirror;
 
 	private AppDomain_GetRootDomain(VirtualMachineImpl vm, PacketStream ps)
 	{
@@ -45,10 +45,10 @@ public class AppDomain_GetRootDomain implements AppDomain
 			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") AppDomain_GetRootDomain" + (ps.pkt.flags != 0 ? ", " +
 					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
 		}
-		appDomainReference = ps.readAppDomainReference();
+		myAppDomainMirror = ps.readAppDomainReference();
 		if(vm.traceReceives)
 		{
-			vm.printReceiveTrace(4, "appDomainReference: " + appDomainReference);
+			vm.printReceiveTrace(4, "appDomainReference: " + myAppDomainMirror);
 		}
 	}
 }

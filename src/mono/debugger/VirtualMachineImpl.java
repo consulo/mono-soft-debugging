@@ -70,15 +70,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	// ObjectReference cache
 	// "objectsByID" protected by "synchronized(this)".
-	private final Map<Long, SoftObjectReference> assemblyById = new HashMap<Long, SoftObjectReference>();
-	private final Map<Long, SoftObjectReference> appDomainById = new HashMap<Long, SoftObjectReference>();
 	private final Map<Long, SoftObjectReference> objectsByID = new HashMap<Long, SoftObjectReference>();
 	private final ReferenceQueue<ObjectReferenceImpl> referenceQueue = new ReferenceQueue<ObjectReferenceImpl>();
 	static private final int DISPOSE_THRESHOLD = 50;
 	private final List<SoftObjectReference> batchedDisposeRequests = Collections.synchronizedList(new ArrayList<SoftObjectReference>
 			(DISPOSE_THRESHOLD + 10));
 
-	private AppDomainReference myRootAppDomain;
+	private AppDomainMirror myRootAppDomain;
 
 	// These are cached once for the life of the VM
 	private JDWP.VirtualMachine.Version versionInfo;
@@ -215,13 +213,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	}
 
 	@Override
-	public AppDomainReference rootAppDomain()
+	public AppDomainMirror rootAppDomain()
 	{
 		if(myRootAppDomain == null)
 		{
 			try
 			{
-				myRootAppDomain = AppDomain_GetRootDomain.process(vm).appDomainReference;
+				myRootAppDomain = AppDomain_GetRootDomain.process(vm).myAppDomainMirror;
 			}
 			catch(JDWPException e)
 			{
@@ -738,12 +736,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 					thread.addListener(this);
 					object = thread;
 					break;
-				case JDWP.Tag.ASSEMBLY:
-					object = new AssemblyReference(vm, id);
-					break;
-				case JDWP.Tag.APP_DOMAIN:
-					object = new AppDomainReference(vm, id);
-					break;
 				case JDWP.Tag.CLASS_OBJECT:
 					object = new ClassObjectReferenceImpl(vm, id);
 					break;
@@ -798,12 +790,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		Map<Long, SoftObjectReference> map;
 		switch(tag)
 		{
-			case JDWP.Tag.ASSEMBLY:
-				map = assemblyById;
-				break;
-			case JDWP.Tag.APP_DOMAIN:
-				map = appDomainById;
-				break;
 			default:
 				map = objectsByID;
 				break;
@@ -838,11 +824,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	ThreadReferenceImpl threadMirror(long id)
 	{
 		return (ThreadReferenceImpl) objectMirror(id, JDWP.Tag.THREAD);
-	}
-
-	AssemblyReference assemblyMirror(long id)
-	{
-		return (AssemblyReference) objectMirror(id, JDWP.Tag.ASSEMBLY);
 	}
 
 	ClassObjectReferenceImpl classObjectMirror(long id)

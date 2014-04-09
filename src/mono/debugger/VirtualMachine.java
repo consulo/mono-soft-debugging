@@ -71,7 +71,7 @@ import mono.debugger.request.EventRequestManager;
  */
 public interface VirtualMachine extends Mirror
 {
-	AppDomainReference rootAppDomain();
+	AppDomainMirror rootAppDomain();
 
 	/**
 	 * Returns the loaded reference types that

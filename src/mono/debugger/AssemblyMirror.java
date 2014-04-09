@@ -7,30 +7,19 @@ import mono.debugger.protocol.Assembly_GetName;
  * @author VISTALL
  * @since 08.04.14
  */
-public class AssemblyReference extends ObjectReferenceImpl
+public class AssemblyMirror extends MirrorWithIdAndName
 {
-	private String myName;
 	private String myLocation;
 
-	public AssemblyReference(VirtualMachine aVm, long aRef)
+	public AssemblyMirror(VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
 	}
 
-	public String name()
+	@Override
+	protected String nameImpl() throws JDWPException
 	{
-		if(myName == null)
-		{
-			try
-			{
-				myName = Assembly_GetName.process(vm, this).name;
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return myName;
+		return Assembly_GetName.process(vm, this).name;
 	}
 
 	public String location()
@@ -47,11 +36,5 @@ public class AssemblyReference extends ObjectReferenceImpl
 			}
 		}
 		return myLocation;
-	}
-
-	@Override
-	int typeValueKey()
-	{
-		return JDWP.Tag.ASSEMBLY;
 	}
 }

@@ -135,9 +135,9 @@ public class PacketStream
 		writeLong(Double.doubleToLongBits(data));
 	}
 
-	public void writeId(long data)
+	public void writeId(MirrorWithId data)
 	{
-		writeInt((int) data);
+		writeInt((int) data.id());
 	}
 
 	void writeID(int size, long data)
@@ -434,9 +434,10 @@ public class PacketStream
 		return (int) readID(4);
 	}
 
-	public AppDomainReference readAppDomainReference()
+	public AppDomainMirror readAppDomainReference()
 	{
-		return (AppDomainReference) vm.objectMirror(readId(), JDWP.Tag.APP_DOMAIN);
+		int ref = readId();
+		return new AppDomainMirror(vm, ref);
 	}
 
 	ObjectReferenceImpl readTaggedObjectReference()
@@ -468,10 +469,10 @@ public class PacketStream
 		return vm.threadMirror(ref);
 	}
 
-	public AssemblyReference readAssemblyReference()
+	public AssemblyMirror readAssemblyReference()
 	{
-		long ref = readObjectRef();
-		return vm.assemblyMirror(ref);
+		long ref = readId();
+		return new AssemblyMirror(vm, ref);
 	}
 
 	ClassObjectReferenceImpl readClassObjectReference()

@@ -1,6 +1,6 @@
 package mono.debugger.event;
 
-import mono.debugger.AssemblyReference;
+import mono.debugger.AssemblyMirror;
 import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
@@ -11,7 +11,7 @@ import mono.debugger.VirtualMachine;
  */
 public class AssemblyUnloadEvent extends EventSetImpl.ThreadedEventImpl implements Event
 {
-	private final AssemblyReference myAssembly;
+	private final AssemblyMirror myAssembly;
 
 	public AssemblyUnloadEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.AssemblyUnLoad evt)
 	{
@@ -26,7 +26,7 @@ public class AssemblyUnloadEvent extends EventSetImpl.ThreadedEventImpl implemen
 		return "AssemblyUnloadEvent";
 	}
 
-	public AssemblyReference getAssembly()
+	public AssemblyMirror getAssembly()
 	{
 		return myAssembly;
 	}

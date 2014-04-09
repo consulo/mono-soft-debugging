@@ -66,7 +66,7 @@ public class InternalEventHandler implements Runnable
 
 						if(event instanceof AssemblyLoadEvent)
 						{
-							AssemblyReference assembly = ((AssemblyLoadEvent) event).getAssembly();
+							AssemblyMirror assembly = ((AssemblyLoadEvent) event).getAssembly();
 
 							if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
 							{
@@ -76,9 +76,9 @@ public class InternalEventHandler implements Runnable
 						}
 						else if(event instanceof AssemblyUnloadEvent)
 						{
-							AssemblyReference assembly = ((AssemblyUnloadEvent) event).getAssembly();
+							AssemblyMirror assembly = ((AssemblyUnloadEvent) event).getAssembly();
 
-							vm.removeObjectMirror(assembly);
+
 							if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
 							{
 								vm.printTrace("Handled AssemblyUnload Event for " + assembly.name() + ",  thread: " + ((AssemblyUnloadEvent) event)
