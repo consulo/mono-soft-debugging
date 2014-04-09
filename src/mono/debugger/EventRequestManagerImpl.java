@@ -620,23 +620,7 @@ class EventRequestManagerImpl extends MirrorImpl
         }
     }
 
-    abstract class WatchpointRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements WatchpointRequest {
-        final Field field;
 
-        WatchpointRequestImpl(Field field) {
-            this.field = field;
-            filters.add(0,
-                   JDWP.EventRequest.Set.Modifier.FieldOnly.create(
-                    (ReferenceTypeImpl)field.declaringType(),
-                    ((FieldImpl)field).ref()));
-        }
-
-        @Override
-		public Field field() {
-            return field;
-        }
-    }
 
     class VMDeathRequestImpl extends EventRequestImpl
                                         implements VMDeathRequest {
