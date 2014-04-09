@@ -542,12 +542,6 @@ class PacketStream
 		return vm.assemblyMirror(ref);
 	}
 
-	ThreadGroupReferenceImpl readThreadGroupReference()
-	{
-		long ref = readObjectRef();
-		return vm.threadGroupMirror(ref);
-	}
-
 	ClassLoaderReferenceImpl readClassLoaderReference()
 	{
 		long ref = readObjectRef();
@@ -742,7 +736,6 @@ class PacketStream
 				(tag == JDWP.Tag.ARRAY) ||
 				(tag == JDWP.Tag.STRING) ||
 				(tag == JDWP.Tag.THREAD) ||
-				(tag == JDWP.Tag.THREAD_GROUP) ||
 				(tag == JDWP.Tag.CLASS_LOADER) ||
 				(tag == JDWP.Tag.CLASS_OBJECT);
 	}

@@ -363,13 +363,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return Collections.emptySet();
 	}
 
-	@Override
-	public List<ThreadGroupReference> topLevelThreadGroups()
-	{
-		validateVM();
-		return state.topLevelThreadGroups();
-	}
-
 	/*
 	 * Sends a command to the back end which is defined to do an
 	 * implicit vm-wide resume. The VM can no longer be considered
@@ -1380,9 +1373,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 				case JDWP.Tag.ASSEMBLY:
 					object = new AssemblyReference(vm, id);
 					break;
-				case JDWP.Tag.THREAD_GROUP:
-					object = new ThreadGroupReferenceImpl(vm, id);
-					break;
 				case JDWP.Tag.CLASS_LOADER:
 					object = new ClassLoaderReferenceImpl(vm, id);
 					break;
@@ -1467,11 +1457,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	AssemblyReference assemblyMirror(long id)
 	{
 		return (AssemblyReference) objectMirror(id, JDWP.Tag.ASSEMBLY);
-	}
-
-	ThreadGroupReferenceImpl threadGroupMirror(long id)
-	{
-		return (ThreadGroupReferenceImpl) objectMirror(id, JDWP.Tag.THREAD_GROUP);
 	}
 
 	ClassLoaderReferenceImpl classLoaderMirror(long id)

@@ -265,19 +265,6 @@ public interface VirtualMachine extends Mirror {
     void resume();
 
     /**
-     * Returns each thread group which does not have a parent. For each
-     * top level thread group a {@link ThreadGroupReference} is placed in the
-     * returned list.
-     * <p>
-     * This command may be used as the first step in building a tree
-     * (or trees) of the existing thread groups.
-     *
-     * @return a list of {@link ThreadGroupReference} objects, one for each
-     * top level thread group.
-     */
-    List<ThreadGroupReference> topLevelThreadGroups();
-
-    /**
      * Returns the event queue for this virtual machine.
      * A virtual machine has only one {@link EventQueue} object, this
      * method will return the same instance each time it

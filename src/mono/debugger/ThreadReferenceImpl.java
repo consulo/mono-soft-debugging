@@ -60,9 +60,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
      * when any thread is resumed.
      */
 
-    // This is cached for the life of the thread
-    private ThreadGroupReference threadGroup;
-
     // This is cached only while this one thread is suspended.  Each time
     // the thread is resumed, we abandon the current cache object and
     // create a new intialized one.
@@ -270,22 +267,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
             // Per the javadoc, not suspended => return false
             return false;
         }
-    }
-
-    @Override
-	public ThreadGroupReference threadGroup() {
-        /*
-         * Thread group can't change, so it's cached once and for all.
-         */
-        if (threadGroup == null) {
-            try {
-                threadGroup = JDWP.ThreadReference.ThreadGroup.
-                    process(vm, this).group;
-            } catch (JDWPException exc) {
-                throw exc.toJDIException();
-            }
-        }
-        return threadGroup;
     }
 
     @Override

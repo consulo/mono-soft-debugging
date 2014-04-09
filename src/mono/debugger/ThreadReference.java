@@ -119,12 +119,6 @@ public interface ThreadReference extends ObjectReference
      */
     boolean isAtBreakpoint();
 
-    /**
-     * Returns this thread's thread group.
-     * @return a {@link ThreadGroupReference} that mirrors this thread's
-     * thread group in the target VM.
-     */
-    ThreadGroupReference threadGroup();
 
     /**
      * Returns the number of stack frames in the thread's current

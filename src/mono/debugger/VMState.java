@@ -25,10 +25,11 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 class VMState {
     private final VirtualMachineImpl vm;
@@ -48,7 +49,6 @@ class VMState {
 
     // This is cached only while the VM is suspended
     private static class Cache {
-        List<ThreadGroupReference> groups = null;  // cached Top Level ThreadGroups
         List<ThreadReference> threads = null; // cached Threads
     }
 
@@ -213,33 +213,4 @@ class VMState {
         }
         return threads;
     }
-
-
-    List<ThreadGroupReference> topLevelThreadGroups() {
-        List<ThreadGroupReference> groups = null;
-        try {
-            Cache local = getCache();
-
-            if (local != null) {
-                groups = local.groups;
-            }
-            if (groups == null) {
-                groups = Arrays.asList(
-                                (ThreadGroupReference[])JDWP.VirtualMachine.TopLevelThreadGroups.
-                                       process(vm).groups);
-                if (local != null) {
-                    local.groups = groups;
-                    if ((vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0) {
-                        vm.printTrace(
-                          "Caching top level thread groups (count = " +
-                          groups.size() + ") while VM suspended");
-                    }
-                }
-            }
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-        return groups;
-    }
-
 }
