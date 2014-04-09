@@ -12,7 +12,7 @@ import mono.debugger.VirtualMachineImpl;
  */
 public class Thread_GetFrameInfo implements Thread
 {
-	static final int COMMAND = 6;
+	static final int COMMAND = 1;
 
 	public static Thread_GetFrameInfo process(VirtualMachineImpl vm, ThreadReferenceImpl thread, int startFrame, int length) throws JDWPException
 	{

@@ -538,8 +538,8 @@ public class PacketStream
 	 */
 	public Location readLocation()
 	{
-		long methodRef = readMethodRef();
-		long codeIndex = readLong();
+		long methodRef = readId();
+		int codeIndex = readInt();
 		return new LocationImpl(vm, methodRef, codeIndex);
 	}
 

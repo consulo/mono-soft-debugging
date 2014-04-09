@@ -359,8 +359,7 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 	@Override
 	public String toString()
 	{
-		return "instance of " + referenceType().name() +
-				"(name='" + name() + "', " + "id=" + uniqueID() + ")";
+		return "(name='" + name() + "', " + "id=" + uniqueID() + ")";
 	}
 
 	@Override
