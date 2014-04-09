@@ -474,12 +474,6 @@ public class PacketStream
 		return vm.assemblyMirror(ref);
 	}
 
-	ClassLoaderReferenceImpl readClassLoaderReference()
-	{
-		long ref = readObjectRef();
-		return vm.classLoaderMirror(ref);
-	}
-
 	ClassObjectReferenceImpl readClassObjectReference()
 	{
 		long ref = readObjectRef();
@@ -631,7 +625,6 @@ public class PacketStream
 				(tag == JDWP.Tag.ARRAY) ||
 				(tag == JDWP.Tag.STRING) ||
 				(tag == JDWP.Tag.THREAD) ||
-				(tag == JDWP.Tag.CLASS_LOADER) ||
 				(tag == JDWP.Tag.CLASS_OBJECT);
 	}
 }

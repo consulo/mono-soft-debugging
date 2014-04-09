@@ -655,18 +655,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	Type findBootType(String signature) throws ClassNotLoadedException
 	{
-		List<ReferenceType> types = allClasses();
-		Iterator<ReferenceType> iter = types.iterator();
-		while(iter.hasNext())
-		{
-			ReferenceType type = iter.next();
-			if((type.classLoader() == null) && (type.signature().equals(signature)))
-			{
-				return type;
-			}
-		}
-		JNITypeParser parser = new JNITypeParser(signature);
-		throw new ClassNotLoadedException(parser.typeName(), "Type " + parser.typeName() + " not loaded");
+		throw new IllegalArgumentException(signature);
 	}
 
 	private void processBatchedDisposes()
@@ -754,9 +743,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 					break;
 				case JDWP.Tag.APP_DOMAIN:
 					object = new AppDomainReference(vm, id);
-					break;
-				case JDWP.Tag.CLASS_LOADER:
-					object = new ClassLoaderReferenceImpl(vm, id);
 					break;
 				case JDWP.Tag.CLASS_OBJECT:
 					object = new ClassObjectReferenceImpl(vm, id);
@@ -857,11 +843,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	AssemblyReference assemblyMirror(long id)
 	{
 		return (AssemblyReference) objectMirror(id, JDWP.Tag.ASSEMBLY);
-	}
-
-	ClassLoaderReferenceImpl classLoaderMirror(long id)
-	{
-		return (ClassLoaderReferenceImpl) objectMirror(id, JDWP.Tag.CLASS_LOADER);
 	}
 
 	ClassObjectReferenceImpl classObjectMirror(long id)

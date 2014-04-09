@@ -385,6 +385,6 @@ public class ClassTypeImpl extends ReferenceTypeImpl
 
     @Override
 	public String toString() {
-       return "class " + name() + " (" + loaderString() + ")";
+       return "class " + name();
     }
 }

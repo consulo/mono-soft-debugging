@@ -51,7 +51,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private SoftReference<SDE> sdeRef = null;
 
 	private boolean isClassLoaderCached = false;
-	private ClassLoaderReference classLoader = null;
+
 	private ClassObjectReference classObject = null;
 
 	private int status = 0;
@@ -210,27 +210,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public String genericSignature()
 	{
 		return genericSignature;
-	}
-
-	@Override
-	public ClassLoaderReference classLoader()
-	{
-		if(!isClassLoaderCached)
-		{
-			// Does not need synchronization, since worst-case
-			// static info is fetched twice
-			try
-			{
-				classLoader = (ClassLoaderReference) JDWP.ReferenceType.ClassLoader.
-						process(vm, this).classLoader;
-				isClassLoaderCached = true;
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return classLoader;
 	}
 
 	@Override
@@ -417,7 +396,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<Field> visibleFields()
 	{
-        /*
+		/*
          * Maintain two different collections of visible fields. The
          * list maintains a reasonable order for return. The
          * hash map provides an efficient way to lookup visible fields
@@ -1151,40 +1130,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 
 	Type findType(String signature) throws ClassNotLoadedException
 	{
-		Type type;
-		if(signature.length() == 1)
-		{
-           type = null;
-		}
-		else
-		{
-			// Must be a reference type.
-			ClassLoaderReferenceImpl loader = (ClassLoaderReferenceImpl) classLoader();
-			if((loader == null) || (isPrimitiveArray(signature)) //Work around 4450091
-					)
-			{
-				// Caller wants type of boot class field
-				type = vm.findBootType(signature);
-			}
-			else
-			{
-				// Caller wants type of non-boot class field
-				type = loader.findType(signature);
-			}
-		}
-		return type;
+		return null;
 	}
-
-	String loaderString()
-	{
-		if(classLoader() != null)
-		{
-			return "loaded by " + classLoader().toString();
-		}
-		else
-		{
-			return "no class loader";
-		}
-	}
-
 }

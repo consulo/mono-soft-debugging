@@ -26,7 +26,6 @@
 package mono.debugger;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -84,26 +83,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
      * this method is sometimes needed for proper type checking.
      */
     Type findComponentType(String signature) throws ClassNotLoadedException {
-        byte tag = (byte)signature.charAt(0);
-        if (PacketStream.isObjectTag(tag)) {
-            // It's a reference type
-            JNITypeParser parser = new JNITypeParser(componentSignature());
-            List<ReferenceType> list = vm.getTypes(parser.typeName(), true);
-            Iterator<ReferenceType> iter = list.iterator();
-            while (iter.hasNext()) {
-                ReferenceType type = iter.next();
-                ClassLoaderReference cl = type.classLoader();
-                if ((cl == null)?
-                         (classLoader() == null) :
-                         (cl.equals(classLoader()))) {
-                    return type;
-                }
-            }
-            // Component class has not yet been loaded
-            throw new ClassNotLoadedException(componentTypeName());
-        } else {
-      		return null;
-        }
+        return null;
     }
 
     @Override
@@ -186,7 +166,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
 
     @Override
 	public String toString() {
-       return "array class " + name() + " (" + loaderString() + ")";
+       return "array class " + name();
     }
 
     /*

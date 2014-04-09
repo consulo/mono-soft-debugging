@@ -107,15 +107,6 @@ public interface ReferenceType
      */
     String genericSignature();
 
-    /**
-     * Gets the classloader object which loaded the class corresponding
-     * to this type.
-     *
-     * @return a {@link ClassLoaderReference} which mirrors the classloader,
-     * or <code>null</code> if the class was loaded through the bootstrap class
-     * loader.
-     */
-    ClassLoaderReference classLoader();
 
     /**
      * Gets an identifying name for the source corresponding to the

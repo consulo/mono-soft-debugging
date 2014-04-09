@@ -537,6 +537,7 @@ public class JDWP
 			}
 		}
 
+
 		/**
 		 * Returns the JNI signature of a reference type.
 		 * JNI signature formats are described in the
@@ -603,66 +604,6 @@ public class JDWP
 			}
 		}
 
-		/**
-		 * Returns the instance of java.lang.ClassLoader which loaded
-		 * a given reference type. If the reference type was loaded by the
-		 * system class loader, the returned object ID is null.
-		 */
-		static class ClassLoader
-		{
-			static final int COMMAND = 2;
-
-			static ClassLoader process(
-					VirtualMachineImpl vm, ReferenceTypeImpl refType) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, refType);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ReferenceTypeImpl refType)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ReferenceType.ClassLoader" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 refType(ReferenceTypeImpl): " + (refType == null ? "NULL" : "ref=" + refType.ref()));
-				}
-				ps.writeClassRef(refType.ref());
-				ps.send();
-				return ps;
-			}
-
-			static ClassLoader waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new ClassLoader(vm, ps);
-			}
-
-
-			/**
-			 * The class loader for the reference type.
-			 */
-			final ClassLoaderReferenceImpl classLoader;
-
-			private ClassLoader(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ReferenceType.ClassLoader" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-				classLoader = ps.readClassLoaderReference();
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "classLoader(ClassLoaderReferenceImpl): " + (classLoader == null ? "NULL" : "ref=" + classLoader.ref()));
-				}
-			}
-		}
 
 		/**
 		 * Returns the modifiers (also known as access flags) for a reference type.
@@ -4593,126 +4534,6 @@ public class JDWP
 		}
 	}
 
-	static class ClassLoaderReference
-	{
-		static final int COMMAND_SET = 14;
-
-		private ClassLoaderReference()
-		{
-		}  // hide constructor
-
-		/**
-		 * Returns a list of all classes which this class loader has
-		 * been requested to load. This class loader is considered to be
-		 * an <i>initiating</i> class loader for each class in the returned
-		 * list. The list contains each
-		 * reference type defined by this loader and any types for which
-		 * loading was delegated by this class loader to another class loader.
-		 * <p/>
-		 * The visible class list has useful properties with respect to
-		 * the type namespace. A particular type name will occur at most
-		 * once in the list. Each field or variable declared with that
-		 * type name in a class defined by
-		 * this class loader must be resolved to that single type.
-		 * <p/>
-		 * No ordering of the returned list is guaranteed.
-		 */
-		static class VisibleClasses
-		{
-			static final int COMMAND = 1;
-
-			static VisibleClasses process(
-					VirtualMachineImpl vm, ClassLoaderReferenceImpl classLoaderObject) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, classLoaderObject);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ClassLoaderReferenceImpl classLoaderObject)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ClassLoaderReference.VisibleClasses" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 classLoaderObject(ClassLoaderReferenceImpl): " + (classLoaderObject == null ? "NULL"
-							: "ref=" + classLoaderObject.ref()));
-				}
-				ps.writeObjectRef(classLoaderObject.ref());
-				ps.send();
-				return ps;
-			}
-
-			static VisibleClasses waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new VisibleClasses(vm, ps);
-			}
-
-			static class ClassInfo
-			{
-
-				/**
-				 * <a href="#JDWP_TypeTag">Kind</a>
-				 * of following reference type.
-				 */
-				final byte refTypeTag;
-
-				/**
-				 * A class visible to this class loader.
-				 */
-				final long typeID;
-
-				private ClassInfo(VirtualMachineImpl vm, PacketStream ps)
-				{
-					refTypeTag = ps.readByte();
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "refTypeTag(byte): " + refTypeTag);
-					}
-					typeID = ps.readClassRef();
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "typeID(long): " + "ref=" + typeID);
-					}
-				}
-			}
-
-
-			/**
-			 * The number of visible classes.
-			 */
-			final ClassInfo[] classes;
-
-			private VisibleClasses(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ClassLoaderReference.VisibleClasses" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "classes(ClassInfo[]): " + "");
-				}
-				int classesCount = ps.readInt();
-				classes = new ClassInfo[classesCount];
-				for(int i = 0; i < classesCount; i++)
-				{
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "classes[i](ClassInfo): " + "");
-					}
-					classes[i] = new ClassInfo(vm, ps);
-				}
-			}
-		}
-	}
-
 	static class EventRequest
 	{
 		static final int COMMAND_SET = 15;
@@ -7015,7 +6836,6 @@ public class JDWP
 		static final int THREAD = 116;
 
 
-		static final int CLASS_LOADER = 108;
 		static final int CLASS_OBJECT = 99;
 
 		// dummy
