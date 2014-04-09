@@ -334,67 +334,6 @@ public interface ObjectReference extends Value
      */
     long uniqueID();
 
-    /**
-     * Returns a List containing a {@link ThreadReference} for
-     * each thread currently waiting for this object's monitor.
-     * See {@link ThreadReference#currentContendedMonitor} for
-     * information about when a thread is considered to be waiting
-     * for a monitor.
-     * <p>
-     * Not all target VMs support this operation. See
-     * VirtualMachine#canGetMonitorInfo to determine if the
-     * operation is supported.
-     *
-     * @return a List of {@link ThreadReference} objects. The list
-     * has zero length if no threads are waiting for the monitor.
-     * @throws java.lang.UnsupportedOperationException if the
-     * target VM does not support this operation.
-     * @throws IncompatibleThreadStateException if any
-     * waiting thread is not suspended
-     * in the target VM
-     */
-    List<ThreadReference> waitingThreads()
-        throws IncompatibleThreadStateException;
-
-    /**
-     * Returns an {@link ThreadReference} for the thread, if any,
-     * which currently owns this object's monitor.
-     * See {@link ThreadReference#ownedMonitors} for a definition
-     * of ownership.
-     * <p>
-     * Not all target VMs support this operation. See
-     * VirtualMachine#canGetMonitorInfo to determine if the
-     * operation is supported.
-     *
-     * @return the {@link ThreadReference} which currently owns the
-     * monitor, or null if it is unowned.
-     *
-     * @throws java.lang.UnsupportedOperationException if the
-     * target VM does not support this operation.
-     * @throws IncompatibleThreadStateException if the owning thread is
-     * not suspended in the target VM
-     */
-    ThreadReference owningThread() throws IncompatibleThreadStateException;
-
-    /**
-     * Returns the number times this object's monitor has been
-     * entered by the current owning thread.
-     * See {@link ThreadReference#ownedMonitors} for a definition
-     * of ownership.
-     * <p>
-     * Not all target VMs support this operation. See
-     * VirtualMachine#canGetMonitorInfo to determine if the
-     * operation is supported.
-     *
-     * @see #owningThread
-     * @return the integer count of the number of entries.
-     *
-     * @throws java.lang.UnsupportedOperationException if the
-     * target VM does not support this operation.
-     * @throws IncompatibleThreadStateException if the owning thread is
-     * not suspended in the target VM
-     */
-    int entryCount() throws IncompatibleThreadStateException;
 
     /**
      * Returns objects that directly reference this object.

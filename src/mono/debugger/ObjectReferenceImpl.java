@@ -38,62 +38,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	private int gcDisableCount = 0;
 	boolean addedListener = false;
 
-	// This is cached only while the VM is suspended
-	protected static class Cache
-	{
-		JDWP.ObjectReference.MonitorInfo monitorInfo = null;
-	}
-
-	private static final Cache noInitCache = new Cache();
-	private static final Cache markerCache = new Cache();
-	private Cache cache = noInitCache;
-
-	private void disableCache()
-	{
-		synchronized(vm.state())
-		{
-			cache = null;
-		}
-	}
-
-	private void enableCache()
-	{
-		synchronized(vm.state())
-		{
-			cache = markerCache;
-		}
-	}
-
-	// Override in subclasses
-	protected Cache newCache()
-	{
-		return new Cache();
-	}
-
-	protected Cache getCache()
-	{
-		synchronized(vm.state())
-		{
-			if(cache == noInitCache)
-			{
-				if(vm.state().isSuspended())
-				{
-					// Set cache now, otherwise newly created objects are
-					// not cached until resuspend
-					enableCache();
-				}
-				else
-				{
-					disableCache();
-				}
-			}
-			if(cache == markerCache)
-			{
-				cache = newCache();
-			}
-			return cache;
-		}
-	}
 
 	// Return the ClassTypeImpl upon which to invoke a method.
 	// By default it is our very own referenceType() but subclasses
@@ -121,7 +65,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	@Override
 	public boolean vmSuspended(VMAction action)
 	{
-		enableCache();
 		return true;
 	}
 
@@ -131,11 +74,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		// make sure that cache and listener management are synchronized
 		synchronized(vm.state())
 		{
-			if(cache != null && (vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0)
-			{
-				vm.printTrace("Clearing temporary cache for " + description());
-			}
-			disableCache();
 			if(addedListener)
 			{
 				/*
@@ -535,84 +473,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	public long uniqueID()
 	{
 		return ref();
-	}
-
-	JDWP.ObjectReference.MonitorInfo jdwpMonitorInfo() throws IncompatibleThreadStateException
-	{
-		JDWP.ObjectReference.MonitorInfo info = null;
-		try
-		{
-			Cache local;
-
-			// getCache() and addlistener() must be synchronized
-			// so that no events are lost.
-			synchronized(vm.state())
-			{
-				local = getCache();
-
-				if(local != null)
-				{
-					info = local.monitorInfo;
-
-					// Check if there will be something to cache
-					// and there is not already a listener
-					if(info == null && !vm.state().hasListener(this))
-					{
-                        /* For other, less numerous objects, this is done
-                         * in the constructor. Since there can be many
-                         * ObjectReferences, the VM listener is installed
-                         * and removed as needed.
-                         * Listener must be installed before process()
-                         */
-						vm.state().addListener(this);
-						addedListener = true;
-					}
-				}
-			}
-			if(info == null)
-			{
-				info = JDWP.ObjectReference.MonitorInfo.process(vm, this);
-				if(local != null)
-				{
-					local.monitorInfo = info;
-					if((vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0)
-					{
-						vm.printTrace("ObjectReference " + uniqueID() +
-								" temporarily caching monitor info");
-					}
-				}
-			}
-		}
-		catch(JDWPException exc)
-		{
-			if(exc.errorCode() == JDWP.Error.THREAD_NOT_SUSPENDED)
-			{
-				throw new IncompatibleThreadStateException();
-			}
-			else
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return info;
-	}
-
-	@Override
-	public List<ThreadReference> waitingThreads() throws IncompatibleThreadStateException
-	{
-		return Arrays.asList((ThreadReference[]) jdwpMonitorInfo().waiters);
-	}
-
-	@Override
-	public ThreadReference owningThread() throws IncompatibleThreadStateException
-	{
-		return jdwpMonitorInfo().owner;
-	}
-
-	@Override
-	public int entryCount() throws IncompatibleThreadStateException
-	{
-		return jdwpMonitorInfo().entryCount;
 	}
 
 

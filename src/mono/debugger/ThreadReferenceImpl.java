@@ -102,18 +102,8 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 		localCache = new LocalCache();
 	}
 
-	// This is cached only while all threads in the VM are suspended
-	// Yes, someone could change the name of a thread while it is suspended.
-	private static class Cache extends ObjectReferenceImpl.Cache
-	{
-		String name = null;
-	}
 
-	@Override
-	protected ObjectReferenceImpl.Cache newCache()
-	{
-		return new Cache();
-	}
+
 
 	// Listeners - synchronized on vm.state()
 	private List<WeakReference<ThreadListener>> listeners = new ArrayList<WeakReference<ThreadListener>>();
@@ -168,29 +158,14 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 	@Override
 	public String name()
 	{
-		String name = null;
 		try
 		{
-			Cache local = (Cache) getCache();
-
-			if(local != null)
-			{
-				name = local.name;
-			}
-			if(name == null)
-			{
-				name = JDWP.ThreadReference.Name.process(vm, this).threadName;
-				if(local != null)
-				{
-					local.name = name;
-				}
-			}
+			return JDWP.ThreadReference.Name.process(vm, this).threadName;
 		}
 		catch(JDWPException exc)
 		{
 			throw exc.toJDIException();
 		}
-		return name;
 	}
 
 	/*
