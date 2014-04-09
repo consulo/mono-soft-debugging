@@ -101,6 +101,9 @@ public interface VirtualMachine extends Mirror
 	 */
 	int TRACE_ALL = 0x00ffffff;
 
+	int MAJOR_VERSION = 2;
+	int MINOR_VERSION = 29;
+
 	/**
 	 * Traces the activities performed by the mono.debugger implementation.
 	 * All trace information is output to System.err. The given trace

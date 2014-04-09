@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
 import mono.debugger.protocol.AppDomain_GetRootDomain;
+import mono.debugger.protocol.VirtualMachine_SetProtocolVersion;
 import mono.debugger.request.EventRequestManager;
 
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
@@ -89,6 +90,56 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	private boolean initComplete = false;
 	private boolean shutdown = false;
 
+	VirtualMachineImpl(VirtualMachineManager manager, Connection connection, Process process, int sequenceNumber)
+	{
+		super(null);  // Can't use super(this)
+		vm = this;
+
+		this.vmManager = (VirtualMachineManagerImpl) manager;
+		this.process = process;
+		this.sequenceNumber = sequenceNumber;
+
+        /* Create ThreadGroup to be used by all threads servicing
+         * this VM.
+         */
+		threadGroupForJDI = new ThreadGroup(vmManager.mainGroupForJDI(), "Mono Soft Debugger [" +this.hashCode() + "]");
+
+        /*
+         * Set up a thread to communicate with the target VM over
+         * the specified transport.
+         */
+		target = new TargetVM(this, connection);
+
+        /*
+         * Set up a thread to handle events processed internally
+         * the JDI implementation.
+         */
+		EventQueueImpl internalEventQueue = new EventQueueImpl(this, target);
+		new InternalEventHandler(this, internalEventQueue);
+        /*
+         * Initialize client access to event setting and handling
+         */
+		eventQueue = new EventQueueImpl(this, target);
+		eventRequestManager = new EventRequestManagerImpl(this);
+
+		target.start();
+
+        /*
+         * Tell other threads, notably TargetVM, that initialization
+         * is complete.
+         */
+		notifyInitCompletion();
+
+		try
+		{
+			VirtualMachine_SetProtocolVersion.process(vm, MAJOR_VERSION, MINOR_VERSION);
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
 	private void notifyInitCompletion()
 	{
 		synchronized(initMonitor)
@@ -133,47 +184,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
          */
 		state.thaw(action.thread());
 		return true;
-	}
-
-	VirtualMachineImpl(VirtualMachineManager manager, Connection connection, Process process, int sequenceNumber)
-	{
-		super(null);  // Can't use super(this)
-		vm = this;
-
-		this.vmManager = (VirtualMachineManagerImpl) manager;
-		this.process = process;
-		this.sequenceNumber = sequenceNumber;
-
-        /* Create ThreadGroup to be used by all threads servicing
-         * this VM.
-         */
-		threadGroupForJDI = new ThreadGroup(vmManager.mainGroupForJDI(), "Mono Soft Debugger [" +this.hashCode() + "]");
-
-        /*
-         * Set up a thread to communicate with the target VM over
-         * the specified transport.
-         */
-		target = new TargetVM(this, connection);
-
-        /*
-         * Set up a thread to handle events processed internally
-         * the JDI implementation.
-         */
-		EventQueueImpl internalEventQueue = new EventQueueImpl(this, target);
-		new InternalEventHandler(this, internalEventQueue);
-        /*
-         * Initialize client access to event setting and handling
-         */
-		eventQueue = new EventQueueImpl(this, target);
-		eventRequestManager = new EventRequestManagerImpl(this);
-
-		target.start();
-
-        /*
-         * Tell other threads, notably TargetVM, that initialization
-         * is complete.
-         */
-		notifyInitCompletion();
 	}
 
 	void validateVM()

@@ -38,7 +38,7 @@ public class Main
 		for(ThreadReference threadReference : accept.allThreads())
 		{
 			List<StackFrame> frames = threadReference.frames();
-			System.out.println("thread: " + threadReference.name() + " frames: " + frames);
+			System.out.println("thread: '" + threadReference.name() + "' frames: " + frames);
 		}
 
 		Thread.sleep(50000L);
