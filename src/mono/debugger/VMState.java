@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 class VMState {
     private final VirtualMachineImpl vm;
 
@@ -188,6 +190,7 @@ class VMState {
         }
     }
 
+	@NotNull
     List<ThreadReference> allThreads() {
         List<ThreadReference> threads = null;
         try {

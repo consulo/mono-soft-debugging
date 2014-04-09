@@ -27,6 +27,7 @@ package mono.debugger;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.event.EventQueue;
 import mono.debugger.request.EventRequestManager;
 
@@ -114,6 +115,7 @@ public interface VirtualMachine extends Mirror
 	 */
 	void setDebugTraceMode(int traceFlags);
 
+	@NotNull
 	AppDomainMirror rootAppDomain();
 
 	/**
@@ -135,6 +137,7 @@ public interface VirtualMachine extends Mirror
 	 * @return a list of {@link ReferenceType} objects, each
 	 *         mirroring a type in the target VM with the given name.
 	 */
+	@NotNull
 	List<ReferenceType> findTypes(String className, boolean ignoreCase);
 
 	/**
@@ -153,6 +156,7 @@ public interface VirtualMachine extends Mirror
 	 * @return a list of {@link ThreadReference} objects, one for each
 	 *         running thread in the mirrored VM.
 	 */
+	@NotNull
 	List<ThreadReference> allThreads();
 
 	/**
@@ -188,6 +192,7 @@ public interface VirtualMachine extends Mirror
 	 * @return the {@link EventQueue} for this virtual machine.
 	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 */
+	@NotNull
 	EventQueue eventQueue();
 
 	/**
@@ -201,6 +206,7 @@ public interface VirtualMachine extends Mirror
 	 * @return the {@link EventRequestManager} for this virtual machine.
 	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 */
+	@NotNull
 	EventRequestManager eventRequestManager();
 
 	/**
@@ -214,6 +220,7 @@ public interface VirtualMachine extends Mirror
 	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only
 	 *                                     -see {@link VirtualMachine#canBeModified()}.
 	 */
+	@NotNull
 	Process process();
 
 	/**
@@ -268,6 +275,7 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @return the target VM version.
 	 */
+	@NotNull
 	String version();
 
 	/**
@@ -276,5 +284,6 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @return the target VM name.
 	 */
+	@NotNull
 	String name();
 }

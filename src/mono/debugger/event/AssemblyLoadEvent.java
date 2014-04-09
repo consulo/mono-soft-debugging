@@ -1,5 +1,6 @@
 package mono.debugger.event;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.AssemblyMirror;
 import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
@@ -26,6 +27,7 @@ public class AssemblyLoadEvent extends EventSetImpl.ThreadedEventImpl implements
 		return "AssemblyLoadEvent";
 	}
 
+	@NotNull
 	public AssemblyMirror getAssembly()
 	{
 		return myAssembly;

@@ -31,11 +31,10 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
 import mono.debugger.protocol.AppDomain_GetRootDomain;
@@ -65,7 +64,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	// tested unsynchronized (since once true, it stays true), but must
 	// be set synchronously
 	private Map<Long, ReferenceType> typesByID;
-	private TreeSet<ReferenceType> typesBySignature;
+
 
 	// ObjectReference cache
 	// "objectsByID" protected by "synchronized(this)".
@@ -86,7 +85,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	// coordinates state changes and corresponding listener notifications
 	private VMState state = new VMState(this);
 
-	private Object initMonitor = new Object();
+	private final Object initMonitor = new Object();
 	private boolean initComplete = false;
 	private boolean shutdown = false;
 
@@ -211,6 +210,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return System.identityHashCode(this);
 	}
 
+	@NotNull
 	@Override
 	public AppDomainMirror rootAppDomain()
 	{
@@ -228,6 +228,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return myRootAppDomain;
 	}
 
+	@NotNull
 	@Override
 	public List<ReferenceType> findTypes(String className, boolean ignoreCase)
 	{
@@ -238,6 +239,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return Collections.unmodifiableList(list);
 	}
 
+	@NotNull
 	@Override
 	public List<ThreadReference> allThreads()
 	{
@@ -328,6 +330,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		}
 	}
 
+	@NotNull
 	@Override
 	public EventQueue eventQueue()
 	{
@@ -339,6 +342,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return eventQueue;
 	}
 
+	@NotNull
 	@Override
 	public EventRequestManager eventRequestManager()
 	{
@@ -383,6 +387,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		target.stopListening();
 	}
 
+	@NotNull
 	@Override
 	public Process process()
 	{
@@ -413,6 +418,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return (version.jdwpMajor > major) || ((version.jdwpMajor == major && version.jdwpMinor >= minor));
 	}
 
+	@NotNull
 	@Override
 	public String version()
 	{
@@ -420,6 +426,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return versionInfo().jdwpMajor + "." + versionInfo().jdwpMinor;
 	}
 
+	@NotNull
 	@Override
 	public String name()
 	{
@@ -470,7 +477,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		}
 
 		typesByID.put(new Long(id), type);
-		typesBySignature.add(type);
 
 		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
 		{
@@ -494,33 +500,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		}
 	}
 
-	private synchronized List<ReferenceType> findReferenceTypes(String signature)
-	{
-		if(typesByID == null)
-		{
-			return new ArrayList<ReferenceType>(0);
-		}
-		Iterator<ReferenceType> iter = typesBySignature.iterator();
-		List<ReferenceType> list = new ArrayList<ReferenceType>();
-		while(iter.hasNext())
-		{
-			ReferenceTypeImpl type = (ReferenceTypeImpl) iter.next();
-			int comp = signature.compareTo(type.signature());
-			if(comp == 0)
-			{
-				list.add(type);
-/* fix for 4359077 , don't break out. list is no longer sorted
-        in the order we think
- */
-			}
-		}
-		return list;
-	}
-
 	private void initReferenceTypes()
 	{
 		typesByID = new HashMap<Long, ReferenceType>(300);
-		typesBySignature = new TreeSet<ReferenceType>();
 	}
 
 	ReferenceTypeImpl referenceType(long ref)
@@ -605,16 +587,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 			}
 		}
 		return list;
-	}
-
-	private void retrieveAllClasses()
-	{
-		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
-		{
-			vm.printTrace("Retrieving all ReferenceTypes");
-		}
-
-		//FIXME [VISTALL] GET_ALL_TYPES is not supported by mono
 	}
 
 	void sendToTarget(Packet packet)

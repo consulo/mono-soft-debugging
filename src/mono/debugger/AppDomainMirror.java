@@ -1,5 +1,7 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import mono.debugger.protocol.AppDomain_GetAssemblies;
 import mono.debugger.protocol.AppDomain_GetEntryAssembly;
 import mono.debugger.protocol.AppDomain_GetFriendlyName;
@@ -13,11 +15,12 @@ public class AppDomainMirror extends MirrorWithIdAndName
 	private AssemblyMirror myEntryAssemblyMirror;
 	private AssemblyMirror[] myAssemblyMirrors;
 
-	public AppDomainMirror(VirtualMachine aVm, long aRef)
+	public AppDomainMirror(@NotNull VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
 	}
 
+	@Nullable
 	public AssemblyMirror entryAssembly()
 	{
 		if(myEntryAssemblyMirror == null)
@@ -34,6 +37,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		return myEntryAssemblyMirror;
 	}
 
+	@NotNull
 	public AssemblyMirror[] assemblies()
 	{
 		if(myAssemblyMirrors == null)
@@ -50,6 +54,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		return myAssemblyMirrors;
 	}
 
+	@NotNull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{

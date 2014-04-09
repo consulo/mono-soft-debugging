@@ -1,5 +1,7 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author VISTALL
  * @since 09.04.14
@@ -9,12 +11,13 @@ public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWi
 	private final long myId;
 	private String myName;
 
-	public MirrorWithIdAndName(VirtualMachine aVm, long id)
+	public MirrorWithIdAndName(@NotNull VirtualMachine aVm, long id)
 	{
 		super(aVm);
 		myId = id;
 	}
 
+	@NotNull
 	public String name()
 	{
 		if(myName == null)
@@ -31,7 +34,7 @@ public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWi
 		return myName;
 	}
 
-
+	@NotNull
 	protected abstract String nameImpl() throws JDWPException;
 
 	@Override

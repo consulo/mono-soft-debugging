@@ -1,5 +1,6 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.Assembly_GetLocation;
 import mono.debugger.protocol.Assembly_GetName;
 
@@ -11,17 +12,19 @@ public class AssemblyMirror extends MirrorWithIdAndName
 {
 	private String myLocation;
 
-	public AssemblyMirror(VirtualMachine aVm, long aRef)
+	public AssemblyMirror(@NotNull VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
 	}
 
+	@NotNull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{
 		return Assembly_GetName.process(vm, this).name;
 	}
 
+	@NotNull
 	public String location()
 	{
 		if(myLocation == null)
