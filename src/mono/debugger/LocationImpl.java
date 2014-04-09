@@ -34,8 +34,7 @@ public class LocationImpl extends MirrorImpl implements Location
 	private LineInfo baseLineInfo = null;
 	private LineInfo otherLineInfo = null;
 
-	LocationImpl(
-			VirtualMachine vm, Method method, long codeIndex)
+	public LocationImpl(VirtualMachine vm, Method method, long codeIndex)
 	{
 		super(vm);
 
@@ -49,8 +48,7 @@ public class LocationImpl extends MirrorImpl implements Location
 	 * can be a performance savings if the method mirror does not yet
 	 * exist.
 	 */
-	LocationImpl(
-			VirtualMachine vm, ReferenceTypeImpl declaringType, long methodRef, long codeIndex)
+	public LocationImpl(VirtualMachine vm, ReferenceTypeImpl declaringType, long methodRef, long codeIndex)
 	{
 		super(vm);
 

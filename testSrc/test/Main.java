@@ -2,9 +2,8 @@ package test;
 
 import java.util.Map;
 
-import mono.debugger.AppDomainReference;
-import mono.debugger.AssemblyReference;
 import mono.debugger.SocketListeningConnector;
+import mono.debugger.ThreadReference;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
 
@@ -25,14 +24,11 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		AppDomainReference rootAppDomain = accept.rootAppDomain();
-
-		System.out.println("root domain: " + rootAppDomain.name());
-		System.out.println("entry assembly: " + rootAppDomain.entryAssembly());
-		for(AssemblyReference assemblyReference : rootAppDomain.assemblies())
+		for(ThreadReference threadReference : accept.allThreads())
 		{
-			System.out.println(" assembly: " + assemblyReference.name() + " / location: " + assemblyReference.location());
+			System.out.println("thread name: "  + threadReference.name());
 		}
+
 		//accept.resume();
 	   /*
 		System.out.println(accept.description());
