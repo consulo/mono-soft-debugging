@@ -40,13 +40,13 @@ public class StackFrameImpl extends MirrorImpl
      */
     private boolean isValid = true;
 
-    private final ThreadMirrorImpl thread;
+    private final ThreadMirror thread;
     private final long id;
     private final Location location;
     private Map<String, LocalVariable> visibleVariables =  null;
     private ObjectReference thisObject = null;
 
-    StackFrameImpl(VirtualMachine vm, ThreadMirrorImpl thread,
+    StackFrameImpl(VirtualMachine vm, ThreadMirror thread,
                    long id, Location location) {
         super(vm);
         this.thread = thread;

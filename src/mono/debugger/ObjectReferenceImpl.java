@@ -321,7 +321,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	}
 
 	PacketStream sendInvokeCommand(
-			final ThreadMirrorImpl thread, final ClassTypeImpl refType, final MethodImpl method, final ValueImpl[] args, final int options)
+			final ThreadMirror thread, final ClassTypeImpl refType, final MethodImpl method, final ValueImpl[] args, final int options)
 	{
 		CommandSender sender = new CommandSender()
 		{
@@ -356,7 +356,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		validateMirrorsOrNulls(origArguments);
 
 		MethodImpl method = (MethodImpl) methodIntf;
-		ThreadMirrorImpl thread = (ThreadMirrorImpl) threadIntf;
+		ThreadMirror thread = (ThreadMirror) threadIntf;
 
 		if(method.isStatic())
 		{

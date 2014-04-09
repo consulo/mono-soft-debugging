@@ -2,7 +2,7 @@ package mono.debugger.protocol;
 
 import mono.debugger.JDWPException;
 import mono.debugger.PacketStream;
-import mono.debugger.ThreadMirrorImpl;
+import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachineImpl;
 
 /**
@@ -13,14 +13,14 @@ public class Thread_GetName implements Thread
 {
 	static final int COMMAND = 2;
 
-	public static Thread_GetName process(VirtualMachineImpl vm, ThreadMirrorImpl thread) throws JDWPException
+	public static Thread_GetName process(VirtualMachineImpl vm, ThreadMirror thread) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, thread);
 		return waitForReply(vm, ps);
 	}
 
 	static PacketStream enqueueCommand(
-			VirtualMachineImpl vm, ThreadMirrorImpl thread)
+			VirtualMachineImpl vm, ThreadMirror thread)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -30,7 +30,7 @@ public class Thread_GetName implements Thread
 		}
 		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 		{
-			ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + thread.ref());
+			ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + thread.ref());
 		}
 		ps.writeId(thread);
 		ps.send();

@@ -451,10 +451,10 @@ public class PacketStream
 		return vm.arrayMirror(ref);
 	}
 
-	ThreadMirrorImpl readThreadReference()
+	ThreadMirror readThreadReference()
 	{
 		long ref = readObjectRef();
-		return new ThreadMirrorImpl(vm, ref); //FIXME [VISTALL] test variable
+		return new ThreadMirror(vm, ref); //FIXME [VISTALL] test variable
 	}
 
 	public AssemblyMirror readAssemblyReference()

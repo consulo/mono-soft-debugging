@@ -3,7 +3,7 @@ package mono.debugger.protocol;
 import mono.debugger.JDWPException;
 import mono.debugger.Location;
 import mono.debugger.PacketStream;
-import mono.debugger.ThreadMirrorImpl;
+import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachineImpl;
 
 /**
@@ -14,13 +14,13 @@ public class Thread_GetFrameInfo implements Thread
 {
 	static final int COMMAND = 1;
 
-	public static Thread_GetFrameInfo process(VirtualMachineImpl vm, ThreadMirrorImpl thread, int startFrame, int length) throws JDWPException
+	public static Thread_GetFrameInfo process(VirtualMachineImpl vm, ThreadMirror thread, int startFrame, int length) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, thread, startFrame, length);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirrorImpl thread, int startFrame, int length)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror thread, int startFrame, int length)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -30,7 +30,7 @@ public class Thread_GetFrameInfo implements Thread
 		}
 		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 		{
-			ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+			ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 		}
 		ps.writeId(thread);
 		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)

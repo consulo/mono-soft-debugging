@@ -38,7 +38,12 @@ public class Main
 		for(ThreadMirror threadMirror : accept.allThreads())
 		{
 			List<StackFrame> frames = threadMirror.frames();
-			System.out.println("thread: '" + threadMirror.name() + "' frames: " + frames);
+			System.out.println("thread: '" + threadMirror.name());
+			System.out.println("frames: ");
+			for(StackFrame frame : frames)
+			{
+				System.out.println(" -- " + frame);
+			}
 		}
 
 		accept.dispose();

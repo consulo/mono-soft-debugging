@@ -146,7 +146,7 @@ public class JDWP
 			/**
 			 * Number of threads that follow.
 			 */
-			final ThreadMirrorImpl[] threads;
+			final ThreadMirror[] threads;
 
 			private AllThreads(VirtualMachineImpl vm, PacketStream ps)
 			{
@@ -157,16 +157,16 @@ public class JDWP
 				}
 				if(vm.traceReceives)
 				{
-					vm.printReceiveTrace(4, "threads(ThreadReferenceImpl[]): " + "");
+					vm.printReceiveTrace(4, "threads(ThreadMirror[]): " + "");
 				}
 				int threadsCount = ps.readInt();
-				threads = new ThreadMirrorImpl[threadsCount];
+				threads = new ThreadMirror[threadsCount];
 				for(int i = 0; i < threadsCount; i++)
 				{
 					threads[i] = ps.readThreadReference();
 					if(vm.traceReceives)
 					{
-						vm.printReceiveTrace(5, "threads[i](ThreadReferenceImpl): " + (threads[i] == null ? "NULL" : "ref=" + threads[i].ref()));
+						vm.printReceiveTrace(5, "threads[i](ThreadMirror): " + (threads[i] == null ? "NULL" : "ref=" + threads[i].ref()));
 					}
 				}
 			}
@@ -2141,7 +2141,7 @@ public class JDWP
 			static InvokeMethod process(
 					VirtualMachineImpl vm,
 					ClassTypeImpl clazz,
-					ThreadMirrorImpl thread,
+					ThreadMirror thread,
 					long methodID,
 					ValueImpl[] arguments,
 					int options) throws JDWPException
@@ -2151,7 +2151,7 @@ public class JDWP
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ClassTypeImpl clazz, ThreadMirrorImpl thread, long methodID, ValueImpl[] arguments, int options)
+					VirtualMachineImpl vm, ClassTypeImpl clazz, ThreadMirror thread, long methodID, ValueImpl[] arguments, int options)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -2166,7 +2166,7 @@ public class JDWP
 				ps.writeClassRef(clazz.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -2294,7 +2294,7 @@ public class JDWP
 			static NewInstance process(
 					VirtualMachineImpl vm,
 					ClassTypeImpl clazz,
-					ThreadMirrorImpl thread,
+					ThreadMirror thread,
 					long methodID,
 					ValueImpl[] arguments,
 					int options) throws JDWPException
@@ -2304,7 +2304,7 @@ public class JDWP
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ClassTypeImpl clazz, ThreadMirrorImpl thread, long methodID, ValueImpl[] arguments, int options)
+					VirtualMachineImpl vm, ClassTypeImpl clazz, ThreadMirror thread, long methodID, ValueImpl[] arguments, int options)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -2319,7 +2319,7 @@ public class JDWP
 				ps.writeClassRef(clazz.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -3433,7 +3433,7 @@ public class JDWP
 			static InvokeMethod process(
 					VirtualMachineImpl vm,
 					ObjectReferenceImpl object,
-					ThreadMirrorImpl thread,
+					ThreadMirror thread,
 					ClassTypeImpl clazz,
 					long methodID,
 					ValueImpl[] arguments,
@@ -3446,7 +3446,7 @@ public class JDWP
 			static PacketStream enqueueCommand(
 					VirtualMachineImpl vm,
 					ObjectReferenceImpl object,
-					ThreadMirrorImpl thread,
+					ThreadMirror thread,
 					ClassTypeImpl clazz,
 					long methodID,
 					ValueImpl[] arguments,
@@ -3465,7 +3465,7 @@ public class JDWP
 				ps.writeObjectRef(object.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -4219,7 +4219,7 @@ public class JDWP
 				{
 					static final byte ALT_ID = 3;
 
-					static Modifier create(ThreadMirrorImpl thread)
+					static Modifier create(ThreadMirror thread)
 					{
 						return new Modifier(ALT_ID, new ThreadOnly(thread));
 					}
@@ -4227,9 +4227,9 @@ public class JDWP
 					/**
 					 * Required thread
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
-					ThreadOnly(ThreadMirrorImpl thread)
+					ThreadOnly(ThreadMirror thread)
 					{
 						this.thread = thread;
 					}
@@ -4239,7 +4239,7 @@ public class JDWP
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
-							ps.vm.printTrace("Sending:                         thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" +
+							ps.vm.printTrace("Sending:                         thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" +
 									thread.ref()));
 						}
 						ps.writeObjectRef(thread.ref());
@@ -4549,7 +4549,7 @@ public class JDWP
 				{
 					static final byte ALT_ID = 10;
 
-					static Modifier create(ThreadMirrorImpl thread, int size, int depth)
+					static Modifier create(ThreadMirror thread, int size, int depth)
 					{
 						return new Modifier(ALT_ID, new Step(thread, size, depth));
 					}
@@ -4557,7 +4557,7 @@ public class JDWP
 					/**
 					 * Thread in which to step
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * size of each step.
@@ -4571,7 +4571,7 @@ public class JDWP
 					 */
 					final int depth;
 
-					Step(ThreadMirrorImpl thread, int size, int depth)
+					Step(ThreadMirror thread, int size, int depth)
 					{
 						this.thread = thread;
 						this.size = size;
@@ -4583,7 +4583,7 @@ public class JDWP
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
-							ps.vm.printTrace("Sending:                         thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" +
+							ps.vm.printTrace("Sending:                         thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" +
 									thread.ref()));
 						}
 						ps.writeObjectRef(thread.ref());
@@ -4916,14 +4916,14 @@ public class JDWP
 			}
 
 			static GetValues process(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame, SlotInfo[] slots) throws JDWPException
+					VirtualMachineImpl vm, ThreadMirror thread, long frame, SlotInfo[] slots) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, thread, frame, slots);
 				return waitForReply(vm, ps);
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame, SlotInfo[] slots)
+					VirtualMachineImpl vm, ThreadMirror thread, long frame, SlotInfo[] slots)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -4933,7 +4933,7 @@ public class JDWP
 				}
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -5048,14 +5048,14 @@ public class JDWP
 			}
 
 			static SetValues process(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame, SlotInfo[] slotValues) throws JDWPException
+					VirtualMachineImpl vm, ThreadMirror thread, long frame, SlotInfo[] slotValues) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, thread, frame, slotValues);
 				return waitForReply(vm, ps);
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame, SlotInfo[] slotValues)
+					VirtualMachineImpl vm, ThreadMirror thread, long frame, SlotInfo[] slotValues)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -5065,7 +5065,7 @@ public class JDWP
 				}
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -5117,14 +5117,14 @@ public class JDWP
 			static final int COMMAND = 3;
 
 			static ThisObject process(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame) throws JDWPException
+					VirtualMachineImpl vm, ThreadMirror thread, long frame) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, thread, frame);
 				return waitForReply(vm, ps);
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame)
+					VirtualMachineImpl vm, ThreadMirror thread, long frame)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -5134,7 +5134,7 @@ public class JDWP
 				}
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -5190,14 +5190,14 @@ public class JDWP
 			static final int COMMAND = 4;
 
 			static PopFrames process(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame) throws JDWPException
+					VirtualMachineImpl vm, ThreadMirror thread, long frame) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, thread, frame);
 				return waitForReply(vm, ps);
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadMirrorImpl thread, long frame)
+					VirtualMachineImpl vm, ThreadMirror thread, long frame)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -5207,7 +5207,7 @@ public class JDWP
 				}
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 				}
 				ps.writeObjectRef(thread.ref());
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -5508,7 +5508,7 @@ public class JDWP
 					/**
 					 * Initial thread
 					 */
-					public final ThreadMirrorImpl thread;
+					public final ThreadMirror thread;
 
 					VMStart(VirtualMachineImpl vm, PacketStream ps)
 					{
@@ -5520,7 +5520,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 					}
 				}
@@ -5547,7 +5547,7 @@ public class JDWP
 					/**
 					 * Stepped thread
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Location stepped to
@@ -5564,7 +5564,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
@@ -5596,7 +5596,7 @@ public class JDWP
 					/**
 					 * Thread which hit breakpoint
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Location hit
@@ -5613,7 +5613,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
@@ -5651,7 +5651,7 @@ public class JDWP
 					/**
 					 * Thread which entered method
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * The initial executable location in the method.
@@ -5668,7 +5668,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
@@ -5704,7 +5704,7 @@ public class JDWP
 					/**
 					 * Thread which exited method
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Location of exit
@@ -5721,7 +5721,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
@@ -5757,7 +5757,7 @@ public class JDWP
 					/**
 					 * Thread which exited method
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Location of exit
@@ -5779,7 +5779,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
@@ -5822,7 +5822,7 @@ public class JDWP
 					/**
 					 * Thread with exception
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Location of exception throw
@@ -5878,7 +5878,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
@@ -5936,7 +5936,7 @@ public class JDWP
 					/**
 					 * Started thread
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					ThreadStart(VirtualMachineImpl vm, PacketStream ps)
 					{
@@ -5948,7 +5948,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 					}
 				}
@@ -5982,7 +5982,7 @@ public class JDWP
 					/**
 					 * Ending thread
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					ThreadDeath(VirtualMachineImpl vm, PacketStream ps)
 					{
@@ -5994,7 +5994,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 					}
 				}
@@ -6014,7 +6014,7 @@ public class JDWP
 					 */
 					public final int requestID;
 
-					public final ThreadMirrorImpl thread;
+					public final ThreadMirror thread;
 
 					public final AssemblyMirror assembly;
 
@@ -6029,7 +6029,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						assembly = ps.readAssemblyReference();
 						if(vm.traceReceives)
@@ -6054,7 +6054,7 @@ public class JDWP
 					 */
 					public final int requestID;
 
-					public final ThreadMirrorImpl thread;
+					public final ThreadMirror thread;
 
 					public final AssemblyMirror assembly;
 
@@ -6068,7 +6068,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						assembly = ps.readAssemblyReference();
 						if(vm.traceReceives)
@@ -6116,7 +6116,7 @@ public class JDWP
 					 * Note that the discussion above does not apply to system threads
 					 * created by the target VM during its normal (non-debug) operation.
 					 */
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Type being prepared
@@ -6134,7 +6134,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						typeID = ps.readClassRef();
 						if(vm.traceReceives)
@@ -6163,7 +6163,7 @@ public class JDWP
 
 					final int requestID;
 
-					final ThreadMirrorImpl thread;
+					final ThreadMirror thread;
 
 					/**
 					 * Type being prepared
@@ -6180,7 +6180,7 @@ public class JDWP
 						thread = ps.readThreadReference();
 						if(vm.traceReceives)
 						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
 						typeID = ps.readClassRef();
 						if(vm.traceReceives)

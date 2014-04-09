@@ -25,7 +25,16 @@
 
 package mono.debugger;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
+import mono.debugger.protocol.Thread_GetFrameInfo;
+import mono.debugger.protocol.Thread_GetName;
+import mono.debugger.protocol.Thread_GetState;
+import mono.debugger.request.BreakpointRequest;
 
 /**
  * A thread object from the target VM.
@@ -37,9 +46,9 @@ import java.util.List;
  * @author James McIlree
  * @since 1.3
  */
-public interface ThreadMirror extends ObjectReference
+public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 {
-	public interface ThreadState
+	public static interface ThreadState
 	{
 		int Running = 0x00000000;
 		int StopRequested = 0x00000001;
@@ -53,92 +62,387 @@ public interface ThreadMirror extends ObjectReference
 		int Aborted = 0x00000100;
 	}
 
-	/**
-	 * Returns the name of this thread.
-	 *
-	 * @return the string containing the thread name.
-	 */
-	String name();
-
-	/**
-	 * @see ThreadState
-	 */
-	int state();
-
-	/**
-	 * Determines whether the thread has been suspended by the
-	 * the debugger.
-	 *
-	 * @return <code>true</code> if the thread is currently suspended;
-	 *         <code>false</code> otherwise.
-	 */
-	boolean isSuspended();
-
-	/**
-	 * Determines whether the thread is suspended at a breakpoint.
-	 *
-	 * @return <code>true</code> if the thread is currently stopped at
-	 *         a breakpoint; <code>false</code> otherwise.
-	 */
-	boolean isAtBreakpoint();
+	static final int SUSPEND_STATUS_SUSPENDED = 0x1;
+	static final int SUSPEND_STATUS_BREAK = 0x2;
 
 
-	/**
-	 * Returns a List containing each {@link StackFrame} in the
-	 * thread's current call stack.
-	 * The thread must be suspended (normally through an interruption
-	 * to the VM) to get this information, and
-	 * it is only valid until the thread is resumed again.
-	 *
-	 * @return a List of {@link StackFrame} with the current frame first
-	 *         followed by each caller's frame.
-	 * @throws IncompatibleThreadStateException
-	 *          if the thread is
-	 *          not suspended in the target VM
+    /*
+	 * Some objects can only be created while a thread is suspended and are valid
+     * only while the thread remains suspended.  Examples are StackFrameImpl
+     * and MonitorInfoImpl.  When the thread resumes, these objects have to be
+     * marked as invalid so that their methods can throw
+     * InvalidStackFrameException if they are called.  To do this, such objects
+     * register themselves as listeners of the associated thread.  When the
+     * thread is resumed, its listeners are notified and mark themselves
+     * invalid.
+     * Also, note that ThreadMirror itself caches some info that
+     * is valid only as long as the thread is suspended.  When the thread
+     * is resumed, that cache must be purged.
+     * Lastly, note that ThreadMirror and its super, ObjectReferenceImpl
+     * cache some info that is only valid as long as the entire VM is suspended.
+     * If _any_ thread is resumed, this cache must be purged.  To handle this,
+     * both ThreadMirror and ObjectReferenceImpl register themselves as
+     * VMListeners so that they get notified when all threads are suspended and
+     * when any thread is resumed.
+     */
+
+	// This is cached only while this one thread is suspended.  Each time
+	// the thread is resumed, we abandon the current cache object and
+	// create a new intialized one.
+	private static class LocalCache
+	{
+		Thread_GetState myState = null;
+		List<StackFrame> frames = null;
+		int framesStart = -1;
+		int framesLength = 0;
+
+		boolean triedCurrentContended = false;
+	}
+
+	/*
+	 * The localCache instance var is set by resetLocalCache to an initialized
+	 * object as shown above.  This occurs when the ThreadReference
+	 * object is created, and when the mirrored thread is resumed.
+	 * The fields are then filled in by the relevant methods as they
+	 * are called.  A problem can occur if resetLocalCache is called
+	 * (ie, a resume() is executed) at certain points in the execution
+	 * of some of these methods - see 6751643.  To avoid this, each
+	 * method that wants to use this cache must make a local copy of
+	 * this variable and use that.  This means that each invocation of
+	 * these methods will use a copy of the cache object that was in
+	 * effect at the point that the copy was made; if a racy resume
+	 * occurs, it won't affect the method's local copy.  This means that
+	 * the values returned by these calls may not match the state of
+	 * the debuggee at the time the caller gets the values.  EG,
+	 * frameCount() is called and comes up with 5 frames.  But before
+	 * it returns this, a resume of the debuggee thread is executed in a
+	 * different debugger thread.  The thread is resumed and running at
+	 * the time that the value 5 is returned.  Or even worse, the thread
+	 * could be suspended again and have a different number of frames, eg, 24,
+	 * but this call will still return 5.
 	 */
-	List<StackFrame> frames() throws IncompatibleThreadStateException;
+	private LocalCache localCache;
+
+	private void resetLocalCache()
+	{
+		localCache = new LocalCache();
+	}
+
+
+	// Listeners - synchronized on vm.state()
+	private List<WeakReference<ThreadListener>> listeners = new ArrayList<WeakReference<ThreadListener>>();
+
+
+	ThreadMirror(VirtualMachine aVm, long aRef)
+	{
+		super(aVm, aRef);
+		resetLocalCache();
+		vm.state().addListener(this);
+	}
+
+	@Override
+	protected String description()
+	{
+		return "ThreadReference " + uniqueID();
+	}
+
+	/*
+	 * VMListener implementation
+	 */
+	@Override
+	public boolean vmNotSuspended(VMAction action)
+	{
+		if(action.resumingThread() == null)
+		{
+			// all threads are being resumed
+			synchronized(vm.state())
+			{
+				processThreadAction(new ThreadAction(this, ThreadAction.THREAD_RESUMABLE));
+			}
+
+		}
+
+        /*
+		 * Othewise, only one thread is being resumed:
+         *   if it is us,
+         *      we have already done our processThreadAction to notify our
+         *      listeners when we processed the resume.
+         *   if it is not us,
+         *      we don't want to notify our listeners
+         *       because we are not being resumed.
+         */
+		return super.vmNotSuspended(action);
+	}
 
 	/**
-	 * Returns the {@link StackFrame} at the given index in the
-	 * thread's current call stack. Index 0 retrieves the current
-	 * frame; higher indices retrieve caller frames.
-	 * The thread must be suspended (normally through an interruption
-	 * to the VM) to get this information, and
-	 * it is only valid until the thread is resumed again.
-	 *
-	 * @param index the desired frame
-	 * @return the requested {@link StackFrame}
-	 * @throws IncompatibleThreadStateException
-	 *          if the thread is
-	 *          not suspended in the target VM
-	 * @throws java.lang.IndexOutOfBoundsException
-	 *          if the index is greater than
-	 *          or equal to {@link #frameCount} or is negative.
+	 * Note that we only cache the name string while the entire VM is suspended
+	 * because the name can change via Thread.setName arbitrarily while this
+	 * thread is running.
 	 */
-	StackFrame frame(int index) throws IncompatibleThreadStateException;
+	public String name()
+	{
+		try
+		{
+			return Thread_GetName.process(vm, this).threadName;
+		}
+		catch(JDWPException exc)
+		{
+			throw exc.toJDIException();
+		}
+	}
+
+	/*
+	 * Sends a command to the back end which is defined to do an
+	 * implicit vm-wide resume.
+	 */
+	PacketStream sendResumingCommand(CommandSender sender)
+	{
+		synchronized(vm.state())
+		{
+			processThreadAction(new ThreadAction(this, ThreadAction.THREAD_RESUMABLE));
+			return sender.send();
+		}
+	}
+
+	private Thread_GetState jdwpStatus()
+	{
+		LocalCache snapshot = localCache;
+		Thread_GetState myState = snapshot.myState;
+		try
+		{
+			if(myState == null)
+			{
+				myState = Thread_GetState.process(vm, this);
+			}
+		}
+		catch(JDWPException exc)
+		{
+			throw exc.toJDIException();
+		}
+		return myState;
+	}
+
+	public int state()
+	{
+		return jdwpStatus().state;
+	}
+
+	public boolean isSuspended()
+	{
+		return (jdwpStatus().state & ThreadState.Suspended) != 0;
+	}
+
+	public boolean isAtBreakpoint()
+	{
+        /*
+         * TO DO: This fails to take filters into account.
+         */
+		try
+		{
+			StackFrame frame = frame(0);
+			Location location = frame.location();
+			List<BreakpointRequest> requests = vm.eventRequestManager().breakpointRequests();
+			Iterator<BreakpointRequest> iter = requests.iterator();
+			while(iter.hasNext())
+			{
+				BreakpointRequest request = iter.next();
+				if(location.equals(request.location()))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		catch(IndexOutOfBoundsException iobe)
+		{
+			return false;  // no frames on stack => not at breakpoint
+		}
+		catch(IncompatibleThreadStateException itse)
+		{
+			// Per the javadoc, not suspended => return false
+			return false;
+		}
+	}
+
+	public List<StackFrame> frames() throws IncompatibleThreadStateException
+	{
+		return privateFrames(0, -1);
+	}
+
+	public StackFrame frame(int index) throws IncompatibleThreadStateException
+	{
+		List<StackFrame> list = privateFrames(index, 1);
+		return list.get(0);
+	}
 
 	/**
-	 * Returns a List containing a range of {@link StackFrame} mirrors
-	 * from the thread's current call stack.
-	 * The thread must be suspended (normally through an interruption
-	 * to the VM) to get this information, and
-	 * it is only valid until the thread is resumed again.
-	 *
-	 * @param start  the index of the first frame to retrieve.
-	 *               Index 0 represents the current frame.
-	 * @param length the number of frames to retrieve
-	 * @return a List of {@link StackFrame} with the current frame first
-	 *         followed by each caller's frame.
-	 * @throws IncompatibleThreadStateException
-	 *                                   if the thread is
-	 *                                   not suspended in the target VM
-	 * @throws IndexOutOfBoundsException if the specified range is not
-	 *                                   within the range of stack frame indicies.
-	 *                                   That is, the exception is thrown if any of the following are true:
-	 *                                   <pre>    start &lt; 0
-	 *                                      start &gt;= {@link #frameCount}
-	 *                                      length &lt; 0
-	 *                                      (start+length) &gt; {@link #frameCount}</pre>
+	 * Is the requested subrange within what has been retrieved?
+	 * local is known to be non-null.  Should only be called from
+	 * a sync method.
 	 */
-	List<StackFrame> frames(int start, int length) throws IncompatibleThreadStateException;
+	private boolean isSubrange(
+			LocalCache snapshot, int start, int length)
+	{
+		if(start < snapshot.framesStart)
+		{
+			return false;
+		}
+		if(length == -1)
+		{
+			return (snapshot.framesLength == -1);
+		}
+		if(snapshot.framesLength == -1)
+		{
+			if((start + length) > (snapshot.framesStart + snapshot.frames.size()))
+			{
+				throw new IndexOutOfBoundsException();
+			}
+			return true;
+		}
+		return ((start + length) <= (snapshot.framesStart + snapshot.framesLength));
+	}
+
+	public List<StackFrame> frames(int start, int length) throws IncompatibleThreadStateException
+	{
+		if(length < 0)
+		{
+			throw new IndexOutOfBoundsException("length must be greater than or equal to zero");
+		}
+		return privateFrames(start, length);
+	}
+
+	/**
+	 * Private version of frames() allows "-1" to specify all
+	 * remaining frames.
+	 */
+	synchronized private List<StackFrame> privateFrames(int start, int length) throws IncompatibleThreadStateException
+	{
+
+		// Lock must be held while creating stack frames so if that two threads
+		// do this at the same time, one won't clobber the subset created by the other.
+		LocalCache snapshot = localCache;
+		try
+		{
+			if(snapshot.frames == null || !isSubrange(snapshot, start, length))
+			{
+				Thread_GetFrameInfo.Frame[] jdwpFrames = Thread_GetFrameInfo.process(vm, this, start, length).frames;
+				int count = jdwpFrames.length;
+				snapshot.frames = new ArrayList<StackFrame>(count);
+
+				for(int i = 0; i < count; i++)
+				{
+					if(jdwpFrames[i].location == null)
+					{
+						throw new InternalException("Invalid frame location");
+					}
+					StackFrame frame = new StackFrameImpl(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location);
+					// Add to the frame list
+					snapshot.frames.add(frame);
+				}
+				snapshot.framesStart = start;
+				snapshot.framesLength = length;
+				return Collections.unmodifiableList(snapshot.frames);
+			}
+			else
+			{
+				int fromIndex = start - snapshot.framesStart;
+				int toIndex;
+				if(length == -1)
+				{
+					toIndex = snapshot.frames.size() - fromIndex;
+				}
+				else
+				{
+					toIndex = fromIndex + length;
+				}
+				return Collections.unmodifiableList(snapshot.frames.subList(fromIndex, toIndex));
+			}
+		}
+		catch(JDWPException exc)
+		{
+			switch(exc.errorCode())
+			{
+				case JDWP.Error.THREAD_NOT_SUSPENDED:
+				case JDWP.Error.INVALID_THREAD:   /* zombie */
+					throw new IncompatibleThreadStateException();
+				default:
+					throw exc.toJDIException();
+			}
+		}
+	}
+
+	@Override
+	public String toString()
+	{
+		return "(name='" + name() + "', " + "id=" + uniqueID() + ")";
+	}
+
+	@Override
+	int typeValueKey()
+	{
+		return JDWP.Tag.THREAD;
+	}
+
+	void addListener(ThreadListener listener)
+	{
+		synchronized(vm.state())
+		{
+			listeners.add(new WeakReference<ThreadListener>(listener));
+		}
+	}
+
+	void removeListener(ThreadListener listener)
+	{
+		synchronized(vm.state())
+		{
+			Iterator<WeakReference<ThreadListener>> iter = listeners.iterator();
+			while(iter.hasNext())
+			{
+				WeakReference<ThreadListener> ref = iter.next();
+				if(listener.equals(ref.get()))
+				{
+					iter.remove();
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Propagate the the thread state change information
+	 * to registered listeners.
+	 * Must be entered while synchronized on vm.state()
+	 */
+	private void processThreadAction(ThreadAction action)
+	{
+		synchronized(vm.state())
+		{
+			Iterator<WeakReference<ThreadListener>> iter = listeners.iterator();
+			while(iter.hasNext())
+			{
+				WeakReference<ThreadListener> ref = iter.next();
+				ThreadListener listener = ref.get();
+				if(listener != null)
+				{
+					switch(action.id())
+					{
+						case ThreadAction.THREAD_RESUMABLE:
+							if(!listener.threadResumable(action))
+							{
+								iter.remove();
+							}
+							break;
+					}
+				}
+				else
+				{
+					// Listener is unreachable; clean up
+					iter.remove();
+				}
+			}
+
+			// Discard our local cache
+			resetLocalCache();
+		}
+	}
 }

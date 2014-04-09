@@ -126,7 +126,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    PacketStream sendInvokeCommand(final ThreadMirrorImpl thread,
+    PacketStream sendInvokeCommand(final ThreadMirror thread,
                                    final MethodImpl method,
                                    final ValueImpl[] args,
                                    final int options) {
@@ -149,7 +149,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return stream;
     }
 
-    PacketStream sendNewInstanceCommand(final ThreadMirrorImpl thread,
+    PacketStream sendNewInstanceCommand(final ThreadMirror thread,
                                    final MethodImpl method,
                                    final ValueImpl[] args,
                                    final int options) {
@@ -184,7 +184,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         validateMirrorsOrNulls(origArguments);
 
         MethodImpl method = (MethodImpl)methodIntf;
-        ThreadMirrorImpl thread = (ThreadMirrorImpl)threadIntf;
+        ThreadMirror thread = (ThreadMirror)threadIntf;
 
         validateMethodInvocation(method);
 
@@ -233,7 +233,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         validateMirrorsOrNulls(origArguments);
 
         MethodImpl method = (MethodImpl)methodIntf;
-        ThreadMirrorImpl thread = (ThreadMirrorImpl)threadIntf;
+        ThreadMirror thread = (ThreadMirror)threadIntf;
 
         validateConstructorInvocation(method);
 

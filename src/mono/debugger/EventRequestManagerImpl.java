@@ -280,7 +280,7 @@ class EventRequestManagerImpl extends MirrorImpl
                 throw invalidState();
             }
             filters.add(JDWP.EventRequest.Set.Modifier.ThreadOnly
-                                      .create((ThreadMirrorImpl)thread));
+                                      .create((ThreadMirror)thread));
         }
     }
 
@@ -501,12 +501,12 @@ class EventRequestManagerImpl extends MirrorImpl
 
     class StepRequestImpl extends ClassVisibleEventRequestImpl
                                       implements StepRequest {
-        ThreadMirrorImpl thread;
+        ThreadMirror thread;
         int size;
         int depth;
 
         StepRequestImpl(ThreadMirror thread, int size, int depth) {
-            this.thread = (ThreadMirrorImpl)thread;
+            this.thread = (ThreadMirror)thread;
             this.size = size;
             this.depth = depth;
 
