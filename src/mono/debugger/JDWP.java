@@ -6690,12 +6690,6 @@ public class JDWP
 						case JDWP.EventKind.ASSEMBLY_UNLOAD:
 							aEventsCommon = new AssemblyUnLoad(vm, ps);
 							break;
-						case JDWP.EventKind.FIELD_ACCESS:
-							aEventsCommon = new FieldAccess(vm, ps);
-							break;
-						case JDWP.EventKind.FIELD_MODIFICATION:
-							aEventsCommon = new FieldModification(vm, ps);
-							break;
 						case JDWP.EventKind.VM_DEATH:
 							aEventsCommon = new VMDeath(vm, ps);
 							break;
@@ -7415,200 +7409,6 @@ public class JDWP
 					}
 				}
 
-				/**
-				 * Notification of a field access in the target VM.
-				 * Field modifications
-				 * are not considered field accesses.
-				 * Requires canWatchFieldAccess capability - see
-				 * <a href="#JDWP_VirtualMachine_CapabilitiesNew">CapabilitiesNew</a>.
-				 */
-				static class FieldAccess extends EventsCommon
-				{
-					static final byte ALT_ID = JDWP.EventKind.FIELD_ACCESS;
-
-					@Override
-					byte eventKind()
-					{
-						return ALT_ID;
-					}
-
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
-
-					/**
-					 * Accessing thread
-					 */
-					final ThreadReferenceImpl thread;
-
-					/**
-					 * Location of access
-					 */
-					final Location location;
-
-					/**
-					 * Kind of reference type.
-					 * See <a href="#JDWP_TypeTag">JDWP.TypeTag</a>
-					 */
-					final byte refTypeTag;
-
-					/**
-					 * Type of field
-					 */
-					final long typeID;
-
-					/**
-					 * Field being accessed
-					 */
-					final long fieldID;
-
-					/**
-					 * Object being accessed (null=0 for statics
-					 */
-					final ObjectReferenceImpl object;
-
-					FieldAccess(VirtualMachineImpl vm, PacketStream ps)
-					{
-						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
-						thread = ps.readThreadReference();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
-						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
-						refTypeTag = ps.readByte();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "refTypeTag(byte): " + refTypeTag);
-						}
-						typeID = ps.readClassRef();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "typeID(long): " + "ref=" + typeID);
-						}
-						fieldID = ps.readFieldRef();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "fieldID(long): " + fieldID);
-						}
-						object = ps.readTaggedObjectReference();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "object(ObjectReferenceImpl): " + (object == null ? "NULL" : "ref=" + object.ref()));
-						}
-					}
-				}
-
-				/**
-				 * Notification of a field modification in the target VM.
-				 * Requires canWatchFieldModification capability - see
-				 * <a href="#JDWP_VirtualMachine_CapabilitiesNew">CapabilitiesNew</a>.
-				 */
-				static class FieldModification extends EventsCommon
-				{
-					static final byte ALT_ID = JDWP.EventKind.FIELD_MODIFICATION;
-
-					@Override
-					byte eventKind()
-					{
-						return ALT_ID;
-					}
-
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
-
-					/**
-					 * Modifying thread
-					 */
-					final ThreadReferenceImpl thread;
-
-					/**
-					 * Location of modify
-					 */
-					final Location location;
-
-					/**
-					 * Kind of reference type.
-					 * See <a href="#JDWP_TypeTag">JDWP.TypeTag</a>
-					 */
-					final byte refTypeTag;
-
-					/**
-					 * Type of field
-					 */
-					final long typeID;
-
-					/**
-					 * Field being modified
-					 */
-					final long fieldID;
-
-					/**
-					 * Object being modified (null=0 for statics
-					 */
-					final ObjectReferenceImpl object;
-
-					/**
-					 * Value to be assigned
-					 */
-					final ValueImpl valueToBe;
-
-					FieldModification(VirtualMachineImpl vm, PacketStream ps)
-					{
-						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
-						thread = ps.readThreadReference();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
-						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
-						refTypeTag = ps.readByte();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "refTypeTag(byte): " + refTypeTag);
-						}
-						typeID = ps.readClassRef();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "typeID(long): " + "ref=" + typeID);
-						}
-						fieldID = ps.readFieldRef();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "fieldID(long): " + fieldID);
-						}
-						object = ps.readTaggedObjectReference();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "object(ObjectReferenceImpl): " + (object == null ? "NULL" : "ref=" + object.ref()));
-						}
-						valueToBe = ps.readValue();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "valueToBe(ValueImpl): " + valueToBe);
-						}
-					}
-				}
-
 				public static class VMDeath extends EventsCommon
 				{
 					static final byte ALT_ID = JDWP.EventKind.VM_DEATH;
@@ -7754,15 +7554,11 @@ public class JDWP
 		static final int THREAD_DEATH = 7;
 		static final int THREAD_END = 7;
 
-
-		static final int FIELD_ACCESS = 20;
-		static final int FIELD_MODIFICATION = 21;
 		static final int EXCEPTION_CATCH = 30;
 		static final int METHOD_ENTRY = 40;
 		static final int METHOD_EXIT = 41;
 		static final int METHOD_EXIT_WITH_RETURN_VALUE = 42;
 
-		static final int VM_INIT = 90;
 		static final int VM_DISCONNECTED = 100;
 	}
 

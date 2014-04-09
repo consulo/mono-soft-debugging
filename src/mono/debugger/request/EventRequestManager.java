@@ -27,7 +27,6 @@ package mono.debugger.request;
 
 import java.util.List;
 
-import mono.debugger.Field;
 import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.NativeMethodException;
@@ -209,48 +208,6 @@ public interface EventRequestManager extends Mirror {
     BreakpointRequest createBreakpointRequest(Location location);
 
     /**
-     * Creates a new disabled watchpoint which watches accesses to the
-     * specified field. The new
-     * watchpoint is added to the list managed by this
-     * EventRequestManager. Multiple watchpoints on the
-     * same field are permitted.
-     * Use {@link EventRequest#enable()} to
-     * activate this event request.
-     * <P>
-     * Not all target virtual machines support this operation.
-     * Use {@link VirtualMachine#canWatchFieldAccess()}
-     * to determine if the operation is supported.
-     *
-     * @param field the field to watch
-     * @return the created watchpoint
-     * @throws java.lang.UnsupportedOperationException if
-     * the target virtual machine does not support this
-     * operation.
-     */
-    AccessWatchpointRequest createAccessWatchpointRequest(Field field);
-
-    /**
-     * Creates a new disabled watchpoint which watches accesses to the
-     * specified field. The new
-     * watchpoint is added to the list managed by this
-     * EventRequestManager. Multiple watchpoints on the
-     * same field are permitted.
-     * Use {@link EventRequest#enable()} to
-     * activate this event request.
-     * <P>
-     * Not all target virtual machines support this operation.
-     * Use {@link VirtualMachine#canWatchFieldModification()}
-     * to determine if the operation is supported.
-     *
-     * @param field the field to watch
-     * @return the created watchpoint
-     * @throws java.lang.UnsupportedOperationException if
-     * the target virtual machine does not support this
-     * operation.
-     */
-    ModificationWatchpointRequest createModificationWatchpointRequest(Field field);
-
-    /**
      * Creates a new disabled {@link VMDeathRequest}.
      * The new request is added to the list managed by this
      * EventRequestManager.
@@ -384,24 +341,6 @@ public interface EventRequestManager extends Mirror {
      * @return the list of all {@link BreakpointRequest} objects.
      */
     List<BreakpointRequest> breakpointRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled access
-     * watchpoint requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the all {@link AccessWatchpointRequest} objects.
-     */
-    List<AccessWatchpointRequest> accessWatchpointRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled modification
-     * watchpoint requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the all {@link ModificationWatchpointRequest} objects.
-     */
-    List<ModificationWatchpointRequest> modificationWatchpointRequests();
 
     /**
      * Return an unmodifiable list of the enabled and disabled method entry requests.

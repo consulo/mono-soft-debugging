@@ -482,44 +482,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 	}
 
-	class AccessWatchpointEventImpl extends WatchpointEventImpl implements AccessWatchpointEvent
-	{
-
-		AccessWatchpointEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.FieldAccess evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location, evt.refTypeTag, evt.typeID, evt.fieldID, evt.object);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "AccessWatchpoint";
-		}
-	}
-
-	class ModificationWatchpointEventImpl extends WatchpointEventImpl implements ModificationWatchpointEvent
-	{
-		Value newValue;
-
-		ModificationWatchpointEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.FieldModification evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location, evt.refTypeTag, evt.typeID, evt.fieldID, evt.object);
-			this.newValue = evt.valueToBe;
-		}
-
-		@Override
-		public Value valueToBe()
-		{
-			return newValue;
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "ModificationWatchpoint";
-		}
-	}
-
 	/**
 	 * Events are constructed on the thread which reads all data from the
 	 * transport. This means that the packet cannot be converted to real

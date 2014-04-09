@@ -291,8 +291,7 @@ class EventRequestManagerImpl extends MirrorImpl
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
-            filters.add(JDWP.EventRequest.Set.Modifier.ClassOnly
-                                      .create((ReferenceTypeImpl)clazz));
+            filters.add(JDWP.EventRequest.Set.Modifier.ClassOnly.create((ReferenceTypeImpl) clazz));
         }
 
         public synchronized void addClassFilter(String classPattern) {
@@ -639,42 +638,6 @@ class EventRequestManagerImpl extends MirrorImpl
         }
     }
 
-    class AccessWatchpointRequestImpl extends WatchpointRequestImpl
-                                  implements AccessWatchpointRequest {
-        AccessWatchpointRequestImpl(Field field) {
-            super(field);
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.FIELD_ACCESS;
-        }
-
-        @Override
-		public String toString() {
-            return "access watchpoint request " + field + state();
-        }
-    }
-
-    class ModificationWatchpointRequestImpl extends WatchpointRequestImpl
-                                  implements ModificationWatchpointRequest {
-        ModificationWatchpointRequestImpl(Field field) {
-            super(field);
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.FIELD_MODIFICATION;
-        }
-
-        @Override
-		public String toString() {
-            return "modification watchpoint request " + field + state();
-        }
-    }
-
     class VMDeathRequestImpl extends EventRequestImpl
                                         implements VMDeathRequest {
         VMDeathRequestImpl() {
@@ -772,22 +735,6 @@ class EventRequestManagerImpl extends MirrorImpl
     }
 
     @Override
-	public AccessWatchpointRequest
-                              createAccessWatchpointRequest(Field field) {
-        validateMirror(field);
-
-        return new AccessWatchpointRequestImpl(field);
-    }
-
-    @Override
-	public ModificationWatchpointRequest
-                        createModificationWatchpointRequest(Field field) {
-        validateMirror(field);
-
-        return new ModificationWatchpointRequestImpl(field);
-    }
-
-    @Override
 	public VMDeathRequest createVMDeathRequest() {
 
         return new VMDeathRequestImpl();
@@ -853,16 +800,6 @@ class EventRequestManagerImpl extends MirrorImpl
     @Override
 	public List<BreakpointRequest> breakpointRequests() {
         return (List<BreakpointRequest>)unmodifiableRequestList(JDWP.EventKind.BREAKPOINT);
-    }
-
-    @Override
-	public List<AccessWatchpointRequest> accessWatchpointRequests() {
-        return (List<AccessWatchpointRequest>)unmodifiableRequestList(JDWP.EventKind.FIELD_ACCESS);
-    }
-
-    @Override
-	public List<ModificationWatchpointRequest> modificationWatchpointRequests() {
-        return (List<ModificationWatchpointRequest>)unmodifiableRequestList(JDWP.EventKind.FIELD_MODIFICATION);
     }
 
     @Override
