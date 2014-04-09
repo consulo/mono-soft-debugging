@@ -41,6 +41,8 @@ public class Main
 			System.out.println("thread: '" + threadReference.name() + "' frames: " + frames);
 		}
 
+		accept.dispose();
+
 		Thread.sleep(50000L);
 	}
 }

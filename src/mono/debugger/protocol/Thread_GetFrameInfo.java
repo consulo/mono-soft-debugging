@@ -25,7 +25,7 @@ public class Thread_GetFrameInfo implements Thread
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
 		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Frames" + (ps.pkt.flags != 0 ? ", " +
+			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") Thread_GetFrameInfo" + (ps.pkt.flags != 0 ? ", " +
 					"FLAGS=" + ps.pkt.flags : ""));
 		}
 		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
@@ -82,7 +82,7 @@ public class Thread_GetFrameInfo implements Thread
 			flags = ps.readByte();
 			if(vm.traceReceives)
 			{
-				vm.printReceiveTrace(5, "flags(Location): " + location);
+				vm.printReceiveTrace(5, "flags(byte): " + location);
 			}
 		}
 	}
@@ -97,7 +97,7 @@ public class Thread_GetFrameInfo implements Thread
 	{
 		if(vm.traceReceives)
 		{
-			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Frames" + (ps.pkt.flags != 0 ? ", " +
+			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") Thread_GetFrameInfo" + (ps.pkt.flags != 0 ? ", " +
 					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
 		}
 		if(vm.traceReceives)
