@@ -47,7 +47,7 @@ import java.util.Map;
  * <p>
  * Any method on <code>ObjectReference</code> or which directly or indirectly takes
  * <code>ObjectReference</code> as parameter may throw
- * {@link mono.debugger.ObjectCollectedException} if the mirrored object has been
+ * {@link InvalidObjectException} if the mirrored object has been
  * garbage collected.
  *
  * @author Robert Field

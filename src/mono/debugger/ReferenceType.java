@@ -65,7 +65,7 @@ import java.util.Map;
  * <p>
  * Any method on <code>ReferenceType</code> or which directly or indirectly takes
  * <code>ReferenceType</code> as parameter may throw
- * {@link mono.debugger.ObjectCollectedException} if the mirrored type has been unloaded.
+ * {@link InvalidObjectException} if the mirrored type has been unloaded.
  *
  * @see ObjectReference
  * @see ObjectReference#referenceType

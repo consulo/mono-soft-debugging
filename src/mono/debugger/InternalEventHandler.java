@@ -113,7 +113,7 @@ public class InternalEventHandler implements Runnable
                  * given and we attempt to continue.
                  */
 				}
-				catch(ObjectCollectedException oce)
+				catch(InvalidObjectException oce)
 				{
 					oce.printStackTrace();
 				}

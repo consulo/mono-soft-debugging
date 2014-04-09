@@ -82,7 +82,7 @@ public class Thread_GetFrameInfo implements Thread
 			flags = ps.readByte();
 			if(vm.traceReceives)
 			{
-				vm.printReceiveTrace(5, "flags(byte): " + location);
+				vm.printReceiveTrace(5, "flags(Location): " + location);
 			}
 		}
 	}

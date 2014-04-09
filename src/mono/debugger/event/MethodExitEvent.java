@@ -46,7 +46,7 @@ public interface MethodExitEvent extends LocatableEvent {
      * Returns the method that was exited.
      *
      * @return a {@link Method} which mirrors the method that was exited.
-     * @throws ObjectCollectedException may be thrown if class
+     * @throws mono.debugger.InvalidObjectException may be thrown if class
      * has been garbage collected.
      */
     public Method method();

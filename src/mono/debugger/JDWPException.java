@@ -46,7 +46,7 @@ public class JDWPException extends Exception
 		switch(errorCode)
 		{
 			case JDWP.Error.INVALID_OBJECT:
-				return new ObjectCollectedException();
+				return new InvalidObjectException();
 			case JDWP.Error.VM_DEAD:
 				return new VMDisconnectedException();
 			case JDWP.Error.OUT_OF_MEMORY:
