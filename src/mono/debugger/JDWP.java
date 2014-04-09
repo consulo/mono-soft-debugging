@@ -7552,7 +7552,6 @@ public class JDWP
 		static final int USER_DEFINED = 5;
 		static final int THREAD_START = 6;
 		static final int THREAD_DEATH = 7;
-		static final int THREAD_END = 7;
 
 		static final int EXCEPTION_CATCH = 30;
 		static final int METHOD_ENTRY = 40;
