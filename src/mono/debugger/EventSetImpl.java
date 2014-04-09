@@ -414,21 +414,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 	}
 
-	public static class VMDisconnectEventImpl extends EventImpl implements VMDisconnectEvent
-	{
-		public VMDisconnectEventImpl(VirtualMachine virtualMachine)
-		{
-			super(virtualMachine, (byte) JDWP.EventKind.VM_DISCONNECTED);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "VMDisconnectEvent";
-		}
-	}
-
-
 	/**
 	 * Events are constructed on the thread which reads all data from the
 	 * transport. This means that the packet cannot be converted to real
@@ -459,10 +444,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		suspendPolicy = JDWP.SuspendPolicy.NONE;
 		switch(eventCmd)
 		{
-			case JDWP.EventKind.VM_DISCONNECTED:
-				addEvent(new VMDisconnectEventImpl(aVm));
-				break;
-
 			default:
 				throw new InternalException("Bad singleton event code");
 		}

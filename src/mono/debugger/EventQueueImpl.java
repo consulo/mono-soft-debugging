@@ -25,11 +25,10 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
+import java.util.LinkedList;
+
 import mono.debugger.event.EventQueue;
 import mono.debugger.event.EventSet;
-
-import java.util.*;
 
 public class EventQueueImpl extends MirrorImpl implements EventQueue {
 
@@ -75,8 +74,7 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
             closed = true; // OK for this the be first since synchronized
 
             // place VMDisconnectEvent into queue
-            enqueue(new EventSetImpl(vm,
-                                     (byte)JDWP.EventKind.VM_DISCONNECTED));
+           // enqueue(new EventSetImpl(vm, (byte)JDWP.EventKind.VM_DISCONNECTED));
         }
     }
 

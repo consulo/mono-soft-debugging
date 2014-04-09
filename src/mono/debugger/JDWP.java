@@ -7027,8 +7027,6 @@ public class JDWP
 		static final int METHOD_ENTRY = 40;
 		static final int METHOD_EXIT = 41;
 		static final int METHOD_EXIT_WITH_RETURN_VALUE = 42;
-
-		static final int VM_DISCONNECTED = 100;
 	}
 
 	static class ThreadStatus
