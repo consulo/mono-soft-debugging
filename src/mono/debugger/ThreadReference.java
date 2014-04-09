@@ -60,7 +60,6 @@ public interface ThreadReference extends ObjectReference
 	 */
 	String name();
 
-
 	/**
 	 * @see ThreadState
 	 */
@@ -83,20 +82,6 @@ public interface ThreadReference extends ObjectReference
 	 */
 	boolean isAtBreakpoint();
 
-
-	/**
-	 * Returns the number of stack frames in the thread's current
-	 * call stack.
-	 * The thread must be suspended (normally through an interruption
-	 * to the VM) to get this information, and
-	 * it is only valid until the thread is resumed again.
-	 *
-	 * @return an integer frame count
-	 * @throws IncompatibleThreadStateException
-	 *          if the thread is
-	 *          not suspended in the target VM
-	 */
-	int frameCount() throws IncompatibleThreadStateException;
 
 	/**
 	 * Returns a List containing each {@link StackFrame} in the

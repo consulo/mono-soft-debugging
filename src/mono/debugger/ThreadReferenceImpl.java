@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import mono.debugger.protocol.Thread_GetFrameInfo;
 import mono.debugger.protocol.Thread_GetName;
 import mono.debugger.protocol.Thread_GetState;
 import mono.debugger.request.BreakpointRequest;
@@ -70,7 +71,6 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 		List<StackFrame> frames = null;
 		int framesStart = -1;
 		int framesLength = 0;
-		int frameCount = -1;
 
 		boolean triedCurrentContended = false;
 	}
@@ -247,31 +247,6 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 	}
 
 	@Override
-	public int frameCount() throws IncompatibleThreadStateException
-	{
-		LocalCache snapshot = localCache;
-		try
-		{
-			if(snapshot.frameCount == -1)
-			{
-				snapshot.frameCount = JDWP.ThreadReference.FrameCount.process(vm, this).frameCount;
-			}
-		}
-		catch(JDWPException exc)
-		{
-			switch(exc.errorCode())
-			{
-				case JDWP.Error.THREAD_NOT_SUSPENDED:
-				case JDWP.Error.INVALID_THREAD:   /* zombie */
-					throw new IncompatibleThreadStateException();
-				default:
-					throw exc.toJDIException();
-			}
-		}
-		return snapshot.frameCount;
-	}
-
-	@Override
 	public List<StackFrame> frames() throws IncompatibleThreadStateException
 	{
 		return privateFrames(0, -1);
@@ -335,8 +310,7 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 		{
 			if(snapshot.frames == null || !isSubrange(snapshot, start, length))
 			{
-				JDWP.ThreadReference.Frames.Frame[] jdwpFrames = JDWP.ThreadReference.Frames.
-						process(vm, this, start, length).frames;
+				Thread_GetFrameInfo.Frame[] jdwpFrames = Thread_GetFrameInfo.process(vm, this, start, length).frames;
 				int count = jdwpFrames.length;
 				snapshot.frames = new ArrayList<StackFrame>(count);
 

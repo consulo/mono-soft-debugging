@@ -104,7 +104,7 @@ public class PacketStream
 		dataStream.write((byte) ((data >>> 0) & 0xFF));
 	}
 
-	void writeInt(int data)
+	public void writeInt(int data)
 	{
 		dataStream.write((byte) ((data >>> 24) & 0xFF));
 		dataStream.write((byte) ((data >>> 16) & 0xFF));
@@ -284,7 +284,7 @@ public class PacketStream
 	/**
 	 * Read byte represented as one bytes.
 	 */
-	byte readByte()
+	public byte readByte()
 	{
 		byte ret = pkt.data[inCursor];
 		inCursor += 1;
@@ -294,7 +294,7 @@ public class PacketStream
 	/**
 	 * Read boolean represented as one byte.
 	 */
-	boolean readBoolean()
+	public boolean readBoolean()
 	{
 		int ret = readInt();
 		return (ret != 0);
@@ -548,22 +548,11 @@ public class PacketStream
 	/**
 	 * Read location represented as vm specific byte sequence.
 	 */
-	Location readLocation()
+	public Location readLocation()
 	{
-		long classRef = readObjectRef();
 		long methodRef = readMethodRef();
 		long codeIndex = readLong();
-		if(classRef != 0)
-		{
-			/* Valid location */
-			ReferenceTypeImpl refType = vm.referenceType(classRef);
-			return new LocationImpl(vm, refType, methodRef, codeIndex);
-		}
-		else
-		{
-            /* Null location (example: uncaught exception) */
-			return null;
-		}
+		return new LocationImpl(vm, methodRef, codeIndex);
 	}
 
 	byte[] readByteArray(int length)
