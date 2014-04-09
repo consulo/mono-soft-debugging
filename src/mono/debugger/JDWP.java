@@ -415,7 +415,7 @@ public class JDWP
 		 */
 		static class Exit
 		{
-			static final int COMMAND = 10;
+			static final int COMMAND = 5;
 
 			static Exit process(
 					VirtualMachineImpl vm, int exitCode) throws JDWPException
