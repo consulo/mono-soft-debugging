@@ -25,15 +25,8 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents non-concrete (that is, native or abstract) methods.
@@ -66,26 +59,24 @@ public class NonConcreteMethodImpl extends MethodImpl {
     }
 
     @Override
-	public List<Location> allLineLocations(String stratumID,
-                                 String sourceName) {
+	public List<Location> allLineLocations(String sourceName) {
         return new ArrayList<Location>(0);
     }
 
     @Override
-	public List<Location> allLineLocations(SDE.Stratum stratum,
-                                 String sourceName) {
+	public List<Location> allLineLocations0(String sourceName) {
         return new ArrayList<Location>(0);
     }
 
     @Override
-	public List<Location> locationsOfLine(String stratumID,
+	public List<Location> locationsOfLine(
                                 String sourceName,
                                 int lineNumber) {
         return new ArrayList<Location>(0);
     }
 
     @Override
-	public List<Location> locationsOfLine(SDE.Stratum stratum,
+	public List<Location> locationsOfLine0(
                                 String sourceName,
                                 int lineNumber) {
         return new ArrayList<Location>(0);

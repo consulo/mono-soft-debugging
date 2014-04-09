@@ -25,13 +25,17 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import mono.debugger.event.*;
-import mono.debugger.connect.spi.Connection;
-import mono.debugger.event.EventSet;
-
-import java.util.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import mono.debugger.connect.spi.Connection;
+import mono.debugger.event.EventQueue;
+import mono.debugger.event.EventSet;
 
 public class TargetVM implements Runnable {
     private Map<String, Packet> waitingQueue = new HashMap<String, Packet>(32,0.75f);
@@ -40,7 +44,6 @@ public class TargetVM implements Runnable {
     private VirtualMachineImpl vm;
     private Connection connection;
     private Thread readerThread;
-    private EventController eventController = null;
     private boolean eventsHeld = false;
 
     /*
@@ -233,19 +236,12 @@ public class TargetVM implements Runnable {
         }
     }
 
-    private EventController eventController() {
-        if (eventController == null) {
-            eventController = new EventController(vm);
-        }
-        return eventController;
-    }
-
     private synchronized void controlEventFlow(int maxQueueSize) {
         if (!eventsHeld && (maxQueueSize > OVERLOADED_QUEUE)) {
-            eventController().hold();
+
             eventsHeld = true;
         } else if (eventsHeld && (maxQueueSize < UNDERLOADED_QUEUE)) {
-            eventController().release();
+
             eventsHeld = false;
         }
     }
@@ -323,55 +319,4 @@ public class TargetVM implements Runnable {
             connection.close();
         } catch (IOException ioe) { }
     }
-
-    static private class EventController extends Thread {
-        VirtualMachineImpl vm;
-        int controlRequest = 0;
-
-        EventController(VirtualMachineImpl vm) {
-            super(vm.threadGroupForJDI(), "JDI Event Control Thread");
-            this.vm = vm;
-            setDaemon(true);
-            setPriority((MAX_PRIORITY + NORM_PRIORITY)/2);
-            super.start();
-        }
-
-        synchronized void hold() {
-            controlRequest++;
-            notifyAll();
-        }
-
-        synchronized void release() {
-            controlRequest--;
-            notifyAll();
-        }
-
-        @Override
-		public void run() {
-            while(true) {
-                int currentRequest;
-                synchronized(this) {
-                    while (controlRequest == 0) {
-                        try {wait();} catch (InterruptedException e) {}
-                    }
-                    currentRequest = controlRequest;
-                    controlRequest = 0;
-                }
-                try {
-                    if (currentRequest > 0) {
-                        JDWP.VirtualMachine.HoldEvents.process(vm);
-                    } else {
-                        JDWP.VirtualMachine.ReleaseEvents.process(vm);
-                    }
-                } catch (JDWPException e) {
-                    /*
-                     * Don't want to terminate the thread, so the
-                     * stack trace is printed and we continue.
-                     */
-                    e.toJDIException().printStackTrace(System.err);
-                }
-            }
-        }
-    }
-
 }

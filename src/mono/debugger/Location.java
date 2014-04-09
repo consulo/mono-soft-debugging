@@ -25,8 +25,6 @@
 
 package mono.debugger;
 
-import java.util.List;
-
 /**
  * A point within the executing code of the target VM.
  * Locations are used to identify the current position of
@@ -113,20 +111,6 @@ public interface Location extends Mirror, Comparable<Location> {
      */
     long codeIndex();
 
-    /**
-     * Gets an identifing name for the source corresponding to
-     * this location.
-     * <P>
-     * This method is equivalent to
-     * <code>sourceName(vm.getDefaultStratum())</code> -
-     * see {@link #sourceName(String)}
-     * for more information.
-     *
-     * @return a string specifying the source
-     * @throws AbsentInformationException if the source name is not
-     * known
-     */
-    String sourceName() throws AbsentInformationException;
 
 
     /**
@@ -154,24 +138,8 @@ public interface Location extends Mirror, Comparable<Location> {
      *
      * @since 1.4
      */
-    String sourceName(String stratum)
+    String sourceName()
                         throws AbsentInformationException;
-
-    /**
-     * Gets the path to the source corresponding to this
-     * location.
-     * <P>
-     * This method is equivalent to
-     * <code>sourcePath(vm.getDefaultStratum())</code> -
-     * see {@link #sourcePath(String)}
-     * for more information.
-     *
-     * @return a string specifying the source
-     *
-     * @throws AbsentInformationException if the source name is not
-     * known
-     */
-    String sourcePath() throws AbsentInformationException;
 
 
     /**
@@ -206,7 +174,7 @@ public interface Location extends Mirror, Comparable<Location> {
      *
      * @since 1.4
      */
-    String sourcePath(String stratum)
+    String sourcePath()
                          throws AbsentInformationException;
 
     /**
@@ -222,27 +190,6 @@ public interface Location extends Mirror, Comparable<Location> {
      * returns -1 for native methods.
      */
     int lineNumber();
-
-    /**
-     * The line number of this Location.  The line number is
-     * relative to the source specified by
-     * {@link #sourceName(String) sourceName(stratum)}.
-     * <P>
-     * Returned line number is for the specified <i>stratum</i>
-     * (see the {@link Location class comment} for a
-     * description of strata).
-     *
-     * @param stratum The stratum to retrieve information from
-     * or <code>null</code> for the declaring type's
-     * default stratum.
-     *
-     * @return an int specifying the line in the source, returns
-     * -1 if the information is not available; specifically, always
-     * returns -1 for native methods.
-     *
-     * @since 1.4
-     */
-    int lineNumber(String stratum);
 
     /**
      * Compares the specified Object with this Location for equality.

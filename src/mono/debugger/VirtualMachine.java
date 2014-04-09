@@ -262,21 +262,6 @@ public interface VirtualMachine extends Mirror {
     DoubleValue mirrorOf(double value);
 
     /**
-     * Creates a string in this virtual machine.
-     * The created string can be used for setting and comparing against
-     * a string value retrieved from a variable or field in this
-     * virtual machine.
-     *
-     * @param value the string to be created
-     * @return a {@link StringReference} that mirrors the newly created
-     * string in the target VM.
-     * @throws VMCannotBeModifiedException if the VirtualMachine is read-only
-     * -see {@link VirtualMachine#canBeModified()}.
-     */
-    StringReference mirrorOf(String value);
-
-
-    /**
      * Creates a {@link VoidValue}.  This value
      * can be passed to {@link ThreadReference#forceEarlyReturn}
      * when a void method is to be exited.
@@ -341,42 +326,6 @@ public interface VirtualMachine extends Mirror {
      * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
      */
     void exit(int exitCode);
-
-
-    /**
-     * Set this VM's default stratum (see {@link Location} for a
-     * discussion of strata).  Overrides the per-class default set
-     * in the class file.
-     * <P>
-     * Affects location queries (such as,
-     * {@link Location#sourceName()})
-     * and the line boundaries used in
-     * single stepping.
-     *
-     * @param stratum the stratum to set as VM default,
-     * or null to use per-class defaults.
-     *
-     * @throws java.lang.UnsupportedOperationException if the
-     * target virtual machine does not support this operation.
-     *
-     * @since 1.4
-     */
-    void setDefaultStratum(String stratum);
-
-    /**
-     * Return this VM's default stratum.
-     *
-     * @see #setDefaultStratum(String)
-     * @see ReferenceType#defaultStratum()
-     * @return <code>null</code> (meaning that the per-class
-     * default - {@link ReferenceType#defaultStratum()} -
-     * should be used) unless the default stratum has been
-     * set with
-     * {@link #setDefaultStratum(String)}.
-     *
-     * @since 1.4
-     */
-    String getDefaultStratum();
 
     /**
      * Returns text information on the target VM and the

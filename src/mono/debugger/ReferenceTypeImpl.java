@@ -750,46 +750,27 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return classObject;
 	}
 
-	SDE.Stratum stratum(String stratumID)
-	{
-		SDE sde = sourceDebugExtensionInfo();
-		if(!sde.isValid())
-		{
-			sde = NO_SDE_INFO_MARK;
-		}
-		return sde.stratum(stratumID);
-	}
 
 	@Override
 	public String sourceName() throws AbsentInformationException
 	{
-		return sourceNames(vm.getDefaultStratum()).get(0);
+		return sourceNames().get(0);
 	}
 
 	@Override
-	public List<String> sourceNames(String stratumID) throws AbsentInformationException
+	public List<String> sourceNames() throws AbsentInformationException
 	{
-		SDE.Stratum stratum = stratum(stratumID);
-		if(stratum.isJava())
-		{
-			List<String> result = new ArrayList<String>(1);
-			result.add(baseSourceName());
-			return result;
-		}
-		return stratum.sourceNames(this);
+		List<String> result = new ArrayList<String>(1);
+		result.add(baseSourceName());
+		return result;
 	}
 
 	@Override
-	public List<String> sourcePaths(String stratumID) throws AbsentInformationException
+	public List<String> sourcePaths() throws AbsentInformationException
 	{
-		SDE.Stratum stratum = stratum(stratumID);
-		if(stratum.isJava())
-		{
-			List<String> result = new ArrayList<String>(1);
-			result.add(baseSourceDir() + baseSourceName());
-			return result;
-		}
-		return stratum.sourcePaths(this);
+		List<String> result = new ArrayList<String>(1);
+		result.add(baseSourceDir() + baseSourceName());
+		return result;
 	}
 
 	String baseSourceName() throws AbsentInformationException
@@ -945,14 +926,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<Location> allLineLocations() throws AbsentInformationException
 	{
-		return allLineLocations(vm.getDefaultStratum(), null);
+		return allLineLocations(null);
 	}
 
 	@Override
-	public List<Location> allLineLocations(String stratumID, String sourceName) throws AbsentInformationException
+	public List<Location> allLineLocations(String sourceName) throws AbsentInformationException
 	{
 		boolean someAbsent = false; // A method that should have info, didn't
-		SDE.Stratum stratum = stratum(stratumID);
+
 		List<Location> list = new ArrayList<Location>();  // location list
 
 		for(Iterator<Method> iter = methods().iterator(); iter.hasNext(); )
@@ -960,7 +941,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			MethodImpl method = (MethodImpl) iter.next();
 			try
 			{
-				list.addAll(method.allLineLocations(stratum, sourceName));
+				list.addAll(method.allLineLocations(sourceName));
 			}
 			catch(AbsentInformationException exc)
 			{
@@ -982,19 +963,18 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<Location> locationsOfLine(int lineNumber) throws AbsentInformationException
 	{
-		return locationsOfLine(vm.getDefaultStratum(), null, lineNumber);
+		return locationsOfLine(null, lineNumber);
 	}
 
 	@Override
-	public List<Location> locationsOfLine(
-			String stratumID, String sourceName, int lineNumber) throws AbsentInformationException
+	public List<Location> locationsOfLine(String sourceName, int lineNumber) throws AbsentInformationException
 	{
 		// A method that should have info, didn't
 		boolean someAbsent = false;
 		// A method that should have info, did
 		boolean somePresent = false;
 		List<Method> methods = methods();
-		SDE.Stratum stratum = stratum(stratumID);
+
 
 		List<Location> list = new ArrayList<Location>();
 
@@ -1008,7 +988,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			{
 				try
 				{
-					list.addAll(method.locationsOfLine(stratum, sourceName, lineNumber));
+					list.addAll(method.locationsOfLine(sourceName, lineNumber));
 					somePresent = true;
 				}
 				catch(AbsentInformationException exc)

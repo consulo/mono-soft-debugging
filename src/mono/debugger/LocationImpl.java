@@ -25,216 +25,196 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
+public class LocationImpl extends MirrorImpl implements Location
+{
+	private final ReferenceTypeImpl declaringType;
+	private Method method;
+	private long methodRef;
+	private long codeIndex;
+	private LineInfo baseLineInfo = null;
+	private LineInfo otherLineInfo = null;
 
-import java.util.*;
+	LocationImpl(
+			VirtualMachine vm, Method method, long codeIndex)
+	{
+		super(vm);
 
-public class LocationImpl extends MirrorImpl implements Location {
-    private final ReferenceTypeImpl declaringType;
-    private Method method;
-    private long methodRef;
-    private long codeIndex;
-    private LineInfo baseLineInfo = null;
-    private LineInfo otherLineInfo = null;
+		this.method = method;
+		this.codeIndex = method.isNative() ? -1 : codeIndex;
+		this.declaringType = (ReferenceTypeImpl) method.declaringType();
+	}
 
-    LocationImpl(VirtualMachine vm,
-                 Method method, long codeIndex) {
-        super(vm);
+	/*
+	 * This constructor allows lazy creation of the method mirror. This
+	 * can be a performance savings if the method mirror does not yet
+	 * exist.
+	 */
+	LocationImpl(
+			VirtualMachine vm, ReferenceTypeImpl declaringType, long methodRef, long codeIndex)
+	{
+		super(vm);
 
-        this.method = method;
-        this.codeIndex = method.isNative()? -1 : codeIndex;
-        this.declaringType = (ReferenceTypeImpl)method.declaringType();
-    }
+		this.method = null;
+		this.codeIndex = codeIndex;
+		this.declaringType = declaringType;
+		this.methodRef = methodRef;
+	}
 
-    /*
-     * This constructor allows lazy creation of the method mirror. This
-     * can be a performance savings if the method mirror does not yet
-     * exist.
-     */
-    LocationImpl(VirtualMachine vm, ReferenceTypeImpl declaringType,
-                 long methodRef, long codeIndex) {
-        super(vm);
+	@Override
+	public boolean equals(Object obj)
+	{
+		if((obj != null) && (obj instanceof Location))
+		{
+			Location other = (Location) obj;
+			return (method().equals(other.method())) &&
+					(codeIndex() == other.codeIndex()) &&
+					super.equals(obj);
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-        this.method = null;
-        this.codeIndex = codeIndex;
-        this.declaringType = declaringType;
-        this.methodRef = methodRef;
-    }
-
-    @Override
-	public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof Location)) {
-            Location other = (Location)obj;
-            return (method().equals(other.method())) &&
-                   (codeIndex() == other.codeIndex()) &&
-                   super.equals(obj);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-	public int hashCode() {
-        /*
+	@Override
+	public int hashCode()
+	{
+		/*
          * TO DO: better hash code?
          */
-        return method().hashCode() + (int)codeIndex();
-    }
+		return method().hashCode() + (int) codeIndex();
+	}
 
-    @Override
-	public int compareTo(Location object) {
-        LocationImpl other = (LocationImpl)object;
-        int rc = method().compareTo(other.method());
-        if (rc == 0) {
-            long diff = codeIndex() - other.codeIndex();
-            if (diff < 0)
-                return -1;
-            else if (diff > 0)
-                return 1;
-            else
-                return 0;
-        }
-        return rc;
-    }
+	@Override
+	public int compareTo(Location object)
+	{
+		LocationImpl other = (LocationImpl) object;
+		int rc = method().compareTo(other.method());
+		if(rc == 0)
+		{
+			long diff = codeIndex() - other.codeIndex();
+			if(diff < 0)
+			{
+				return -1;
+			}
+			else if(diff > 0)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		return rc;
+	}
 
-    @Override
-	public ReferenceType declaringType() {
-        return declaringType;
-    }
+	@Override
+	public ReferenceType declaringType()
+	{
+		return declaringType;
+	}
 
-    @Override
-	public Method method() {
-        if (method == null) {
-            method = declaringType.getMethodMirror(methodRef);
-            if (method.isNative()) {
-                codeIndex = -1;
-            }
-        }
-        return method;
-    }
+	@Override
+	public Method method()
+	{
+		if(method == null)
+		{
+			method = declaringType.getMethodMirror(methodRef);
+			if(method.isNative())
+			{
+				codeIndex = -1;
+			}
+		}
+		return method;
+	}
 
-    @Override
-	public long codeIndex() {
-        method();  // be sure information is up-to-date
-        return codeIndex;
-    }
+	@Override
+	public long codeIndex()
+	{
+		method();  // be sure information is up-to-date
+		return codeIndex;
+	}
 
-    LineInfo getBaseLineInfo(SDE.Stratum stratum) {
-        LineInfo lineInfo;
+	LineInfo getBaseLineInfo()
+	{
+		LineInfo lineInfo;
 
         /* check if there is cached info to use */
-        if (baseLineInfo != null) {
-            return baseLineInfo;
-        }
+		if(baseLineInfo != null)
+		{
+			return baseLineInfo;
+		}
 
         /* compute the line info */
-        MethodImpl methodImpl = (MethodImpl)method();
-        lineInfo = methodImpl.codeIndexToLineInfo(stratum,
-                                                  codeIndex());
+		MethodImpl methodImpl = (MethodImpl) method();
+		lineInfo = methodImpl.codeIndexToLineInfo(codeIndex());
 
         /* cache it */
-        addBaseLineInfo(lineInfo);
+		addBaseLineInfo(lineInfo);
 
-        return lineInfo;
-    }
+		return lineInfo;
+	}
 
-    LineInfo getLineInfo(SDE.Stratum stratum) {
-        LineInfo lineInfo;
+	LineInfo getLineInfo()
+	{
+		return getBaseLineInfo();
 
-        /* base stratum is done slighly differently */
-        if (stratum.isJava()) {
-            return getBaseLineInfo(stratum);
-        }
+	}
 
-        /* check if there is cached info to use */
-        lineInfo = otherLineInfo; // copy because of concurrency
-        if (lineInfo != null &&
-                           stratum.id().equals(lineInfo.liStratum())) {
-            return lineInfo;
-        }
+	void addStratumLineInfo(LineInfo lineInfo)
+	{
+		otherLineInfo = lineInfo;
+	}
 
-        int baseLineNumber = lineNumber(SDE.BASE_STRATUM_NAME);
-        SDE.LineStratum lineStratum =
-                  stratum.lineStratum(declaringType, baseLineNumber);
+	void addBaseLineInfo(LineInfo lineInfo)
+	{
+		baseLineInfo = lineInfo;
+	}
 
-        if (lineStratum != null && lineStratum.lineNumber() != -1) {
-            lineInfo = new StratumLineInfo(stratum.id(),
-                                           lineStratum.lineNumber(),
-                                           lineStratum.sourceName(),
-                                           lineStratum.sourcePath());
-        } else {
-            /* find best match */
-            MethodImpl methodImpl = (MethodImpl)method();
-            lineInfo = methodImpl.codeIndexToLineInfo(stratum,
-                                                      codeIndex());
-        }
+	@Override
+	public String sourceName() throws AbsentInformationException
+	{
+		return sourceName0();
+	}
 
-        /* cache it */
-        addStratumLineInfo(lineInfo);
+	String sourceName0() throws AbsentInformationException
+	{
+		return getLineInfo().liSourceName();
+	}
 
-        return lineInfo;
-    }
+	@Override
+	public String sourcePath() throws AbsentInformationException
+	{
+		return sourcePath0();
+	}
 
-    void addStratumLineInfo(LineInfo lineInfo) {
-        otherLineInfo = lineInfo;
-    }
+	String sourcePath0() throws AbsentInformationException
+	{
+		return getLineInfo().liSourcePath();
+	}
 
-    void addBaseLineInfo(LineInfo lineInfo) {
-        baseLineInfo = lineInfo;
-    }
+	@Override
+	public int lineNumber()
+	{
+		return lineNumber0();
+	}
 
-    @Override
-	public String sourceName() throws AbsentInformationException {
-        return sourceName(vm.getDefaultStratum());
-    }
+	int lineNumber0()
+	{
+		return getLineInfo().liLineNumber();
+	}
 
-    @Override
-	public String sourceName(String stratumID)
-                               throws AbsentInformationException {
-        return sourceName(declaringType.stratum(stratumID));
-    }
-
-    String sourceName(SDE.Stratum stratum)
-                               throws AbsentInformationException {
-        return getLineInfo(stratum).liSourceName();
-    }
-
-    @Override
-	public String sourcePath() throws AbsentInformationException {
-        return sourcePath(vm.getDefaultStratum());
-    }
-
-    @Override
-	public String sourcePath(String stratumID)
-                               throws AbsentInformationException {
-        return sourcePath(declaringType.stratum(stratumID));
-    }
-
-    String sourcePath(SDE.Stratum stratum)
-                               throws AbsentInformationException {
-        return getLineInfo(stratum).liSourcePath();
-    }
-
-    @Override
-	public int lineNumber() {
-        return lineNumber(vm.getDefaultStratum());
-    }
-
-    @Override
-	public int lineNumber(String stratumID) {
-        return lineNumber(declaringType.stratum(stratumID));
-    }
-
-    int lineNumber(SDE.Stratum stratum) {
-        return getLineInfo(stratum).liLineNumber();
-    }
-
-    @Override
-	public String toString() {
-        if (lineNumber() == -1) {
-            return method().toString() + "+" + codeIndex();
-        } else {
-            return declaringType().name() + ":" + lineNumber();
-        }
-    }
+	@Override
+	public String toString()
+	{
+		if(lineNumber() == -1)
+		{
+			return method().toString() + "+" + codeIndex();
+		}
+		else
+		{
+			return declaringType().name() + ":" + lineNumber();
+		}
+	}
 }

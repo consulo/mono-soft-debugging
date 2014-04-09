@@ -68,10 +68,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	private Map<Long, ReferenceType> typesByID;
 	private TreeSet<ReferenceType> typesBySignature;
 
-
-	// For other languages support
-	private String defaultStratum = null;
-
 	// ObjectReference cache
 	// "objectsByID" protected by "synchronized(this)".
 	private final Map<Long, SoftObjectReference> assemblyById = new HashMap<Long, SoftObjectReference>();
@@ -430,21 +426,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	{
 		validateVM();
 		return new DoubleValueImpl(this, value);
-	}
-
-	@Override
-	public StringReference mirrorOf(String value)
-	{
-		validateVM();
-		try
-		{
-			return (StringReference) JDWP.VirtualMachine.CreateString.
-					process(vm, value).stringObject;
-		}
-		catch(JDWPException exc)
-		{
-			throw exc.toJDIException();
-		}
 	}
 
 	@Override
@@ -924,45 +905,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 			return;
 		}
 
-		JDWP.VirtualMachine.DisposeObjects.Request[] requests = null;
-		synchronized(batchedDisposeRequests)
-		{
-			int size = batchedDisposeRequests.size();
-			if(size >= DISPOSE_THRESHOLD)
-			{
-				if((traceFlags & TRACE_OBJREFS) != 0)
-				{
-					printTrace("Dispose threashold reached. Will dispose " + size + " object references...");
-				}
-				requests = new JDWP.VirtualMachine.DisposeObjects.Request[size];
-				for(int i = 0; i < requests.length; i++)
-				{
-					SoftObjectReference ref = batchedDisposeRequests.get(i);
-					if((traceFlags & TRACE_OBJREFS) != 0)
-					{
-						printTrace("Disposing object " + ref.key().longValue() +
-								" (ref count = " + ref.count() + ")");
-					}
-
-					// This is kludgy. We temporarily re-create an object
-					// reference so that we can correctly pass its id to the
-					// JDWP command.
-					requests[i] = new JDWP.VirtualMachine.DisposeObjects.Request(new ObjectReferenceImpl(this, ref.key().longValue()), ref.count());
-				}
-				batchedDisposeRequests.clear();
-			}
-		}
-		if(requests != null)
-		{
-			try
-			{
-				JDWP.VirtualMachine.DisposeObjects.process(vm, requests);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
 	}
 
 	private void batchForDispose(SoftObjectReference ref)
@@ -1132,30 +1074,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	ClassObjectReferenceImpl classObjectMirror(long id)
 	{
 		return (ClassObjectReferenceImpl) objectMirror(id, JDWP.Tag.CLASS_OBJECT);
-	}
-
-	@Override
-	public void setDefaultStratum(String stratum)
-	{
-		defaultStratum = stratum;
-		if(stratum == null)
-		{
-			stratum = "";
-		}
-		try
-		{
-			JDWP.VirtualMachine.SetDefaultStratum.process(vm, stratum);
-		}
-		catch(JDWPException exc)
-		{
-			throw exc.toJDIException();
-		}
-	}
-
-	@Override
-	public String getDefaultStratum()
-	{
-		return defaultStratum;
 	}
 
 	ThreadGroup threadGroupForJDI()

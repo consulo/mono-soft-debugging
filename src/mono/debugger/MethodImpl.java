@@ -25,23 +25,18 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.List;
 
 public abstract class MethodImpl extends TypeComponentImpl
     implements Method {
     private JNITypeParser signatureParser;
     abstract int argSlotCount() throws AbsentInformationException;
 
-    abstract List<Location> allLineLocations(SDE.Stratum stratum,
-                                   String sourceName)
+    abstract List<Location> allLineLocations0(String sourceName)
                            throws AbsentInformationException;
 
-    abstract List<Location> locationsOfLine(SDE.Stratum stratum,
+    abstract List<Location> locationsOfLine0(
                                   String sourceName,
                                   int lineNumber)
                            throws AbsentInformationException;
@@ -96,41 +91,33 @@ public abstract class MethodImpl extends TypeComponentImpl
     @Override
 	public final List<Location> allLineLocations()
                            throws AbsentInformationException {
-        return allLineLocations(vm.getDefaultStratum(), null);
+        return allLineLocations(null);
     }
 
     @Override
-	public List<Location> allLineLocations(String stratumID,
+	public List<Location> allLineLocations(
                                  String sourceName)
                            throws AbsentInformationException {
-        return allLineLocations(declaringType.stratum(stratumID),
-                                sourceName);
+        return allLineLocations0(sourceName);
     }
 
     @Override
 	public final List<Location> locationsOfLine(int lineNumber)
                            throws AbsentInformationException {
-        return locationsOfLine(vm.getDefaultStratum(),
-                               null, lineNumber);
+        return locationsOfLine(null, lineNumber);
     }
 
     @Override
-	public List<Location> locationsOfLine(String stratumID,
+	public List<Location> locationsOfLine(
                                 String sourceName,
                                 int lineNumber)
                            throws AbsentInformationException {
-        return locationsOfLine(declaringType.stratum(stratumID),
-                               sourceName, lineNumber);
+        return locationsOfLine0(sourceName, lineNumber);
     }
 
-    LineInfo codeIndexToLineInfo(SDE.Stratum stratum,
-                                 long codeIndex) {
-        if (stratum.isJava()) {
-            return new BaseLineInfo(-1, declaringType);
-        } else {
-            return new StratumLineInfo(stratum.id(), -1,
-                                       null, null);
-        }
+    LineInfo codeIndexToLineInfo(long codeIndex) {
+        return new BaseLineInfo(-1, declaringType);
+
     }
 
     /**

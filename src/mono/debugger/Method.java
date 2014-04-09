@@ -253,7 +253,7 @@ public interface Method extends TypeComponent, Locatable, Comparable<Method> {
      *
      * @since 1.4
      */
-    List<Location> allLineLocations(String stratum, String sourceName)
+    List<Location> allLineLocations(String sourceName)
         throws AbsentInformationException;
 
     /**
@@ -312,7 +312,7 @@ public interface Method extends TypeComponent, Locatable, Comparable<Method> {
      *
      * @since 1.4
      */
-    List<Location> locationsOfLine(String stratum, String sourceName,
+    List<Location> locationsOfLine(String sourceName,
                                    int lineNumber)
         throws AbsentInformationException;
 

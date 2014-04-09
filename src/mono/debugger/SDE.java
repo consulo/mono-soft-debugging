@@ -25,10 +25,9 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 class SDE {
     private static final int INIT_SIZE_FILE = 3;
@@ -88,70 +87,6 @@ class SDE {
         int lineIndex;
     }
 
-    class Stratum {
-        private final int sti; /* stratum index */
-
-        private Stratum(int sti) {
-            this.sti = sti;
-        }
-
-        String id() {
-            return stratumTable[sti].id;
-        }
-
-        boolean isJava() {
-            return sti == baseStratumIndex;
-        }
-
-        /**
-         * Return all the sourceNames for this stratum.
-         * Look from our starting fileIndex upto the starting
-         * fileIndex of next stratum - can do this since there
-         * is always a terminator stratum.
-         * Default sourceName (the first one) must be first.
-         */
-        List<String> sourceNames(ReferenceTypeImpl refType) {
-            int i;
-            int fileIndexStart = stratumTable[sti].fileIndex;
-            /* one past end */
-            int fileIndexEnd = stratumTable[sti+1].fileIndex;
-            List<String> result = new ArrayList<String>(fileIndexEnd - fileIndexStart);
-            for (i = fileIndexStart; i < fileIndexEnd; ++i) {
-                result.add(fileTable[i].sourceName);
-            }
-            return result;
-        }
-
-        /**
-         * Return all the sourcePaths for this stratum.
-         * Look from our starting fileIndex upto the starting
-         * fileIndex of next stratum - can do this since there
-         * is always a terminator stratum.
-         * Default sourcePath (the first one) must be first.
-         */
-        List<String> sourcePaths(ReferenceTypeImpl refType) {
-            int i;
-            int fileIndexStart = stratumTable[sti].fileIndex;
-            /* one past end */
-            int fileIndexEnd = stratumTable[sti+1].fileIndex;
-            List<String> result = new ArrayList<String>(fileIndexEnd - fileIndexStart);
-            for (i = fileIndexStart; i < fileIndexEnd; ++i) {
-                result.add(fileTable[i].getSourcePath(refType));
-            }
-            return result;
-        }
-
-        LineStratum lineStratum(ReferenceTypeImpl refType,
-                                int jplsLine) {
-            int lti = stiLineTableIndex(sti, jplsLine);
-            if (lti < 0) {
-                return null;
-            } else {
-                return new LineStratum(sti, lti, refType,
-                                       jplsLine);
-            }
-        }
-    }
 
     class LineStratum {
         private final int sti; /* stratum index */
@@ -365,10 +300,6 @@ class SDE {
         return defaultStratumTableIndex();
     }
 
-    Stratum stratum(String stratumID) {
-        int sti = stratumTableIndex(stratumID);
-        return new Stratum(sti);
-    }
 
     List<String> availableStrata() {
         List<String> strata = new ArrayList<String>();

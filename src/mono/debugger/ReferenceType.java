@@ -170,7 +170,7 @@ public interface ReferenceType
      *
      * @since 1.4
      */
-    List<String> sourceNames(String stratum) throws AbsentInformationException;
+    List<String> sourceNames() throws AbsentInformationException;
 
     /**
      * Gets the paths to the source corresponding to the
@@ -204,7 +204,7 @@ public interface ReferenceType
      *
      * @since 1.4
      */
-    List<String> sourcePaths(String stratum) throws AbsentInformationException;
+    List<String> sourcePaths() throws AbsentInformationException;
 
     /**
      * Get the source debug extension of this type.
@@ -591,7 +591,7 @@ public interface ReferenceType
      *
      * @since 1.4
      */
-    List<Location> allLineLocations(String stratum, String sourceName)
+    List<Location> allLineLocations(String sourceName)
                              throws AbsentInformationException;
 
     /**
@@ -659,7 +659,7 @@ public interface ReferenceType
      *
      * @since 1.4
      */
-    List<Location> locationsOfLine(String stratum,
+    List<Location> locationsOfLine(
                                    String sourceName,
                                    int lineNumber)
                      throws AbsentInformationException;
