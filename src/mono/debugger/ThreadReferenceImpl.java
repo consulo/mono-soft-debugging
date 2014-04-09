@@ -25,16 +25,20 @@
 
 package mono.debugger;
 
-import mono.debugger.request.BreakpointRequest;
-import java.util.*;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import mono.debugger.request.BreakpointRequest;
 
 public class ThreadReferenceImpl extends ObjectReferenceImpl
              implements ThreadReference, VMListener {
     static final int SUSPEND_STATUS_SUSPENDED = 0x1;
     static final int SUSPEND_STATUS_BREAK = 0x2;
 
-    private int suspendedZombieCount = 0;
 
     /*
      * Some objects can only be created while a thread is suspended and are valid
@@ -63,7 +67,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
     // the thread is resumed, we abandon the current cache object and
     // create a new intialized one.
     private static class LocalCache {
-        JDWP.ThreadReference.Status status = null;
+        JDWP.ThreadReference.State myState = null;
         List<StackFrame> frames = null;
         int framesStart = -1;
         int framesLength = 0;
@@ -193,57 +197,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
     }
 
     @Override
-	public void suspend() {
-        try {
-            JDWP.ThreadReference.Suspend.process(vm, this);
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-        // Don't consider the thread suspended yet. On reply, notifySuspend()
-        // will be called.
-    }
-
-    @Override
-	public void resume() {
-        /*
-         * If it's a zombie, we can just update internal state without
-         * going to back end.
-         */
-        if (suspendedZombieCount > 0) {
-            suspendedZombieCount--;
-            return;
-        }
-
-        PacketStream stream;
-        synchronized (vm.state()) {
-            processThreadAction(new ThreadAction(this,
-                                      ThreadAction.THREAD_RESUMABLE));
-            stream = JDWP.ThreadReference.Resume.enqueueCommand(vm, this);
-        }
-        try {
-            JDWP.ThreadReference.Resume.waitForReply(vm, stream);
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-    }
-
-    @Override
-	public int suspendCount() {
-        /*
-         * If it's a zombie, we maintain the count in the front end.
-         */
-        if (suspendedZombieCount > 0) {
-            return suspendedZombieCount;
-        }
-
-        try {
-            return JDWP.ThreadReference.SuspendCount.process(vm, this).suspendCount;
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-    }
-
-    @Override
 	public void stop(ObjectReference throwable) throws InvalidTypeException {
         validateMirror(throwable);
         // Verify that the given object is a Throwable instance
@@ -271,32 +224,27 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl
         }
     }
 
-    private JDWP.ThreadReference.Status jdwpStatus() {
+    private JDWP.ThreadReference.State jdwpStatus() {
         LocalCache snapshot = localCache;
-        JDWP.ThreadReference.Status myStatus = snapshot.status;
+        JDWP.ThreadReference.State myState = snapshot.myState;
         try {
-             if (myStatus == null) {
-                 myStatus = JDWP.ThreadReference.Status.process(vm, this);
-                if ((myStatus.suspendStatus & SUSPEND_STATUS_SUSPENDED) != 0) {
-                    // thread is suspended, we can cache the status.
-                    snapshot.status = myStatus;
-                }
+             if (myState == null) {
+                 myState = JDWP.ThreadReference.State.process(vm, this);
             }
          } catch (JDWPException exc) {
             throw exc.toJDIException();
         }
-        return myStatus;
+        return myState;
     }
 
     @Override
-	public int status() {
-        return jdwpStatus().threadStatus;
+	public int state() {
+        return jdwpStatus().state;
     }
 
     @Override
 	public boolean isSuspended() {
-        return ((suspendedZombieCount > 0) ||
-                ((jdwpStatus().suspendStatus & SUSPEND_STATUS_SUSPENDED) != 0));
+        return (jdwpStatus().state & ThreadState.Suspended) != 0;
     }
 
     @Override

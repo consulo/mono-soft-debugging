@@ -38,7 +38,21 @@ import java.util.List;
  */
 public interface ThreadReference extends ObjectReference
 {
-    /** Thread status is unknown */
+	public interface ThreadState
+	{
+		int Running = 0x00000000;
+		int StopRequested = 0x00000001;
+		int SuspendRequested = 0x00000002;
+		int Background = 0x00000004;
+		int Unstarted = 0x00000008;
+		int Stopped = 0x00000010;
+		int WaitSleepJoin = 0x00000020;
+		int Suspended = 0x00000040;
+		int AbortRequested = 0x00000080;
+		int Aborted = 0x00000100;
+	}
+
+	//   /** Thread state is unknown */
     public final int THREAD_STATUS_UNKNOWN  =-1;
     /** Thread has completed execution */
     public final int THREAD_STATUS_ZOMBIE = 0;
@@ -60,50 +74,6 @@ public interface ThreadReference extends ObjectReference
      */
     String name();
 
-    /**
-     * Suspends this thread. The thread can be resumed through
-     * {@link #resume} or resumed with other threads through
-     * {@link VirtualMachine#resume}.
-     * <p>
-     * Unlike {@link java.lang.Thread#suspend},
-     * suspends of both the virtual machine and individual threads are
-     * counted. Before a thread will run again, it must be resumed
-     * (through {@link #resume} or {@link ThreadReference#resume})
-     * the same number of times it has been suspended.
-     * <p>
-     * Suspending single threads with this method has the same dangers
-     * as {@link java.lang.Thread#suspend()}. If the suspended thread
-     * holds a monitor needed by another running thread, deadlock is
-     * possible in the target VM (at least until the suspended thread
-     * is resumed again).
-     * <p>
-     * The suspended thread is guaranteed to remain suspended until
-     * resumed through one of the JDI resume methods mentioned above;
-     * the application in the target VM cannot resume the suspended thread
-     * through {@link java.lang.Thread#resume}.
-     * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
-     */
-    void suspend();
-
-    /**
-     * Resumes this thread. If this thread was not previously suspended
-     * through {@link #suspend} or through {@link VirtualMachine#suspend},
-     * or because of a SUSPEND_ALL or SUSPEND_EVENT_THREAD event, then
-     * invoking this method has no effect. Otherwise, the count of pending
-     * suspends on this thread is decremented. If it is decremented to 0,
-     * the thread will continue to execute.
-     * Note: the normal way to resume from an event related suspension is
-     * via {@link mono.debugger.event.EventSet#resume}.
-     * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
-     */
-    void resume();
-
-    /**
-     * Returns the number of pending suspends for this thread. See
-     * {@link #suspend} for an explanation of counted suspends.
-     * @return pending suspend count as an integer
-     */
-    int suspendCount();
 
     /**
      * Stops this thread with an asynchronous exception.
@@ -128,23 +98,9 @@ public interface ThreadReference extends ObjectReference
     void interrupt();
 
     /**
-     * Returns the thread's status. If the thread is not suspended the
-     * thread's current status is returned. If the thread is suspended, the
-     * thread's status before the suspension is returned (or
-     * {@link #THREAD_STATUS_UNKNOWN} if this information is not available.
-     * {@link #isSuspended} can be used to determine if the thread has been
-     * suspended.
-     *
-     * @return one of
-     * {@link #THREAD_STATUS_UNKNOWN},
-     * {@link #THREAD_STATUS_ZOMBIE},
-     * {@link #THREAD_STATUS_RUNNING},
-     * {@link #THREAD_STATUS_SLEEPING},
-     * {@link #THREAD_STATUS_MONITOR},
-     * {@link #THREAD_STATUS_WAIT},
-     * {@link #THREAD_STATUS_NOT_STARTED},
+     * @see ThreadState
      */
-    int status();
+    int state();
 
     /**
      * Determines whether the thread has been suspended by the
@@ -290,7 +246,7 @@ public interface ThreadReference extends ObjectReference
      * for which this thread is currently waiting.
      * The thread can be waiting for a monitor through entry into a
      * synchronized method, the synchronized statement, or
-     * {@link Object#wait}.  The {@link #status} method can be used
+     * {@link Object#wait}.  The {@link #state} method can be used
      * to differentiate between the first two cases and the third.
      * <p>
      * Not all target virtual machines support this operation.

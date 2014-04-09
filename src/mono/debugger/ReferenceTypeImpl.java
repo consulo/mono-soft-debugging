@@ -339,7 +339,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	{
 		// This ref type may have been prepared before we were getting
 		// events, so get it once.  After that,
-		// this status flag is updated through the ClassPrepareEvent,
+		// this state flag is updated through the ClassPrepareEvent,
 		// there is no need for the expense of a JDWP query.
 		if(status == 0)
 		{

@@ -2342,15 +2342,15 @@ public class JDWP
 		}
 
 		/**
-		 * Returns the current status of the reference type. The status
+		 * Returns the current state of the reference type. The state
 		 * indicates the extent to which the reference type has been
 		 * initialized, as described in section 2.1.6 of
 		 * <cite>The Java&trade; Virtual Machine Specification</cite>.
-		 * If the class is linked the PREPARED and VERIFIED bits in the returned status bits
+		 * If the class is linked the PREPARED and VERIFIED bits in the returned state bits
 		 * will be set. If the class is initialized the INITIALIZED bit in the returned
-		 * status bits will be set. If an error occured during initialization then the
-		 * ERROR bit in the returned status bits will be set.
-		 * The returned status bits are undefined for array types and for
+		 * state bits will be set. If an error occured during initialization then the
+		 * ERROR bit in the returned state bits will be set.
+		 * The returned state bits are undefined for array types and for
 		 * primitive classes (such as java.lang.Integer.TYPE).
 		 */
 		static class Status
@@ -2405,7 +2405,7 @@ public class JDWP
 				status = ps.readInt();
 				if(vm.traceReceives)
 				{
-					vm.printReceiveTrace(4, "status(int): " + status);
+					vm.printReceiveTrace(4, "state(int): " + status);
 				}
 			}
 		}
@@ -5248,149 +5248,17 @@ public class JDWP
 			}
 		}
 
-		/**
-		 * Suspends the thread.
-		 * <p/>
-		 * Unlike java.lang.Thread.suspend(), suspends of both
-		 * the virtual machine and individual threads are counted. Before
-		 * a thread will run again, it must be resumed the same number
-		 * of times it has been suspended.
-		 * <p/>
-		 * Suspending single threads with command has the same
-		 * dangers java.lang.Thread.suspend(). If the suspended
-		 * thread holds a monitor needed by another running thread,
-		 * deadlock is possible in the target VM (at least until the
-		 * suspended thread is resumed again).
-		 * <p/>
-		 * The suspended thread is guaranteed to remain suspended until
-		 * resumed through one of the JDI resume methods mentioned above;
-		 * the application in the target VM cannot resume the suspended thread
-		 * through {@link java.lang.Thread#resume}.
-		 * <p/>
-		 * Note that this doesn't change the status of the thread (see the
-		 * <a href="#JDWP_ThreadReference_Status">ThreadStatus</a> command.)
-		 * For example, if it was
-		 * Running, it will still appear running to other threads.
-		 */
-		static class Suspend
-		{
-			static final int COMMAND = 2;
-
-			static Suspend process(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, thread);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Suspend" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-				}
-				ps.writeObjectRef(thread.ref());
-				ps.send();
-				return ps;
-			}
-
-			static Suspend waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new Suspend(vm, ps);
-			}
-
-
-			private Suspend(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Suspend" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-			}
-		}
-
-		/**
-		 * Resumes the execution of a given thread. If this thread was
-		 * not previously suspended by the front-end,
-		 * calling this command has no effect.
-		 * Otherwise, the count of pending suspends on this thread is
-		 * decremented. If it is decremented to 0, the thread will
-		 * continue to execute.
-		 */
-		static class Resume
+		static class State
 		{
 			static final int COMMAND = 3;
 
-			static Resume process(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread) throws JDWPException
+			static State process(VirtualMachineImpl vm, ThreadReferenceImpl thread) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, thread);
 				return waitForReply(vm, ps);
 			}
 
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Resume" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-				}
-				ps.writeObjectRef(thread.ref());
-				ps.send();
-				return ps;
-			}
-
-			static Resume waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new Resume(vm, ps);
-			}
-
-
-			private Resume(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Resume" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-			}
-		}
-
-		/**
-		 * Returns the current status of a thread. The thread status
-		 * reply indicates the thread status the last time it was running.
-		 * the suspend status provides information on the thread's
-		 * suspension, if any.
-		 */
-		static class Status
-		{
-			static final int COMMAND = 4;
-
-			static Status process(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, thread);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread)
+			static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadReferenceImpl thread)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
@@ -5400,48 +5268,32 @@ public class JDWP
 				}
 				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
+					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + "ref=" + thread.ref());
 				}
-				ps.writeObjectRef(thread.ref());
+				ps.writeId(thread.ref());
 				ps.send();
 				return ps;
 			}
 
-			static Status waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
+			static State waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
 			{
 				ps.waitForReply();
-				return new Status(vm, ps);
+				return new State(vm, ps);
 			}
 
+			final int state;
 
-			/**
-			 * One of the thread status codes
-			 * See <a href="#JDWP_ThreadStatus">JDWP.ThreadStatus</a>
-			 */
-			final int threadStatus;
-
-			/**
-			 * One of the suspend status codes
-			 * See <a href="#JDWP_SuspendStatus">JDWP.SuspendStatus</a>
-			 */
-			final int suspendStatus;
-
-			private Status(VirtualMachineImpl vm, PacketStream ps)
+			private State(VirtualMachineImpl vm, PacketStream ps)
 			{
 				if(vm.traceReceives)
 				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.Status" + (ps.pkt.flags != 0 ? ", " +
+					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.State" + (ps.pkt.flags != 0 ? ", " +
 							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
 				}
-				threadStatus = ps.readInt();
+				state = ps.readInt();
 				if(vm.traceReceives)
 				{
-					vm.printReceiveTrace(4, "threadStatus(int): " + threadStatus);
-				}
-				suspendStatus = ps.readInt();
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "suspendStatus(int): " + suspendStatus);
+					vm.printReceiveTrace(4, "state(int): " + state);
 				}
 			}
 		}
@@ -5921,66 +5773,6 @@ public class JDWP
 			}
 		}
 
-		/**
-		 * Get the suspend count for this thread. The suspend count is the
-		 * number of times the thread has been suspended through the
-		 * thread-level or VM-level suspend commands without a corresponding resume
-		 */
-		static class SuspendCount
-		{
-			static final int COMMAND = 12;
-
-			static SuspendCount process(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, thread);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, ThreadReferenceImpl thread)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.SuspendCount" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 thread(ThreadReferenceImpl): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-				}
-				ps.writeObjectRef(thread.ref());
-				ps.send();
-				return ps;
-			}
-
-			static SuspendCount waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new SuspendCount(vm, ps);
-			}
-
-
-			/**
-			 * The number of outstanding suspends of this thread.
-			 */
-			final int suspendCount;
-
-			private SuspendCount(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.ThreadReference.SuspendCount" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-				suspendCount = ps.readInt();
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "suspendCount(int): " + suspendCount);
-				}
-			}
-		}
 
 		/**
 		 * Returns monitor objects owned by the thread, along with stack depth at which

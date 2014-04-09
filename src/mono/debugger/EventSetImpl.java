@@ -713,7 +713,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			}
 		}
 
-		ThreadReference fix6485605 = null;
 		for(int i = 0; i < compEvt.events.length; i++)
 		{
 			EventImpl evt = createEvent(compEvt.events[i]);
@@ -733,14 +732,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			switch(evt.destination())
 			{
 				case UNKNOWN_EVENT:
-					// Ignore disabled, deleted, unknown events, but
-					// save the thread if there is one since we might
-					// have to resume it.  Note that events for different
-					// threads can't be in the same event set.
-					if(evt instanceof ThreadedEventImpl && suspendPolicy == JDWP.SuspendPolicy.EVENT_THREAD)
-					{
-						fix6485605 = ((ThreadedEventImpl) evt).thread();
-					}
 					continue;
 				case CLIENT_EVENT:
 					addEvent(evt);
@@ -766,18 +757,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			if(suspendPolicy == JDWP.SuspendPolicy.ALL)
 			{
 				vm.resume();
-			}
-			else if(suspendPolicy == JDWP.SuspendPolicy.EVENT_THREAD)
-			{
-				// See bug 6485605.
-				if(fix6485605 != null)
-				{
-					fix6485605.resume();
-				}
-				else
-				{
-					// apparently, there is nothing to resume.
-				}
 			}
 			suspendPolicy = JDWP.SuspendPolicy.NONE;
 
@@ -905,7 +884,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				{
 					throw new InternalException("Inconsistent suspend policy");
 				}
-				thread.resume();
+				//thread.resume();
 				break;
 			case EventRequest.SUSPEND_NONE:
 				// Do nothing

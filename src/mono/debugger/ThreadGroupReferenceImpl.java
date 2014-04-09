@@ -25,8 +25,8 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
     implements ThreadGroupReference, VMListener
@@ -91,24 +91,12 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl
 
     @Override
 	public void suspend() {
-        for (ThreadReference thread : threads()) {
-            thread.suspend();
-        }
 
-        for (ThreadGroupReference threadGroup : threadGroups()) {
-            threadGroup.suspend();
-        }
     }
 
     @Override
 	public void resume() {
-        for (ThreadReference thread : threads()) {
-            thread.resume();
-        }
 
-        for (ThreadGroupReference threadGroup : threadGroups()) {
-            threadGroup.resume();
-        }
     }
 
     private JDWP.ThreadGroupReference.Children kids() {

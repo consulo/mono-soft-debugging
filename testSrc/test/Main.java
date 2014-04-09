@@ -1,8 +1,10 @@
 package test;
 
+import java.util.List;
 import java.util.Map;
 
 import mono.debugger.SocketListeningConnector;
+import mono.debugger.ThreadReference;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
 
@@ -23,6 +25,12 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
+		List<ThreadReference> threadReferences = accept.allThreads();
+		for(ThreadReference threadReference : threadReferences)
+		{
+			System.out.println("name: " + threadReference.name());
+			System.out.println("state: " + threadReference.state());
+		}
 		//accept.resume();
 	   /*
 		System.out.println(accept.description());
