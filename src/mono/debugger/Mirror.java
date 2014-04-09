@@ -66,12 +66,4 @@ public interface Mirror {
      * @return the {@link VirtualMachine} for which this mirror is a proxy.
      */
     VirtualMachine virtualMachine();
-
-    /**
-     * Returns a String describing this mirror
-     *
-     * @return a string describing this mirror.
-     */
-	@Override
-	String toString();
 }

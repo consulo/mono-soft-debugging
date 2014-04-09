@@ -71,6 +71,49 @@ import mono.debugger.request.EventRequestManager;
  */
 public interface VirtualMachine extends Mirror
 {
+	/**
+	 * All tracing is disabled.
+	 */
+	int TRACE_NONE = 0x00000000;
+	/**
+	 * Tracing enabled for JDWP packets sent to target VM.
+	 */
+	int TRACE_SENDS = 0x00000001;
+	/**
+	 * Tracing enabled for JDWP packets received from target VM.
+	 */
+	int TRACE_RECEIVES = 0x00000002;
+	/**
+	 * Tracing enabled for internal event handling.
+	 */
+	int TRACE_EVENTS = 0x00000004;
+	/**
+	 * Tracing enabled for internal managment of reference types.
+	 */
+	int TRACE_REFTYPES = 0x00000008;
+	/**
+	 * Tracing enabled for internal management of object references.
+	 */
+	int TRACE_OBJREFS = 0x00000010;
+	/**
+	 * All tracing is enabled.
+	 */
+	int TRACE_ALL = 0x00ffffff;
+
+	/**
+	 * Traces the activities performed by the mono.debugger implementation.
+	 * All trace information is output to System.err. The given trace
+	 * flags are used to limit the output to only the information
+	 * desired. The given flags are in effect and the corresponding
+	 * trace will continue until the next call to
+	 * this method.
+	 * <p/>
+	 * Output is implementation dependent and trace mode may be ignored.
+	 *
+	 * @param traceFlags identifies which kinds of tracing to enable.
+	 */
+	void setDebugTraceMode(int traceFlags);
+
 	AppDomainMirror rootAppDomain();
 
 	/**
@@ -92,23 +135,7 @@ public interface VirtualMachine extends Mirror
 	 * @return a list of {@link ReferenceType} objects, each
 	 *         mirroring a type in the target VM with the given name.
 	 */
-	List<ReferenceType> getTypes(String className, boolean ignoreCase);
-
-	/**
-	 * Returns all loaded types. For each loaded type in the target
-	 * VM a {@link ReferenceType} will be placed in the returned list.
-	 * The list will include ReferenceTypes which mirror classes,
-	 * interfaces, and array types.
-	 * <p/>
-	 * The returned list will include reference types
-	 * loaded at least to the point of preparation and
-	 * types (like array) for which preparation is
-	 * not defined.
-	 *
-	 * @return a list of {@link ReferenceType} objects, each mirroring
-	 *         a loaded type in the target VM.
-	 */
-	List<ReferenceType> allClasses();
+	List<ReferenceType> findTypes(String className, boolean ignoreCase);
 
 	/**
 	 * Returns a list of the currently running threads. For each
@@ -233,21 +260,6 @@ public interface VirtualMachine extends Mirror
 	void exit(int exitCode);
 
 	/**
-	 * Returns text information on the target VM and the
-	 * debugger support that mirrors it. No specific format
-	 * for this information is guaranteed.
-	 * Typically, this string contains version information for the
-	 * target VM and debugger interfaces.
-	 * More precise information
-	 * on VM and JDI versions is available through
-	 * {@link #version}, {@link VirtualMachineManager#majorInterfaceVersion},
-	 * and {@link VirtualMachineManager#minorInterfaceVersion}
-	 *
-	 * @return the description.
-	 */
-	String description();
-
-	/**
 	 * Returns the version of the Java Runtime Environment in the target
 	 * VM as reported by the property <code>java.version</code>.
 	 * For obtaining the JDI interface version, use
@@ -265,47 +277,4 @@ public interface VirtualMachine extends Mirror
 	 * @return the target VM name.
 	 */
 	String name();
-
-	/**
-	 * All tracing is disabled.
-	 */
-	int TRACE_NONE = 0x00000000;
-	/**
-	 * Tracing enabled for JDWP packets sent to target VM.
-	 */
-	int TRACE_SENDS = 0x00000001;
-	/**
-	 * Tracing enabled for JDWP packets received from target VM.
-	 */
-	int TRACE_RECEIVES = 0x00000002;
-	/**
-	 * Tracing enabled for internal event handling.
-	 */
-	int TRACE_EVENTS = 0x00000004;
-	/**
-	 * Tracing enabled for internal managment of reference types.
-	 */
-	int TRACE_REFTYPES = 0x00000008;
-	/**
-	 * Tracing enabled for internal management of object references.
-	 */
-	int TRACE_OBJREFS = 0x00000010;
-	/**
-	 * All tracing is enabled.
-	 */
-	int TRACE_ALL = 0x00ffffff;
-
-	/**
-	 * Traces the activities performed by the mono.debugger implementation.
-	 * All trace information is output to System.err. The given trace
-	 * flags are used to limit the output to only the information
-	 * desired. The given flags are in effect and the corresponding
-	 * trace will continue until the next call to
-	 * this method.
-	 * <p/>
-	 * Output is implementation dependent and trace mode may be ignored.
-	 *
-	 * @param traceFlags identifies which kinds of tracing to enable.
-	 */
-	void setDebugTraceMode(int traceFlags);
 }

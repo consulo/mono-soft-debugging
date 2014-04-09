@@ -28,7 +28,6 @@ package mono.debugger;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -230,29 +229,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	}
 
 	@Override
-	public List<ReferenceType> getTypes(String className, boolean ignoreCase)
+	public List<ReferenceType> findTypes(String className, boolean ignoreCase)
 	{
 		validateVM();
 		//String signature = JNITypeParser.typeNameToSignature(className);
-		List<ReferenceType> list = retrieveClassesBySignature(className, ignoreCase);
+		List<ReferenceType> list = findTypesImpl(className, ignoreCase);
 
 		return Collections.unmodifiableList(list);
 	}
-
-	@Override
-	public List<ReferenceType> allClasses()
-	{
-		validateVM();
-
-		retrieveAllClasses();
-		ArrayList<ReferenceType> a;
-		synchronized(this)
-		{
-			a = new ArrayList<ReferenceType>(typesBySignature);
-		}
-		return Collections.unmodifiableList(a);
-	}
-
 
 	@Override
 	public List<ThreadReference> allThreads()
@@ -423,13 +407,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		}
 	}
 
-	@Override
-	public String description()
+	public boolean isAtLeastVersion(int major, int minor)
 	{
-		validateVM();
-
-		return MessageFormat.format(vmManager.getString("version_format"), "" + vmManager.majorInterfaceVersion(),
-				"" + vmManager.minorInterfaceVersion(), versionInfo().description);
+		JDWP.VirtualMachine.Version version = versionInfo();
+		return (version.jdwpMajor > major) || ((version.jdwpMajor == major && version.jdwpMinor >= minor));
 	}
 
 	@Override
@@ -456,7 +437,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	public void printTrace(String string)
 	{
-		System.err.println("[JDI: " + string + "]");
+		System.err.println("[MDI: " + string + "]");
 	}
 
 	public void printReceiveTrace(int depth, String string)
@@ -509,7 +490,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 		if(typesByID.remove(((ReferenceTypeImpl) signature).ref()) != null)
 		{
-			retrieveClassesBySignature(signature.name(), true);
+			findTypesImpl(signature.name(), true);
 		}
 	}
 
@@ -561,15 +542,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	{
 		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
 		{
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("Looking up ");
 			sb.append("Class");
 
 			if(signature != null)
 			{
-				sb.append(", signature='" + signature + "'");
+				sb.append(", signature='").append(signature).append("'");
 			}
-			sb.append(", id=" + id);
+			sb.append(", id=").append(id);
 			vm.printTrace(sb.toString());
 		}
 		if(id == 0)
@@ -594,17 +575,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		}
 	}
 
-	private List<ReferenceType> retrieveClassesBySignature(String signature, boolean ignoreCase)
+	private List<ReferenceType> findTypesImpl(String name, boolean ignoreCase)
 	{
 		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
 		{
-			vm.printTrace("Retrieving matching ReferenceTypes, sig=" + signature);
+			vm.printTrace("Retrieving matching ReferenceTypes, name=" + name);
 		}
 		JDWP.VirtualMachine.GetTypes.ClassInfo[] cinfos;
 		try
 		{
-			cinfos = JDWP.VirtualMachine.GetTypes.
-					process(vm, signature, ignoreCase).classes;
+			cinfos = JDWP.VirtualMachine.GetTypes.process(vm, name, ignoreCase).classes;
 		}
 		catch(JDWPException exc)
 		{
@@ -620,7 +600,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 			for(int i = 0; i < count; i++)
 			{
 				JDWP.VirtualMachine.GetTypes.ClassInfo ci = cinfos[i];
-				ReferenceTypeImpl type = referenceType(ci.typeID, signature);
+				ReferenceTypeImpl type = referenceType(ci.typeID, name);
 				list.add(type);
 			}
 		}

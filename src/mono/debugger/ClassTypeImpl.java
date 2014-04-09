@@ -69,15 +69,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     @Override
 	public List<ClassType> subclasses() {
         List<ClassType> subs = new ArrayList<ClassType>();
-        for (ReferenceType refType : vm.allClasses()) {
-            if (refType instanceof ClassType) {
-                ClassType clazz = (ClassType)refType;
-                ClassType superclass = clazz.superclass();
-                if ((superclass != null) && superclass.equals(this)) {
-                    subs.add((ClassType)refType);
-                }
-            }
-        }
+
 
         return subs;
     }

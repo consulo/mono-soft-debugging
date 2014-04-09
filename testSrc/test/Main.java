@@ -3,7 +3,6 @@ package test;
 import java.util.Map;
 
 import mono.debugger.SocketListeningConnector;
-import mono.debugger.ThreadReference;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
 
@@ -24,10 +23,8 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		for(ThreadReference threadReference : accept.allThreads())
-		{
-			System.out.println("thread name: "  + threadReference.name());
-		}
+		System.out.println(accept.name());
+		System.out.println(accept.version());
 
 		//accept.resume();
 	   /*
