@@ -41,7 +41,6 @@ import java.util.TreeSet;
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
 import mono.debugger.request.BreakpointRequest;
-import mono.debugger.request.EventRequest;
 import mono.debugger.request.EventRequestManager;
 
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
@@ -50,7 +49,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	private final TargetVM target;
 	private final EventQueueImpl eventQueue;
-	private final EventRequestManagerImpl internalEventRequestManager;
 	private final EventRequestManagerImpl eventRequestManager;
 	final VirtualMachineManagerImpl vmManager;
 	private final ThreadGroup threadGroupForJDI;
@@ -196,36 +194,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 		target.start();
 
-		/**
-		 * Set up requests needed by internal event handler.
-		 * Make sure they are distinguished by creating them with
-		 * an internal event request manager.
-		 *
-		 * Warning: create events only with SUSPEND_NONE policy.
-		 * In the current implementation other policies will not
-		 * be handled correctly when the event comes in. (notfiySuspend()
-		 * will not be properly called, and if the event is combined
-		 * with external events in the same set, suspend policy is not
-		 * correctly determined for the internal vs. external event sets)
-		 */
-		internalEventRequestManager = new EventRequestManagerImpl(this);
-		EventRequest er = internalEventRequestManager.createClassPrepareRequest();
-		er.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-		er.enable();
-		er = internalEventRequestManager.createClassUnloadRequest();
-		er.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-		er.enable();
-
         /*
          * Tell other threads, notably TargetVM, that initialization
          * is complete.
          */
 		notifyInitCompletion();
-	}
-
-	EventRequestManagerImpl getInternalEventRequestManager()
-	{
-		return internalEventRequestManager;
 	}
 
 	void validateVM()

@@ -161,13 +161,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			// Is this an event for a current client request?
 			if(request == null)
 			{
-				// Nope.  Is it an event for an internal request?
-				EventRequestManagerImpl ermi = this.vm.getInternalEventRequestManager();
-				if(ermi.request(eventCmd, requestID) != null)
-				{
-					// Yep
-					return EventDestination.INTERNAL_EVENT;
-				}
 				return EventDestination.UNKNOWN_EVENT;
 			}
 

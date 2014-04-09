@@ -23,7 +23,7 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-		accept.resume();
+		//accept.resume();
 	   /*
 		System.out.println(accept.description());
 
