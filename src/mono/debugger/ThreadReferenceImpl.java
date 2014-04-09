@@ -408,23 +408,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 
 	@Override
-	public void popFrames(StackFrame frame) throws IncompatibleThreadStateException
-	{
-		// Note that interface-wise this functionality belongs
-		// here in ThreadReference, but implementation-wise it
-		// belongs in StackFrame, so we just forward it.
-		if(!frame.thread().equals(this))
-		{
-			throw new IllegalArgumentException("frame does not belong to this thread");
-		}
-		if(!vm.canPopFrames())
-		{
-			throw new UnsupportedOperationException("target does not support popping frames");
-		}
-		((StackFrameImpl) frame).pop();
-	}
-
-	@Override
 	public String toString()
 	{
 		return "instance of " + referenceType().name() +

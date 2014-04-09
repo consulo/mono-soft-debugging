@@ -40,7 +40,6 @@ import java.util.TreeSet;
 
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
-import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequestManager;
 
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
@@ -68,7 +67,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	// be set synchronously
 	private Map<Long, ReferenceType> typesByID;
 	private TreeSet<ReferenceType> typesBySignature;
-	private boolean retrievedAllTypes = false;
+
 
 	// For other languages support
 	private String defaultStratum = null;
@@ -84,8 +83,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	// These are cached once for the life of the VM
 	private JDWP.VirtualMachine.Version versionInfo;
-	private JDWP.VirtualMachine.Capabilities capabilities = null;
-	private JDWP.VirtualMachine.CapabilitiesNew capabilitiesNew = null;
 
 	// Per-vm singletons for primitive types and for void.
 	// singleton-ness protected by "synchronized(this)".
@@ -240,15 +237,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	{
 		validateVM();
 		//String signature = JNITypeParser.typeNameToSignature(className);
-		List<ReferenceType> list;
-		if(retrievedAllTypes)
-		{
-			list = findReferenceTypes(className);
-		}
-		else
-		{
-			list = retrieveClassesBySignature(className, ignoreCase);
-		}
+		List<ReferenceType> list = retrieveClassesBySignature(className, ignoreCase);
+
 		return Collections.unmodifiableList(list);
 	}
 
@@ -257,10 +247,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	{
 		validateVM();
 
-		if(!retrievedAllTypes)
-		{
-			retrieveAllClasses();
-		}
+		retrieveAllClasses();
 		ArrayList<ReferenceType> a;
 		synchronized(this)
 		{
@@ -269,86 +256,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return Collections.unmodifiableList(a);
 	}
 
-	@Override
-	public void redefineClasses(Map<? extends ReferenceType, byte[]> classToBytes)
-	{
-		int cnt = classToBytes.size();
-		JDWP.VirtualMachine.RedefineClasses.ClassDef[] defs = new JDWP.VirtualMachine.RedefineClasses.ClassDef[cnt];
-		validateVM();
-		if(!canRedefineClasses())
-		{
-			throw new UnsupportedOperationException();
-		}
-		Iterator<?> it = classToBytes.entrySet().iterator();
-		for(int i = 0; it.hasNext(); i++)
-		{
-			Map.Entry<?, ?> entry = (Map.Entry) it.next();
-			ReferenceTypeImpl refType = (ReferenceTypeImpl) entry.getKey();
-			validateMirror(refType);
-			defs[i] = new JDWP.VirtualMachine.RedefineClasses.ClassDef(refType, (byte[]) entry.getValue());
-		}
-
-		// flush caches and disable caching until the next suspend
-		vm.state().thaw();
-
-		try
-		{
-			JDWP.VirtualMachine.RedefineClasses.
-					process(vm, defs);
-		}
-		catch(JDWPException exc)
-		{
-			switch(exc.errorCode())
-			{
-				case JDWP.Error.INVALID_CLASS_FORMAT:
-					throw new ClassFormatError("class not in class file format");
-				case JDWP.Error.CIRCULAR_CLASS_DEFINITION:
-					throw new ClassCircularityError("circularity has been detected while initializing a class");
-				case JDWP.Error.FAILS_VERIFICATION:
-					throw new VerifyError("verifier detected internal inconsistency or security problem");
-				case JDWP.Error.UNSUPPORTED_VERSION:
-					throw new UnsupportedClassVersionError("version numbers of class are not supported");
-				case JDWP.Error.ADD_METHOD_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException("add method not implemented");
-				case JDWP.Error.SCHEMA_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException("schema change not implemented");
-				case JDWP.Error.HIERARCHY_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException("hierarchy change not implemented");
-				case JDWP.Error.DELETE_METHOD_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException("delete method not implemented");
-				case JDWP.Error.CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException("changes to class modifiers not implemented");
-				case JDWP.Error.METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException("changes to method modifiers not implemented");
-				case JDWP.Error.NAMES_DONT_MATCH:
-					throw new NoClassDefFoundError("class names do not match");
-				default:
-					throw exc.toJDIException();
-			}
-		}
-
-		// Delete any record of the breakpoints
-		List<BreakpointRequest> toDelete = new ArrayList<BreakpointRequest>();
-		EventRequestManager erm = eventRequestManager();
-		it = erm.breakpointRequests().iterator();
-		while(it.hasNext())
-		{
-			BreakpointRequest req = (BreakpointRequest) it.next();
-			if(classToBytes.containsKey(req.location().declaringType()))
-			{
-				toDelete.add(req);
-			}
-		}
-		erm.deleteEventRequests(toDelete);
-
-		// Invalidate any information cached for the classes just redefined.
-		it = classToBytes.keySet().iterator();
-		while(it.hasNext())
-		{
-			ReferenceTypeImpl rti = (ReferenceTypeImpl) it.next();
-			rti.noticeRedefineClass();
-		}
-	}
 
 	@Override
 	public List<ThreadReference> allThreads()
@@ -551,34 +458,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	}
 
 	@Override
-	public long[] instanceCounts(List<? extends ReferenceType> classes)
-	{
-		if(!canGetInstanceInfo())
-		{
-			throw new UnsupportedOperationException("target does not support getting instances");
-		}
-		long[] retValue;
-		ReferenceTypeImpl[] rtArray = new ReferenceTypeImpl[classes.size()];
-		int ii = 0;
-		for(ReferenceType rti : classes)
-		{
-			validateMirror(rti);
-			rtArray[ii++] = (ReferenceTypeImpl) rti;
-		}
-		try
-		{
-			retValue = JDWP.VirtualMachine.InstanceCounts.
-					process(vm, rtArray).counts;
-		}
-		catch(JDWPException exc)
-		{
-			throw exc.toJDIException();
-		}
-
-		return retValue;
-	}
-
-	@Override
 	public void dispose()
 	{
 		validateVM();
@@ -655,188 +534,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	{
 		validateVM();
 		return versionInfo().description;
-	}
-
-	@Override
-	public boolean canWatchFieldModification()
-	{
-		validateVM();
-		return capabilities().canWatchFieldModification;
-	}
-
-	@Override
-	public boolean canWatchFieldAccess()
-	{
-		validateVM();
-		return capabilities().canWatchFieldAccess;
-	}
-
-	@Override
-	public boolean canGetBytecodes()
-	{
-		validateVM();
-		return capabilities().canGetBytecodes;
-	}
-
-	@Override
-	public boolean canGetSyntheticAttribute()
-	{
-		validateVM();
-		return capabilities().canGetSyntheticAttribute;
-	}
-
-	@Override
-	public boolean canGetOwnedMonitorInfo()
-	{
-		validateVM();
-		return capabilities().canGetOwnedMonitorInfo;
-	}
-
-	@Override
-	public boolean canGetCurrentContendedMonitor()
-	{
-		validateVM();
-		return capabilities().canGetCurrentContendedMonitor;
-	}
-
-	@Override
-	public boolean canGetMonitorInfo()
-	{
-		validateVM();
-		return capabilities().canGetMonitorInfo;
-	}
-
-	private boolean hasNewCapabilities()
-	{
-		return versionInfo().jdwpMajor > 1 || versionInfo().jdwpMinor >= 4;
-	}
-
-	boolean canGet1_5LanguageFeatures()
-	{
-		return versionInfo().jdwpMajor > 1 || versionInfo().jdwpMinor >= 5;
-	}
-
-	@Override
-	public boolean canUseInstanceFilters()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canUseInstanceFilters;
-	}
-
-	@Override
-	public boolean canRedefineClasses()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canRedefineClasses;
-	}
-
-	@Override
-	public boolean canAddMethod()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canAddMethod;
-	}
-
-	@Override
-	public boolean canUnrestrictedlyRedefineClasses()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canUnrestrictedlyRedefineClasses;
-	}
-
-	@Override
-	public boolean canPopFrames()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canPopFrames;
-	}
-
-	@Override
-	public boolean canGetMethodReturnValues()
-	{
-		return versionInfo().jdwpMajor > 1 || versionInfo().jdwpMinor >= 6;
-	}
-
-	@Override
-	public boolean canGetInstanceInfo()
-	{
-		if(versionInfo().jdwpMajor < 1 || versionInfo().jdwpMinor < 6)
-		{
-			return false;
-		}
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canGetInstanceInfo;
-	}
-
-	@Override
-	public boolean canUseSourceNameFilters()
-	{
-		if(versionInfo().jdwpMajor < 1 || versionInfo().jdwpMinor < 6)
-		{
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean canForceEarlyReturn()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canForceEarlyReturn;
-	}
-
-	@Override
-	public boolean canBeModified()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean canGetSourceDebugExtension()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canGetSourceDebugExtension;
-	}
-
-	@Override
-	public boolean canGetClassFileVersion()
-	{
-		if(versionInfo().jdwpMajor < 1 && versionInfo().jdwpMinor < 6)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-	@Override
-	public boolean canGetConstantPool()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canGetConstantPool;
-	}
-
-	@Override
-	public boolean canRequestVMDeathEvent()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canRequestVMDeathEvent;
-	}
-
-	@Override
-	public boolean canRequestMonitorEvents()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canRequestMonitorEvents;
-	}
-
-	@Override
-	public boolean canGetMonitorFrameInfo()
-	{
-		validateVM();
-		return hasNewCapabilities() && capabilitiesNew().canGetMonitorFrameInfo;
 	}
 
 	@Override
@@ -985,38 +682,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 			}
 			return retType;
 		}
-	}
-
-	private JDWP.VirtualMachine.Capabilities capabilities()
-	{
-		if(capabilities == null)
-		{
-			try
-			{
-				capabilities = JDWP.VirtualMachine.Capabilities.process(vm);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return capabilities;
-	}
-
-	private JDWP.VirtualMachine.CapabilitiesNew capabilitiesNew()
-	{
-		if(capabilitiesNew == null)
-		{
-			try
-			{
-				capabilitiesNew = JDWP.VirtualMachine.CapabilitiesNew.process(vm);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return capabilitiesNew;
 	}
 
 	private List<ReferenceType> retrieveClassesBySignature(String signature, boolean ignoreCase)

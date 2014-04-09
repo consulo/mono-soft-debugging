@@ -305,10 +305,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		@Override
 		public Value returnValue()
 		{
-			if(!this.vm.canGetMethodReturnValues())
-			{
-				throw new UnsupportedOperationException("target does not support return values in MethodExit events");
-			}
 			return returnVal;
 		}
 

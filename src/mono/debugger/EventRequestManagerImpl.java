@@ -322,10 +322,7 @@ class EventRequestManagerImpl extends MirrorImpl
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
-            if (!vm.canUseInstanceFilters()) {
-                throw new UnsupportedOperationException(
-                     "target does not support instance filters");
-            }
+
             filters.add(JDWP.EventRequest.Set.Modifier.InstanceOnly
                                       .create((ObjectReferenceImpl)instance));
         }
@@ -374,10 +371,7 @@ class EventRequestManagerImpl extends MirrorImpl
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
-            if (!vm.canUseSourceNameFilters()) {
-                throw new UnsupportedOperationException(
-                     "target does not support source name filters");
-            }
+
             if (sourceNamePattern == null) {
                 throw new NullPointerException();
             }
@@ -490,11 +484,7 @@ class EventRequestManagerImpl extends MirrorImpl
                  * This call to canGetMethodReturnValues can't
                  * be done in the EventRequestManager ctor because that is too early.
                  */
-                if (vm.canGetMethodReturnValues()) {
-                    methodExitEventCmd = JDWP.EventKind.METHOD_EXIT_WITH_RETURN_VALUE;
-                } else {
-                    methodExitEventCmd = JDWP.EventKind.METHOD_EXIT;
-                }
+                methodExitEventCmd = JDWP.EventKind.METHOD_EXIT_WITH_RETURN_VALUE;
             }
             requestList().add(this);
         }
@@ -842,37 +832,24 @@ class EventRequestManagerImpl extends MirrorImpl
 
     @Override
 	public MonitorContendedEnterRequest createMonitorContendedEnterRequest() {
-        if (!vm.canRequestMonitorEvents()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support requesting Monitor events");
-        }
+
         return new MonitorContendedEnterRequestImpl();
     }
 
     @Override
 	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest() {
-        if (!vm.canRequestMonitorEvents()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support requesting Monitor events");
-        }
+
         return new MonitorContendedEnteredRequestImpl();
     }
 
     @Override
 	public MonitorWaitRequest createMonitorWaitRequest() {
-        if (!vm.canRequestMonitorEvents()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support requesting Monitor events");
-        }
+
         return new MonitorWaitRequestImpl();
     }
 
     @Override
 	public MonitorWaitedRequest createMonitorWaitedRequest() {
-        if (!vm.canRequestMonitorEvents()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support requesting Monitor events");
-        }
         return new MonitorWaitedRequestImpl();
     }
 
@@ -889,10 +866,7 @@ class EventRequestManagerImpl extends MirrorImpl
 	public AccessWatchpointRequest
                               createAccessWatchpointRequest(Field field) {
         validateMirror(field);
-        if (!vm.canWatchFieldAccess()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support access watchpoints");
-        }
+
         return new AccessWatchpointRequestImpl(field);
     }
 
@@ -900,19 +874,13 @@ class EventRequestManagerImpl extends MirrorImpl
 	public ModificationWatchpointRequest
                         createModificationWatchpointRequest(Field field) {
         validateMirror(field);
-        if (!vm.canWatchFieldModification()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support modification watchpoints");
-        }
+
         return new ModificationWatchpointRequestImpl(field);
     }
 
     @Override
 	public VMDeathRequest createVMDeathRequest() {
-        if (!vm.canRequestVMDeathEvent()) {
-            throw new UnsupportedOperationException(
-          "target VM does not support requesting VM death events");
-        }
+
         return new VMDeathRequestImpl();
     }
 

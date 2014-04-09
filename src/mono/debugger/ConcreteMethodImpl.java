@@ -25,16 +25,13 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.HashMap;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.lang.ref.SoftReference;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents methods with method bodies.
@@ -491,50 +488,7 @@ public class ConcreteMethodImpl extends MethodImpl {
 
     private List<LocalVariable> getVariables1() throws AbsentInformationException {
 
-        if (!vm.canGet1_5LanguageFeatures()) {
-            return getVariables1_4();
-        }
-
-        JDWP.Method.VariableTableWithGeneric vartab = null;
-        try {
-            vartab = JDWP.Method.VariableTableWithGeneric.
-                                     process(vm, declaringType, ref);
-        } catch (JDWPException exc) {
-            if (exc.errorCode() == JDWP.Error.ABSENT_INFORMATION) {
-                absentVariableInformation = true;
-                throw new AbsentInformationException();
-            } else {
-                throw exc.toJDIException();
-            }
-        }
-
-        // Get the number of slots used by argument variables
-        argSlotCount = vartab.argCnt;
-        int count = vartab.slots.length;
-        List<LocalVariable> variables = new ArrayList<LocalVariable>(count);
-        for (int i=0; i<count; i++) {
-            JDWP.Method.VariableTableWithGeneric.SlotInfo si = vartab.slots[i];
-
-            /*
-             * Skip "this*" entries because they are never real
-             * variables from the JLS perspective.
-             */
-            if (!si.name.startsWith("this$") && !si.name.equals("this")) {
-                Location scopeStart = new LocationImpl(virtualMachine(),
-                                                       this, si.codeIndex);
-                Location scopeEnd =
-                    new LocationImpl(virtualMachine(), this,
-                                     si.codeIndex + si.length - 1);
-                LocalVariable variable =
-                    new LocalVariableImpl(virtualMachine(), this,
-                                          si.slot, scopeStart, scopeEnd,
-                                          si.name, si.signature,
-                                          si.genericSignature);
-                // Add to the variable list
-                variables.add(variable);
-            }
-        }
-        return variables;
+        return getVariables1_4();
     }
 
     private List<LocalVariable> getVariables() throws AbsentInformationException {

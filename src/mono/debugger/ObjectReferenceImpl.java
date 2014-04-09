@@ -631,10 +631,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	@Override
 	public List<ObjectReference> referringObjects(long maxReferrers)
 	{
-		if(!vm.canGetInstanceInfo())
-		{
-			throw new UnsupportedOperationException("target does not support getting referring objects");
-		}
 
 		if(maxReferrers < 0)
 		{

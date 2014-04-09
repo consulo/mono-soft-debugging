@@ -58,15 +58,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private boolean isPrepared = false;
 
 
-	private boolean versionNumberGotten = false;
-	private int majorVersion;
-	private int minorVersion;
-
-	private boolean constantPoolInfoGotten = false;
-	private int constanPoolCount;
-	private byte[] constantPoolBytes;
-	private SoftReference<byte[]> constantPoolBytesRef = null;
-
 	/* to mark a SourceFile request that returned a genuine JDWP.Error.ABSENT_INFORMATION */
 	private static final String ABSENT_BASE_SOURCE_NAME = "**ABSENT_BASE_SOURCE_NAME**";
 
@@ -95,8 +86,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		fieldsRef = null;
 		methodsRef = null;
 		sdeRef = null;
-		versionNumberGotten = false;
-		constantPoolInfoGotten = false;
 	}
 
 	Method getMethodMirror(long ref)
@@ -220,24 +209,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public String genericSignature()
 	{
-		// This gets both the signature and the generic signature
-		if(vm.canGet1_5LanguageFeatures() && !genericSignatureGotten)
-		{
-			// Does not need synchronization, since worst-case
-			// static info is fetched twice
-			JDWP.ReferenceType.SignatureWithGeneric result;
-			try
-			{
-				result = JDWP.ReferenceType.SignatureWithGeneric.
-						process(vm, this);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-			signature = result.signature;
-			setGenericSignature(result.genericSignature);
-		}
 		return genericSignature;
 	}
 
@@ -389,46 +360,23 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		List<Field> fields = (fieldsRef == null) ? null : fieldsRef.get();
 		if(fields == null)
 		{
-			if(vm.canGet1_5LanguageFeatures())
+			JDWP.ReferenceType.Fields.FieldInfo[] jdwpFields;
+			try
 			{
-				JDWP.ReferenceType.FieldsWithGeneric.FieldInfo[] jdwpFields;
-				try
-				{
-					jdwpFields = JDWP.ReferenceType.FieldsWithGeneric.process(vm, this).declared;
-				}
-				catch(JDWPException exc)
-				{
-					throw exc.toJDIException();
-				}
-				fields = new ArrayList<Field>(jdwpFields.length);
-				for(int i = 0; i < jdwpFields.length; i++)
-				{
-					JDWP.ReferenceType.FieldsWithGeneric.FieldInfo fi = jdwpFields[i];
-
-					Field field = new FieldImpl(vm, this, fi.fieldID, fi.name, fi.signature, fi.genericSignature, fi.modBits);
-					fields.add(field);
-				}
+				jdwpFields = JDWP.ReferenceType.Fields.
+						process(vm, this).declared;
 			}
-			else
+			catch(JDWPException exc)
 			{
-				JDWP.ReferenceType.Fields.FieldInfo[] jdwpFields;
-				try
-				{
-					jdwpFields = JDWP.ReferenceType.Fields.
-							process(vm, this).declared;
-				}
-				catch(JDWPException exc)
-				{
-					throw exc.toJDIException();
-				}
-				fields = new ArrayList<Field>(jdwpFields.length);
-				for(int i = 0; i < jdwpFields.length; i++)
-				{
-					JDWP.ReferenceType.Fields.FieldInfo fi = jdwpFields[i];
+				throw exc.toJDIException();
+			}
+			fields = new ArrayList<Field>(jdwpFields.length);
+			for(int i = 0; i < jdwpFields.length; i++)
+			{
+				JDWP.ReferenceType.Fields.FieldInfo fi = jdwpFields[i];
 
-					Field field = new FieldImpl(vm, this, fi.fieldID, fi.name, fi.signature, null, fi.modBits);
-					fields.add(field);
-				}
+				Field field = new FieldImpl(vm, this, fi.fieldID, fi.name, fi.signature, null, fi.modBits);
+				fields.add(field);
 			}
 
 			fields = Collections.unmodifiableList(fields);
@@ -564,31 +512,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		List<Method> methods = (methodsRef == null) ? null : methodsRef.get();
 		if(methods == null)
 		{
-			if(!vm.canGet1_5LanguageFeatures())
-			{
-				methods = methods1_4();
-			}
-			else
-			{
-				JDWP.ReferenceType.MethodsWithGeneric.MethodInfo[] declared;
-				try
-				{
-					declared = JDWP.ReferenceType.MethodsWithGeneric.
-							process(vm, this).declared;
-				}
-				catch(JDWPException exc)
-				{
-					throw exc.toJDIException();
-				}
-				methods = new ArrayList<Method>(declared.length);
-				for(int i = 0; i < declared.length; i++)
-				{
-					JDWP.ReferenceType.MethodsWithGeneric.MethodInfo mi = declared[i];
-
-					Method method = MethodImpl.createMethodImpl(vm, this, mi.methodID, mi.name, mi.signature, mi.genericSignature, mi.modBits);
-					methods.add(method);
-				}
-			}
+			methods = methods1_4();
 			methods = Collections.unmodifiableList(methods);
 			methodsRef = new SoftReference<List<Method>>(methods);
 		}
@@ -934,10 +858,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public String sourceDebugExtension() throws AbsentInformationException
 	{
-		if(!vm.canGetSourceDebugExtension())
-		{
-			throw new UnsupportedOperationException();
-		}
 		SDE sde = sourceDebugExtensionInfo();
 		if(sde == NO_SDE_INFO_MARK)
 		{
@@ -948,10 +868,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 
 	private SDE sourceDebugExtensionInfo()
 	{
-		if(!vm.canGetSourceDebugExtension())
-		{
-			return NO_SDE_INFO_MARK;
-		}
 		SDE sde = (sdeRef == null) ? null : sdeRef.get();
 		if(sde == null)
 		{
@@ -1111,11 +1027,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<ObjectReference> instances(long maxInstances)
 	{
-		if(!vm.canGetInstanceInfo())
-		{
-			throw new UnsupportedOperationException("target does not support getting instances");
-		}
-
 		if(maxInstances < 0)
 		{
 			throw new IllegalArgumentException("maxInstances is less than zero: " + maxInstances);
@@ -1131,151 +1042,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		catch(JDWPException exc)
 		{
 			throw exc.toJDIException();
-		}
-	}
-
-	private void getClassFileVersion()
-	{
-		if(!vm.canGetClassFileVersion())
-		{
-			throw new UnsupportedOperationException();
-		}
-		JDWP.ReferenceType.ClassFileVersion classFileVersion;
-		if(versionNumberGotten)
-		{
-			return;
-		}
-		else
-		{
-			try
-			{
-				classFileVersion = JDWP.ReferenceType.ClassFileVersion.process(vm, this);
-			}
-			catch(JDWPException exc)
-			{
-				if(exc.errorCode() == JDWP.Error.ABSENT_INFORMATION)
-				{
-					majorVersion = 0;
-					minorVersion = 0;
-					versionNumberGotten = true;
-					return;
-				}
-				else
-				{
-					throw exc.toJDIException();
-				}
-			}
-			majorVersion = classFileVersion.majorVersion;
-			minorVersion = classFileVersion.minorVersion;
-			versionNumberGotten = true;
-		}
-	}
-
-	@Override
-	public int majorVersion()
-	{
-		try
-		{
-			getClassFileVersion();
-		}
-		catch(RuntimeException exc)
-		{
-			throw exc;
-		}
-		return majorVersion;
-	}
-
-	@Override
-	public int minorVersion()
-	{
-		try
-		{
-			getClassFileVersion();
-		}
-		catch(RuntimeException exc)
-		{
-			throw exc;
-		}
-		return minorVersion;
-	}
-
-	private void getConstantPoolInfo()
-	{
-		JDWP.ReferenceType.ConstantPool jdwpCPool;
-		if(!vm.canGetConstantPool())
-		{
-			throw new UnsupportedOperationException();
-		}
-		if(constantPoolInfoGotten)
-		{
-			return;
-		}
-		else
-		{
-			try
-			{
-				jdwpCPool = JDWP.ReferenceType.ConstantPool.process(vm, this);
-			}
-			catch(JDWPException exc)
-			{
-				if(exc.errorCode() == JDWP.Error.ABSENT_INFORMATION)
-				{
-					constanPoolCount = 0;
-					constantPoolBytesRef = null;
-					constantPoolInfoGotten = true;
-					return;
-				}
-				else
-				{
-					throw exc.toJDIException();
-				}
-			}
-			byte[] cpbytes;
-			constanPoolCount = jdwpCPool.count;
-			cpbytes = jdwpCPool.bytes;
-			constantPoolBytesRef = new SoftReference<byte[]>(cpbytes);
-			constantPoolInfoGotten = true;
-		}
-	}
-
-	@Override
-	public int constantPoolCount()
-	{
-		try
-		{
-			getConstantPoolInfo();
-		}
-		catch(RuntimeException exc)
-		{
-			throw exc;
-		}
-		return constanPoolCount;
-	}
-
-	@Override
-	public byte[] constantPool()
-	{
-		try
-		{
-			getConstantPoolInfo();
-		}
-		catch(RuntimeException exc)
-		{
-			throw exc;
-		}
-		if(constantPoolBytesRef != null)
-		{
-			byte[] cpbytes = constantPoolBytesRef.get();
-            /*
-             * Arrays are always modifiable, so it is a little unsafe
-             * to return the cached bytecodes directly; instead, we
-             * make a clone at the cost of using more memory.
-             */
-			return cpbytes.clone();
-		}
-		else
-		{
-			return null;
 		}
 	}
 
