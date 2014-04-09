@@ -1,5 +1,7 @@
 package mono.debugger;
 
+import mono.debugger.protocol.AppDomain_GetAssemblies;
+import mono.debugger.protocol.AppDomain_GetEntryAssembly;
 import mono.debugger.protocol.AppDomain_GetFriendlyName;
 
 /**
@@ -9,10 +11,44 @@ import mono.debugger.protocol.AppDomain_GetFriendlyName;
 public class AppDomainReference extends ObjectReferenceImpl
 {
 	private String myName;
+	private AssemblyReference myEntryAssemblyReference;
+	private AssemblyReference[] myAssemblyReferences;
 
 	public AppDomainReference(VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
+	}
+
+	public AssemblyReference entryAssembly()
+	{
+		if(myEntryAssemblyReference == null)
+		{
+			try
+			{
+				myEntryAssemblyReference = AppDomain_GetEntryAssembly.process(vm, this).assembly;
+			}
+			catch(JDWPException e)
+			{
+				throw e.toJDIException();
+			}
+		}
+		return myEntryAssemblyReference;
+	}
+
+	public AssemblyReference[] assemblies()
+	{
+		if(myAssemblyReferences == null)
+		{
+			try
+			{
+				myAssemblyReferences = AppDomain_GetAssemblies.process(vm, this).assemblies;
+			}
+			catch(JDWPException e)
+			{
+				throw e.toJDIException();
+			}
+		}
+		return myAssemblyReferences;
 	}
 
 	public String name()

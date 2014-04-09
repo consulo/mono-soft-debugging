@@ -25,7 +25,7 @@
 
 package mono.debugger;
 
-public class ClassObjectReferenceImpl extends ObjectReferenceImpl
+public class ClassObjectReferenceImpl extends ObjectReferenceWithType
                                       implements ClassObjectReference {
     private ReferenceType reflectedType;
 

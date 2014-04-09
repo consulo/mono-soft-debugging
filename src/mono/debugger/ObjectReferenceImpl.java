@@ -34,7 +34,7 @@ import java.util.Map;
 public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, VMListener
 {
 	protected long ref;
-	private ReferenceType type = null;
+
 	private int gcDisableCount = 0;
 	boolean addedListener = false;
 
@@ -182,19 +182,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	@Override
 	public ReferenceType referenceType()
 	{
-		if(type == null)
-		{
-			try
-			{
-				JDWP.ObjectReference.ReferenceType rtinfo = JDWP.ObjectReference.ReferenceType.process(vm, this);
-				type = vm.referenceType(rtinfo.typeID);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-		}
-		return type;
+		return null;
 	}
 
 	@Override
@@ -713,7 +701,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	@Override
 	public String toString()
 	{
-		return "instance of " + referenceType().name() + "(id=" + uniqueID() + ")";
+		ReferenceType referenceType = referenceType();
+		return "instance of " + (referenceType == null ? null : referenceType.name()) + "(id=" + uniqueID() + ")";
 	}
 
 	@Override

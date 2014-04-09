@@ -329,7 +329,7 @@ public class PacketStream
 	/**
 	 * Read int represented as four bytes.
 	 */
-	int readInt()
+	public int readInt()
 	{
 		int b1, b2, b3, b4;
 
@@ -468,7 +468,7 @@ public class PacketStream
 		return vm.threadMirror(ref);
 	}
 
-	AssemblyReference readAssemblyReference()
+	public AssemblyReference readAssemblyReference()
 	{
 		long ref = readObjectRef();
 		return vm.assemblyMirror(ref);

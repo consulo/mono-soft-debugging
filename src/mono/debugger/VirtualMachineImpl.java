@@ -712,6 +712,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		{
 			return null;
 		}
+
 		ObjectReferenceImpl object = null;
 		Long key = new Long(id);
 

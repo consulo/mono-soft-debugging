@@ -25,14 +25,10 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.List;
 
-public class ArrayReferenceImpl extends ObjectReferenceImpl
+public class ArrayReferenceImpl extends ObjectReferenceWithType
     implements ArrayReference
 {
     int length = -1;

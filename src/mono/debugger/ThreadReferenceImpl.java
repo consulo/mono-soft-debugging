@@ -33,7 +33,7 @@ import java.util.List;
 
 import mono.debugger.request.BreakpointRequest;
 
-public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadReference, VMListener
+public class ThreadReferenceImpl extends ObjectReferenceWithType implements ThreadReference, VMListener
 {
 	static final int SUSPEND_STATUS_SUSPENDED = 0x1;
 	static final int SUSPEND_STATUS_BREAK = 0x2;

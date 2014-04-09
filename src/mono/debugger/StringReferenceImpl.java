@@ -25,7 +25,7 @@
 
 package mono.debugger;
 
-public class StringReferenceImpl extends ObjectReferenceImpl
+public class StringReferenceImpl extends ObjectReferenceWithType
     implements StringReference
 {
     private String value;

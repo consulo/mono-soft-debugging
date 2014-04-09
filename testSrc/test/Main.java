@@ -3,6 +3,7 @@ package test;
 import java.util.Map;
 
 import mono.debugger.AppDomainReference;
+import mono.debugger.AssemblyReference;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
@@ -27,6 +28,11 @@ public class Main
 		AppDomainReference rootAppDomain = accept.rootAppDomain();
 
 		System.out.println("root domain: " + rootAppDomain.name());
+		System.out.println("entry assembly: " + rootAppDomain.entryAssembly());
+		for(AssemblyReference assemblyReference : rootAppDomain.assemblies())
+		{
+			System.out.println(" assembly: " + assemblyReference.name());
+		}
 		//accept.resume();
 	   /*
 		System.out.println(accept.description());
