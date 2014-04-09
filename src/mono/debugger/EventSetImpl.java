@@ -428,59 +428,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 	}
 
-	abstract class WatchpointEventImpl extends LocatableEventImpl implements WatchpointEvent
-	{
-		private final ReferenceTypeImpl refType;
-		private final long fieldID;
-		private final ObjectReference object;
-		private Field field = null;
-
-		WatchpointEventImpl(
-				VirtualMachine virtualMachine,
-				JDWP.Event.Composite.Events.EventsCommon evt,
-				int requestID,
-				ThreadReference thread,
-				Location location,
-				byte refTypeTag,
-				long typeID,
-				long fieldID,
-				ObjectReference object)
-		{
-			super(virtualMachine, evt, requestID, thread, location);
-			this.refType = this.vm.referenceType(typeID);
-			this.fieldID = fieldID;
-			this.object = object;
-		}
-
-		@Override
-		public Field field()
-		{
-			if(field == null)
-			{
-				field = refType.getFieldMirror(fieldID);
-			}
-			return field;
-		}
-
-		@Override
-		public ObjectReference object()
-		{
-			return object;
-		}
-
-		@Override
-		public Value valueCurrent()
-		{
-			if(object == null)
-			{
-				return refType.getValue(field());
-			}
-			else
-			{
-				return object.getValue(field());
-			}
-		}
-	}
 
 	/**
 	 * Events are constructed on the thread which reads all data from the
