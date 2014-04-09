@@ -31,7 +31,7 @@ public class Main
 		System.out.println("entry assembly: " + rootAppDomain.entryAssembly());
 		for(AssemblyReference assemblyReference : rootAppDomain.assemblies())
 		{
-			System.out.println(" assembly: " + assemblyReference.name());
+			System.out.println(" assembly: " + assemblyReference.name() + " / location: " + assemblyReference.location());
 		}
 		//accept.resume();
 	   /*

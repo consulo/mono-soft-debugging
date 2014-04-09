@@ -1,5 +1,6 @@
 package mono.debugger;
 
+import mono.debugger.protocol.Assembly_GetLocation;
 import mono.debugger.protocol.Assembly_GetName;
 
 /**
@@ -9,6 +10,7 @@ import mono.debugger.protocol.Assembly_GetName;
 public class AssemblyReference extends ObjectReferenceImpl
 {
 	private String myName;
+	private String myLocation;
 
 	public AssemblyReference(VirtualMachine aVm, long aRef)
 	{
@@ -29,6 +31,22 @@ public class AssemblyReference extends ObjectReferenceImpl
 			}
 		}
 		return myName;
+	}
+
+	public String location()
+	{
+		if(myLocation == null)
+		{
+			try
+			{
+				myLocation = Assembly_GetLocation.process(vm, this).location;
+			}
+			catch(JDWPException exc)
+			{
+				throw exc.toJDIException();
+			}
+		}
+		return myLocation;
 	}
 
 	@Override
