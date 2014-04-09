@@ -500,74 +500,6 @@ class EventRequestManagerImpl extends MirrorImpl
         }
     }
 
-    class MonitorContendedEnterRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements MonitorContendedEnterRequest {
-        MonitorContendedEnterRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.MONITOR_CONTENDED_ENTER;
-        }
-
-        @Override
-		public String toString() {
-            return "monitor contended enter request " + state();
-        }
-    }
-
-    class MonitorContendedEnteredRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements MonitorContendedEnteredRequest {
-        MonitorContendedEnteredRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.MONITOR_CONTENDED_ENTERED;
-        }
-
-        @Override
-		public String toString() {
-            return "monitor contended entered request " + state();
-        }
-    }
-
-    class MonitorWaitRequestImpl extends ClassVisibleEventRequestImpl
-                                 implements MonitorWaitRequest {
-        MonitorWaitRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.MONITOR_WAIT;
-        }
-
-        @Override
-		public String toString() {
-            return "monitor wait request " + state();
-        }
-    }
-
-    class MonitorWaitedRequestImpl extends ClassVisibleEventRequestImpl
-                                 implements MonitorWaitedRequest {
-        MonitorWaitedRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.MONITOR_WAITED;
-        }
-
-        @Override
-		public String toString() {
-            return "monitor waited request " + state();
-        }
-    }
-
     class StepRequestImpl extends ClassVisibleEventRequestImpl
                                       implements StepRequest {
         ThreadReferenceImpl thread;
@@ -831,29 +763,6 @@ class EventRequestManagerImpl extends MirrorImpl
     }
 
     @Override
-	public MonitorContendedEnterRequest createMonitorContendedEnterRequest() {
-
-        return new MonitorContendedEnterRequestImpl();
-    }
-
-    @Override
-	public MonitorContendedEnteredRequest createMonitorContendedEnteredRequest() {
-
-        return new MonitorContendedEnteredRequestImpl();
-    }
-
-    @Override
-	public MonitorWaitRequest createMonitorWaitRequest() {
-
-        return new MonitorWaitRequestImpl();
-    }
-
-    @Override
-	public MonitorWaitedRequest createMonitorWaitedRequest() {
-        return new MonitorWaitedRequestImpl();
-    }
-
-    @Override
 	public BreakpointRequest createBreakpointRequest(Location location) {
         validateMirror(location);
         if (location.codeIndex() == -1) {
@@ -967,25 +876,6 @@ class EventRequestManagerImpl extends MirrorImpl
                                EventRequestManagerImpl.methodExitEventCmd);
     }
 
-    @Override
-	public List<MonitorContendedEnterRequest> monitorContendedEnterRequests() {
-        return (List<MonitorContendedEnterRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_CONTENDED_ENTER);
-    }
-
-    @Override
-	public List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests() {
-        return (List<MonitorContendedEnteredRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_CONTENDED_ENTERED);
-    }
-
-    @Override
-	public List<MonitorWaitRequest> monitorWaitRequests() {
-        return (List<MonitorWaitRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_WAIT);
-    }
-
-    @Override
-	public List<MonitorWaitedRequest> monitorWaitedRequests() {
-        return (List<MonitorWaitedRequest>)unmodifiableRequestList(JDWP.EventKind.MONITOR_WAITED);
-    }
 
     @Override
 	public List<VMDeathRequest> vmDeathRequests() {

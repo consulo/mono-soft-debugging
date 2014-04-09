@@ -25,9 +25,15 @@
 
 package mono.debugger.request;
 
-import mono.debugger.*;
-
 import java.util.List;
+
+import mono.debugger.Field;
+import mono.debugger.Location;
+import mono.debugger.Mirror;
+import mono.debugger.NativeMethodException;
+import mono.debugger.ReferenceType;
+import mono.debugger.ThreadReference;
+import mono.debugger.VirtualMachine;
 
 /**
  * Manages the creation and deletion of {@link EventRequest}s. A single
@@ -131,83 +137,6 @@ public interface EventRequestManager extends Mirror {
      * @return the created {@link MethodExitRequest}
      */
     MethodExitRequest createMethodExitRequest();
-
-     /**
-     * Creates a new disabled {@link MonitorContendedEnterRequest}.
-     * The new event request is added to the list managed by this
-     * EventRequestManager. Use {@link EventRequest#enable()} to
-     * activate this event request.
-     *
-     * Not all target virtual machines support this operation.
-     * Use {@link VirtualMachine#canRequestMonitorEvents()}
-     * to determine if the operation is supported.
-     *
-     * @return the created {@link MonitorContendedEnterRequest}
-     * @throws java.lang.UnsupportedOperationException if
-     * the target VM does not support this
-     * operation.
-     *
-     * @since 1.6
-     */
-    MonitorContendedEnterRequest createMonitorContendedEnterRequest();
-
-    /**
-     * Creates a new disabled {@link MonitorContendedEnteredRequest}.
-     * The new event request is added to the list managed by this
-     * EventRequestManager. Use {@link EventRequest#enable()} to
-     * activate this event request.
-     *
-     * Not all target virtual machines support this operation.
-     * Use {@link VirtualMachine#canRequestMonitorEvents()}
-     * to determine if the operation is supported.
-     *
-     * @return the created {@link MonitorContendedEnteredRequest}
-     * @throws java.lang.UnsupportedOperationException if
-     * the target VM does not support this
-     * operation.
-     *
-     * @since 1.6
-     */
-
-    MonitorContendedEnteredRequest createMonitorContendedEnteredRequest();
-
-    /**
-     * Creates a new disabled {@link MonitorWaitRequest}.
-     * The new event request is added to the list managed by this
-     * EventRequestManager. Use {@link EventRequest#enable()} to
-     * activate this event request.
-     *
-     * Not all target virtual machines support this operation.
-     * Use {@link VirtualMachine#canRequestMonitorEvents()}
-     * to determine if the operation is supported.
-     *
-     * @return the created {@link MonitorWaitRequest}
-     * @throws java.lang.UnsupportedOperationException if
-     * the target VM does not support this
-     * operation.
-     *
-     * @since 1.6
-     */
-    MonitorWaitRequest createMonitorWaitRequest();
-
-    /**
-     * Creates a new disabled {@link MonitorWaitedRequest}.
-     * The new event request is added to the list managed by this
-     * EventRequestManager. Use {@link EventRequest#enable()} to
-     * activate this event request.
-     *
-     * Not all target virtual machines support this operation.
-     * Use {@link VirtualMachine#canRequestMonitorEvents()}
-     * to determine if the operation is supported.
-     *
-     * @return the created {@link MonitorWaitedRequest}
-     * @throws java.lang.UnsupportedOperationException if
-     * the target VM does not support this
-     * operation.
-     *
-     * @since 1.6
-     */
-    MonitorWaitedRequest createMonitorWaitedRequest();
 
     /**
      * Creates a new disabled {@link StepRequest}.
@@ -489,46 +418,6 @@ public interface EventRequestManager extends Mirror {
      * @return the list of all {@link MethodExitRequest} objects.
      */
     List<MethodExitRequest> methodExitRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled monitor contended enter requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the list of all {@link MonitorContendedEnterRequest} objects.
-     *
-     * @since 1.6
-     */
-    List<MonitorContendedEnterRequest> monitorContendedEnterRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled monitor contended entered requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the list of all {@link MonitorContendedEnteredRequest} objects.
-     *
-     * @since 1.6
-     */
-    List<MonitorContendedEnteredRequest> monitorContendedEnteredRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled monitor wait requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the list of all {@link MonitorWaitRequest} objects.
-     *
-     * @since 1.6
-     */
-    List<MonitorWaitRequest> monitorWaitRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled monitor waited requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the list of all {@link MonitorWaitedRequest} objects.
-     *
-     * @since 1.6
-     */
-    List<MonitorWaitedRequest> monitorWaitedRequests();
 
     /**
      * Return an unmodifiable list of the enabled and disabled VM death requests.
