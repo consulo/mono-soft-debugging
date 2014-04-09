@@ -35,11 +35,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
+import mono.debugger.protocol.AppDomain_GetRootDomain;
 import mono.debugger.request.EventRequestManager;
 
 public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
@@ -54,12 +54,12 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	// Allow direct access to this field so that that tracing code slows down
 	// JDI as little as possible when not enabled.
-	int traceFlags = TRACE_ALL;
+	public int traceFlags = TRACE_ALL;
 
 	static int TRACE_RAW_SENDS = 0x01000000;
 	static int TRACE_RAW_RECEIVES = 0x02000000;
 
-	boolean traceReceives = false;   // pre-compute because of frequency
+	public boolean traceReceives = false;   // pre-compute because of frequency
 
 	// ReferenceType access - updated with class prepare and unload events
 	// Protected by "synchronized(this)". "retrievedAllTypes" may be
@@ -71,11 +71,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	// ObjectReference cache
 	// "objectsByID" protected by "synchronized(this)".
 	private final Map<Long, SoftObjectReference> assemblyById = new HashMap<Long, SoftObjectReference>();
+	private final Map<Long, SoftObjectReference> appDomainById = new HashMap<Long, SoftObjectReference>();
 	private final Map<Long, SoftObjectReference> objectsByID = new HashMap<Long, SoftObjectReference>();
 	private final ReferenceQueue<ObjectReferenceImpl> referenceQueue = new ReferenceQueue<ObjectReferenceImpl>();
 	static private final int DISPOSE_THRESHOLD = 50;
 	private final List<SoftObjectReference> batchedDisposeRequests = Collections.synchronizedList(new ArrayList<SoftObjectReference>
 			(DISPOSE_THRESHOLD + 10));
+
+	private AppDomainReference myRootAppDomain;
 
 	// These are cached once for the life of the VM
 	private JDWP.VirtualMachine.Version versionInfo;
@@ -136,8 +139,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return true;
 	}
 
-	VirtualMachineImpl(
-			VirtualMachineManager manager, Connection connection, Process process, int sequenceNumber)
+	VirtualMachineImpl(VirtualMachineManager manager, Connection connection, Process process, int sequenceNumber)
 	{
 		super(null);  // Can't use super(this)
 		vm = this;
@@ -149,8 +151,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
         /* Create ThreadGroup to be used by all threads servicing
          * this VM.
          */
-		threadGroupForJDI = new ThreadGroup(vmManager.mainGroupForJDI(), "JDI [" +
-				this.hashCode() + "]");
+		threadGroupForJDI = new ThreadGroup(vmManager.mainGroupForJDI(), "Mono Soft Debugger [" +this.hashCode() + "]");
 
         /*
          * Set up a thread to communicate with the target VM over
@@ -214,6 +215,23 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	}
 
 	@Override
+	public AppDomainReference rootAppDomain()
+	{
+		if(myRootAppDomain == null)
+		{
+			try
+			{
+				myRootAppDomain = AppDomain_GetRootDomain.process(vm).appDomainReference;
+			}
+			catch(JDWPException e)
+			{
+				throw e.toJDIException();
+			}
+		}
+		return myRootAppDomain;
+	}
+
+	@Override
 	public List<ReferenceType> getTypes(String className, boolean ignoreCase)
 	{
 		validateVM();
@@ -243,12 +261,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	{
 		validateVM();
 		return state.allThreads();
-	}
-
-	@Override
-	public Set<AssemblyReference> allAssemblies()
-	{
-		return Collections.emptySet();
 	}
 
 	/*
@@ -444,14 +456,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		this.traceReceives = (traceFlags & TRACE_RECEIVES) != 0;
 	}
 
-	void printTrace(String string)
+	public void printTrace(String string)
 	{
 		System.err.println("[JDI: " + string + "]");
 	}
 
-	void printReceiveTrace(int depth, String string)
+	public void printReceiveTrace(int depth, String string)
 	{
-		StringBuffer sb = new StringBuffer("Receiving:");
+		StringBuilder sb = new StringBuilder("Receiving:");
 		for(int i = depth; i > 0; --i)
 		{
 			sb.append("    ");
@@ -706,7 +718,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
         /*
          * Attempt to retrieve an existing object object reference
          */
-		Map<Long, SoftObjectReference> map = tag == JDWP.Tag.ASSEMBLY ? assemblyById : objectsByID;
+		Map<Long, SoftObjectReference> map = tagToMap(tag);
 
 		SoftObjectReference ref = map.get(key);
 		if(ref != null)
@@ -738,6 +750,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 					break;
 				case JDWP.Tag.ASSEMBLY:
 					object = new AssemblyReference(vm, id);
+					break;
+				case JDWP.Tag.APP_DOMAIN:
+					object = new AppDomainReference(vm, id);
 					break;
 				case JDWP.Tag.CLASS_LOADER:
 					object = new ClassLoaderReferenceImpl(vm, id);
@@ -774,7 +789,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		// Handle any queue elements that are not strongly reachable
 		processQueue();
 
-		Map<Long, SoftObjectReference> map = object instanceof AssemblyReference ? assemblyById : objectsByID;
+		Map<Long, SoftObjectReference> map = tagToMap(object.typeValueKey());
 
 		SoftObjectReference ref = map.remove(new Long(object.ref()));
 		if(ref != null)
@@ -789,6 +804,24 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
              */
 			throw new InternalException("ObjectReference " + object.ref() + " not found in object cache");
 		}
+	}
+
+	Map<Long, SoftObjectReference> tagToMap(int tag)
+	{
+		Map<Long, SoftObjectReference> map;
+		switch(tag)
+		{
+			case JDWP.Tag.ASSEMBLY:
+				map = assemblyById;
+				break;
+			case JDWP.Tag.APP_DOMAIN:
+				map = appDomainById;
+				break;
+			default:
+				map = objectsByID;
+				break;
+		}
+		return map;
 	}
 
 	synchronized void removeObjectMirror(SoftObjectReference ref)

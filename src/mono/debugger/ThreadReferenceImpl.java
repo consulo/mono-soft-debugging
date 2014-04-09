@@ -413,7 +413,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	}
 
 	@Override
-	byte typeValueKey()
+	int typeValueKey()
 	{
 		return JDWP.Tag.THREAD;
 	}

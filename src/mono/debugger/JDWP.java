@@ -5866,66 +5866,6 @@ public class JDWP
 		}
 	}
 
-	static class Assembly
-	{
-		static final int COMMAND_SET = 21;
-
-		private Assembly()
-		{
-		}  // hide constructor
-
-		static class Name
-		{
-			static final int COMMAND = 6;
-
-			static Name process(VirtualMachineImpl vm, AssemblyReference assemblyReference) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, assemblyReference);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(VirtualMachineImpl vm, AssemblyReference assemblyReference)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.Assembly.Name" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 assembly(AssemblyReference): " + "ref=" + assemblyReference.ref());
-				}
-				ps.writeId(assemblyReference.ref());
-				ps.send();
-				return ps;
-			}
-
-			static Name waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new Name(vm, ps);
-			}
-
-
-			public final String name;
-
-			private Name(VirtualMachineImpl vm, PacketStream ps)
-			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.Assembly.Name" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-				name = ps.readString();
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "name): " + name);
-				}
-			}
-		}
-	}
-
 	static class ClassObjectReference
 	{
 		static final int COMMAND_SET = 17;
@@ -7073,10 +7013,14 @@ public class JDWP
 		static final int BOOLEAN = 90;
 		static final int STRING = 115;
 		static final int THREAD = 116;
-		static final int ASSEMBLY = 117;
+
 
 		static final int CLASS_LOADER = 108;
 		static final int CLASS_OBJECT = 99;
+
+		// dummy
+		static final int ASSEMBLY = 100000000;
+		static final int APP_DOMAIN = 100000001;
 	}
 
 	static class StepDepth

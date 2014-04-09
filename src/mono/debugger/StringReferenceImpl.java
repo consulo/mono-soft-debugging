@@ -25,8 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
 public class StringReferenceImpl extends ObjectReferenceImpl
     implements StringReference
 {
@@ -57,7 +55,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl
     }
 
     @Override
-	byte typeValueKey() {
+	int typeValueKey() {
         return JDWP.Tag.STRING;
     }
 }

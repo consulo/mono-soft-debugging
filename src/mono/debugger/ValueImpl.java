@@ -25,8 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
 abstract class ValueImpl extends MirrorImpl implements Value {
 
     ValueImpl(VirtualMachine aVm) {
@@ -49,7 +47,7 @@ abstract class ValueImpl extends MirrorImpl implements Value {
         }
     }
 
-    static byte typeValueKey(Value val) {
+    static int typeValueKey(Value val) {
         if (val == null) {
             return JDWP.Tag.OBJECT;
         } else {
@@ -60,5 +58,5 @@ abstract class ValueImpl extends MirrorImpl implements Value {
     abstract ValueImpl prepareForAssignmentTo(ValueContainer destination)
                  throws InvalidTypeException, ClassNotLoadedException;
 
-    abstract byte typeValueKey();
+    abstract int typeValueKey();
 }

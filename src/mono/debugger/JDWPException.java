@@ -25,12 +25,12 @@
 
 package mono.debugger;
 
-class JDWPException extends Exception
+public class JDWPException extends Exception
 {
 	private static final long serialVersionUID = -6321344442751299874L;
 	short errorCode;
 
-	JDWPException(short errorCode)
+	public JDWPException(short errorCode)
 	{
 		super();
 		this.errorCode = errorCode;
@@ -41,7 +41,7 @@ class JDWPException extends Exception
 		return errorCode;
 	}
 
-	RuntimeException toJDIException()
+	public RuntimeException toJDIException()
 	{
 		switch(errorCode)
 		{

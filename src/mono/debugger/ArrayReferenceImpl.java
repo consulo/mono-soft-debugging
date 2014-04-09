@@ -217,7 +217,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl
     }
 
     @Override
-	byte typeValueKey() {
+	int typeValueKey() {
         return JDWP.Tag.ARRAY;
     }
 

@@ -49,7 +49,7 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl
     }
 
     @Override
-	byte typeValueKey() {
+	int typeValueKey() {
         return JDWP.Tag.CLASS_OBJECT;
     }
 

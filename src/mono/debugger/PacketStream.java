@@ -29,15 +29,15 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-class PacketStream
+public class PacketStream
 {
-	final VirtualMachineImpl vm;
+	public final VirtualMachineImpl vm;
 	private int inCursor = 0;
-	final Packet pkt;
+	public final Packet pkt;
 	private ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
 	private boolean isCommitted = false;
 
-	PacketStream(VirtualMachineImpl vm, int cmdSet, int cmd)
+	public PacketStream(VirtualMachineImpl vm, int cmdSet, int cmd)
 	{
 		this.vm = vm;
 		this.pkt = new Packet();
@@ -45,7 +45,7 @@ class PacketStream
 		pkt.cmd = (short) cmd;
 	}
 
-	PacketStream(VirtualMachineImpl vm, Packet pkt)
+	public PacketStream(VirtualMachineImpl vm, Packet pkt)
 	{
 		this.vm = vm;
 		this.pkt = pkt;
@@ -57,7 +57,7 @@ class PacketStream
 		return pkt.id;
 	}
 
-	void send()
+	public void send()
 	{
 		if(!isCommitted)
 		{
@@ -67,7 +67,7 @@ class PacketStream
 		}
 	}
 
-	void waitForReply() throws JDWPException
+	public void waitForReply() throws JDWPException
 	{
 		if(!isCommitted)
 		{
@@ -240,7 +240,7 @@ class PacketStream
 
 	void writeValueChecked(Value val) throws InvalidTypeException
 	{
-		writeByte(ValueImpl.typeValueKey(val));
+		writeByte((byte)ValueImpl.typeValueKey(val));
 		writeUntaggedValue(val);
 	}
 
@@ -258,7 +258,7 @@ class PacketStream
 
 	void writeUntaggedValueChecked(Value val) throws InvalidTypeException
 	{
-		byte tag = ValueImpl.typeValueKey(val);
+		byte tag = (byte) ValueImpl.typeValueKey(val);
 		if(isObjectTag(tag))
 		{
 			if(val == null)
@@ -382,7 +382,7 @@ class PacketStream
 	 * Read string represented as four byte length followed by
 	 * characters of the string.
 	 */
-	String readString()
+	public String readString()
 	{
 		String ret;
 		int len = readInt();
@@ -432,6 +432,11 @@ class PacketStream
 	int readClassRef()
 	{
 		return (int) readID(4);
+	}
+
+	public AppDomainReference readAppDomainReference()
+	{
+		return (AppDomainReference) vm.objectMirror(readId(), JDWP.Tag.APP_DOMAIN);
 	}
 
 	ObjectReferenceImpl readTaggedObjectReference()

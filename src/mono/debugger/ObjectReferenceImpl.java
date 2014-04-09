@@ -651,7 +651,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		}
 	}
 
-	long ref()
+	public long ref()
 	{
 		return ref;
 	}
@@ -717,7 +717,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	}
 
 	@Override
-	byte typeValueKey()
+	int typeValueKey()
 	{
 		return JDWP.Tag.OBJECT;
 	}

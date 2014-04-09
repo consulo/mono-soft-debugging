@@ -79,7 +79,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManagerService {
         while ((parent = top.getParent()) != null) {
             top = parent;
         }
-        mainGroupForJDI = new ThreadGroup(top, "JDI main");
+        mainGroupForJDI = new ThreadGroup(top, "Mono Soft Debugger main");
 
         /*
          * Load the connectors

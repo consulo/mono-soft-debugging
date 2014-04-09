@@ -113,7 +113,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl
     }
 
     @Override
-	byte typeValueKey() {
+	int typeValueKey() {
         return JDWP.Tag.CLASS_LOADER;
     }
 }

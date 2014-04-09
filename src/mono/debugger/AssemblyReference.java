@@ -1,5 +1,7 @@
 package mono.debugger;
 
+import mono.debugger.protocol.Assembly_GetName;
+
 /**
  * @author VISTALL
  * @since 08.04.14
@@ -19,7 +21,7 @@ public class AssemblyReference extends ObjectReferenceImpl
 		{
 			try
 			{
-				myName = JDWP.Assembly.Name.process(vm, this).name;
+				myName = Assembly_GetName.process(vm, this).name;
 			}
 			catch(JDWPException exc)
 			{
@@ -30,7 +32,7 @@ public class AssemblyReference extends ObjectReferenceImpl
 	}
 
 	@Override
-	byte typeValueKey()
+	int typeValueKey()
 	{
 		return JDWP.Tag.ASSEMBLY;
 	}

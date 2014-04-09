@@ -25,7 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
 import java.io.IOException;
 
 public class Packet extends Object {
@@ -39,11 +38,11 @@ public class Packet extends Object {
     // Note! flags, cmdSet, and cmd are all byte values.
     // We represent them as shorts to make them easier
     // to work with.
-    int id;
-    short flags;
-    short cmdSet;
-    short cmd;
-    short errorCode;
+	public int id;
+	public short flags;
+	public short cmdSet;
+	public short cmd;
+	public  short errorCode;
     byte[] data;
     volatile boolean replied = false;
 
