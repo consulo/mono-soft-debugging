@@ -69,9 +69,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 		int framesStart = -1;
 		int framesLength = 0;
 		int frameCount = -1;
-		List<ObjectReference> ownedMonitors = null;
-		List<MonitorInfo> ownedMonitorsInfo = null;
-		ObjectReference contendedMonitor = null;
+
 		boolean triedCurrentContended = false;
 	}
 
