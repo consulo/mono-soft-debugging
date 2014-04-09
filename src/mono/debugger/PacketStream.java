@@ -210,19 +210,7 @@ public class PacketStream
 
 	void writeLocation(Location location)
 	{
-		ReferenceTypeImpl refType = (ReferenceTypeImpl) location.declaringType();
-		byte tag;
-		if(refType instanceof ClassType)
-		{
-			tag = JDWP.TypeTag.CLASS;
-		}
-		else
-		{
-			throw new InternalException("Invalid Location");
-		}
-		writeByte(tag);
-		writeClassRef(refType.ref());
-		writeMethodRef(((MethodImpl) location.method()).ref());
+		writeInt((int) location.methodId());
 		writeLong(location.codeIndex());
 	}
 

@@ -142,6 +142,12 @@ public class LocationImpl extends MirrorImpl implements Location
 		return codeIndex;
 	}
 
+	@Override
+	public long methodId()
+	{
+		return methodRef;
+	}
+
 	LineInfo getBaseLineInfo()
 	{
 		LineInfo lineInfo;

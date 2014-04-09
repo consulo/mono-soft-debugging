@@ -111,7 +111,7 @@ public interface Location extends Mirror, Comparable<Location> {
      */
     long codeIndex();
 
-
+	long methodId();
 
     /**
      * Gets an identifing name for the source corresponding to
