@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import mono.debugger.protocol.Thread_GetName;
+import mono.debugger.protocol.Thread_GetState;
 import mono.debugger.request.BreakpointRequest;
 
 public class ThreadReferenceImpl extends ObjectReferenceWithType implements ThreadReference, VMListener
@@ -64,7 +66,7 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 	// create a new intialized one.
 	private static class LocalCache
 	{
-		JDWP.ThreadReference.State myState = null;
+		Thread_GetState myState = null;
 		List<StackFrame> frames = null;
 		int framesStart = -1;
 		int framesLength = 0;
@@ -160,7 +162,7 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 	{
 		try
 		{
-			return JDWP.ThreadReference.Name.process(vm, this).threadName;
+			return Thread_GetName.process(vm, this).threadName;
 		}
 		catch(JDWPException exc)
 		{
@@ -181,15 +183,15 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 		}
 	}
 
-	private JDWP.ThreadReference.State jdwpStatus()
+	private Thread_GetState jdwpStatus()
 	{
 		LocalCache snapshot = localCache;
-		JDWP.ThreadReference.State myState = snapshot.myState;
+		Thread_GetState myState = snapshot.myState;
 		try
 		{
 			if(myState == null)
 			{
-				myState = JDWP.ThreadReference.State.process(vm, this);
+				myState = Thread_GetState.process(vm, this);
 			}
 		}
 		catch(JDWPException exc)
