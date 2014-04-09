@@ -1154,16 +1154,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		Type type;
 		if(signature.length() == 1)
 		{
-            /* OTI FIX: Must be a primitive type or the void type */
-			char sig = signature.charAt(0);
-			if(sig == 'V')
-			{
-				type = vm.theVoidType();
-			}
-			else
-			{
-				type = vm.primitiveTypeMirror((byte) sig);
-			}
+           type = null;
 		}
 		else
 		{

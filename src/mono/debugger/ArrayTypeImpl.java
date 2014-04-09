@@ -25,10 +25,12 @@
 
 package mono.debugger;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import javax.lang.model.type.PrimitiveType;
 
 public class ArrayTypeImpl extends ReferenceTypeImpl
     implements ArrayType
@@ -100,8 +102,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
             // Component class has not yet been loaded
             throw new ClassNotLoadedException(componentTypeName());
         } else {
-            // It's a primitive type
-            return vm.primitiveTypeMirror(tag);
+      		return null;
         }
     }
 
@@ -174,9 +175,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
          */
         try {
             Type t = componentType();
-            if (t instanceof PrimitiveType) {
-                modifiers = VMModifiers.FINAL | VMModifiers.PUBLIC;
-            } else {
+            {
                 ReferenceType rt = (ReferenceType)t;
                 modifiers = rt.modifiers();
             }

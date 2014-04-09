@@ -276,80 +276,7 @@ class PacketStream
 		}
 		else
 		{
-			switch(tag)
-			{
-				case JDWP.Tag.BYTE:
-					if(!(val instanceof ByteValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeByte(((PrimitiveValue) val).byteValue());
-					break;
-
-				case JDWP.Tag.CHAR:
-					if(!(val instanceof CharValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeChar(((PrimitiveValue) val).charValue());
-					break;
-
-				case JDWP.Tag.FLOAT:
-					if(!(val instanceof FloatValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeFloat(((PrimitiveValue) val).floatValue());
-					break;
-
-				case JDWP.Tag.DOUBLE:
-					if(!(val instanceof DoubleValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeDouble(((PrimitiveValue) val).doubleValue());
-					break;
-
-				case JDWP.Tag.INT:
-					if(!(val instanceof IntegerValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeInt(((PrimitiveValue) val).intValue());
-					break;
-
-				case JDWP.Tag.LONG:
-					if(!(val instanceof LongValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeLong(((PrimitiveValue) val).longValue());
-					break;
-
-				case JDWP.Tag.SHORT:
-					if(!(val instanceof ShortValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeShort(((PrimitiveValue) val).shortValue());
-					break;
-
-				case JDWP.Tag.BOOLEAN:
-					if(!(val instanceof BooleanValue))
-					{
-						throw new InvalidTypeException();
-					}
-
-					writeBoolean(((PrimitiveValue) val).booleanValue());
-					break;
-			}
+			throw new IllegalArgumentException();
 		}
 	}
 
@@ -613,44 +540,7 @@ class PacketStream
 		}
 		else
 		{
-			switch(typeKey)
-			{
-				case JDWP.Tag.BYTE:
-					val = new ByteValueImpl(vm, readByte());
-					break;
-
-				case JDWP.Tag.CHAR:
-					val = new CharValueImpl(vm, readChar());
-					break;
-
-				case JDWP.Tag.FLOAT:
-					val = new FloatValueImpl(vm, readFloat());
-					break;
-
-				case JDWP.Tag.DOUBLE:
-					val = new DoubleValueImpl(vm, readDouble());
-					break;
-
-				case JDWP.Tag.INT:
-					val = new IntegerValueImpl(vm, readInt());
-					break;
-
-				case JDWP.Tag.LONG:
-					val = new LongValueImpl(vm, readLong());
-					break;
-
-				case JDWP.Tag.SHORT:
-					val = new ShortValueImpl(vm, readShort());
-					break;
-
-				case JDWP.Tag.BOOLEAN:
-					val = new BooleanValueImpl(vm, readBoolean());
-					break;
-
-				case JDWP.Tag.VOID:
-					val = new VoidValueImpl(vm);
-					break;
-			}
+			throw new IllegalArgumentException();
 		}
 		return val;
 	}

@@ -25,6 +25,7 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
+
 		List<ThreadReference> threadReferences = accept.allThreads();
 		for(ThreadReference threadReference : threadReferences)
 		{
