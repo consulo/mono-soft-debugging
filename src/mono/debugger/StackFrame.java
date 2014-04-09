@@ -35,7 +35,7 @@ import java.util.Map;
  * mirrors one such frame from a target VM at some point in its
  * thread's execution. The call stack is, then, simply a List of
  * StackFrame objects. The call stack can be obtained any time a thread
- * is suspended through a call to {@link ThreadReference#frames}
+ * is suspended through a call to {@link ThreadMirror#frames}
  * <p>
  * StackFrames provide access to a method's local variables and their
  * current values.
@@ -83,12 +83,12 @@ public interface StackFrame extends Mirror, Locatable
     /**
      * Returns the thread under which this frame's method is running.
      *
-     * @return a {@link ThreadReference} which mirrors the frame's thread.
+     * @return a {@link ThreadMirror} which mirrors the frame's thread.
      * @throws InvalidStackFrameException if this stack frame has become
      * invalid. Once the frame's thread is resumed, the stack frame is
      * no longer valid.
      */
-    ThreadReference thread();
+    ThreadMirror thread();
 
     /**
      * Returns the value of 'this' for the current frame.

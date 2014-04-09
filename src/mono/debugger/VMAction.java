@@ -25,7 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
 import java.util.EventObject;
 
 /*
@@ -40,7 +39,7 @@ class VMAction extends EventObject {
     static final int VM_NOT_SUSPENDED = 2;
 
     int id;
-    ThreadReference resumingThread;
+    ThreadMirror resumingThread;
 
     VMAction(VirtualMachine vm, int id) {
         this(vm, null, id);
@@ -48,7 +47,7 @@ class VMAction extends EventObject {
 
     // For id = VM_NOT_SUSPENDED, if resumingThread != null, then it is
     // the only thread that is being resumed.
-     VMAction(VirtualMachine vm,  ThreadReference resumingThread, int id) {
+     VMAction(VirtualMachine vm,  ThreadMirror resumingThread, int id) {
         super(vm);
         this.id = id;
         this.resumingThread = resumingThread;
@@ -60,7 +59,7 @@ class VMAction extends EventObject {
         return id;
     }
 
-    ThreadReference resumingThread() {
+    ThreadMirror resumingThread() {
         return resumingThread;
     }
 }

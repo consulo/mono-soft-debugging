@@ -164,7 +164,7 @@ public interface EventSet extends Mirror, Set<Event> {
      * suspend policy is
      * {@link mono.debugger.request.EventRequest#SUSPEND_EVENT_THREAD},
      * a call to this method is equivalent to
-     * {@link mono.debugger.ThreadReference#resume} for the event thread.
+     * {@link mono.debugger.ThreadMirror#resume} for the event thread.
      * Otherwise, a call to this method is a no-op.
      */
     void resume();

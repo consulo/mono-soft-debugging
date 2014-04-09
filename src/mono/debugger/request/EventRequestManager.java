@@ -31,7 +31,7 @@ import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.NativeMethodException;
 import mono.debugger.ReferenceType;
-import mono.debugger.ThreadReference;
+import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachine;
 
 /**
@@ -188,7 +188,7 @@ public interface EventRequestManager extends Mirror {
      * @throws IllegalArgumentException if the size or depth arguments
      * contain illegal values.
      */
-    StepRequest createStepRequest(ThreadReference thread,
+    StepRequest createStepRequest(ThreadMirror thread,
                                   int size,
                                   int depth);
 

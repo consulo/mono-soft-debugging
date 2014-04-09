@@ -184,15 +184,15 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 	public abstract static class ThreadedEventImpl extends EventImpl
 	{
-		private ThreadReference thread;
+		private ThreadMirror thread;
 
-		public ThreadedEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadReference thread)
+		public ThreadedEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread)
 		{
 			super(virtualMachine, evt, requestID);
 			this.thread = thread;
 		}
 
-		public ThreadReference thread()
+		public ThreadMirror thread()
 		{
 			return thread;
 		}
@@ -209,7 +209,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		private Location location;
 
 		LocatableEventImpl(
-				VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadReference thread,
+				VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread,
 				Location location)
 		{
 			super(virtualMachine, evt, requestID, thread);
@@ -634,7 +634,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		return EventRequestManagerImpl.JDWPtoJDISuspendPolicy(suspendPolicy);
 	}
 
-	private ThreadReference eventThread()
+	private ThreadMirror eventThread()
 	{
 		for(Event event : this)
 		{
@@ -655,7 +655,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				vm.resume();
 				break;
 			case EventRequest.SUSPEND_EVENT_THREAD:
-				ThreadReference thread = eventThread();
+				ThreadMirror thread = eventThread();
 				if(thread == null)
 				{
 					throw new InternalException("Inconsistent suspend policy");

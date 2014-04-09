@@ -131,7 +131,7 @@ package mono.debugger;
  * <TR>
  *   <TD headers="objref kind2">     a thread</TD>
  *   <TD headers="objref example2">  <CODE>Thread.currentThread()</CODE></TD>
- *   <TD headers="objref mirrored2"> {@link ThreadReference}</TD>
+ *   <TD headers="objref mirrored2"> {@link ThreadMirror}</TD>
  *   <TD headers="objref type2">     {@link ClassType}</TD>
  * <TR>
  *   <TD headers="objref kind2">     a thread group</TD>

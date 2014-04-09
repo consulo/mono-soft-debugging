@@ -58,10 +58,10 @@ public interface ClassPrepareEvent extends Event {
      * Note that the discussion above does not apply to system threads
      * created by the target VM during its normal (non-debug) operation.
      *
-     * @return a {@link ThreadReference} which mirrors the event's thread in
+     * @return a {@link mono.debugger.ThreadMirror} which mirrors the event's thread in
      * the target VM, or null in the rare cases described above.
      */
-    public ThreadReference thread();
+    public ThreadMirror thread();
 
     /**
      * Returns the reference type for which this event was generated.

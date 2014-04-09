@@ -27,8 +27,6 @@ package mono.debugger.event;
 
 import mono.debugger.*;
 
-import java.util.List;
-
 /**
  * Abstract superinterface of events which have both location
  * and thread.
@@ -41,8 +39,8 @@ public interface LocatableEvent extends Event, Locatable {
     /**
      * Returns the thread in which this event has occurred.
      *
-     * @return a {@link ThreadReference} which mirrors the event's thread in
+     * @return a {@link mono.debugger.ThreadMirror} which mirrors the event's thread in
      * the target VM.
      */
-    public ThreadReference thread();
+    public ThreadMirror thread();
 }

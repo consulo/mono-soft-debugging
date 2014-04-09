@@ -37,7 +37,7 @@ import java.util.List;
  * @author James McIlree
  * @since 1.3
  */
-public interface ThreadReference extends ObjectReference
+public interface ThreadMirror extends ObjectReference
 {
 	public interface ThreadState
 	{

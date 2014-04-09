@@ -54,5 +54,5 @@ public interface ThreadDeathRequest extends EventRequest {
      * enabled or has been deleted.
      * Filters may be added only to disabled requests.
      */
-    void addThreadFilter(ThreadReference thread);
+    void addThreadFilter(ThreadMirror thread);
 }

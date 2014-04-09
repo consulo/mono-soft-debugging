@@ -157,7 +157,7 @@ public interface ObjectReference extends Value
      * Method invocation is not supported
      * when the target VM has been suspended through
      * {@link VirtualMachine#suspend} or when the specified thread
-     * is suspended through {@link ThreadReference#suspend}.
+     * is suspended through {@link ThreadMirror#suspend}.
      * <p>
      * The specified method is invoked with the arguments in the specified
      * argument list.  The method invocation is synchronous; this method
@@ -201,11 +201,11 @@ public interface ObjectReference extends Value
      * By default, all threads in the target VM are resumed while
      * the method is being invoked if they were previously
      * suspended by an event or by {@link VirtualMachine#suspend} or
-     * {@link ThreadReference#suspend}. This is done to prevent the deadlocks
+     * {@link ThreadMirror#suspend}. This is done to prevent the deadlocks
      * that will occur if any of the threads own monitors
      * that will be needed by the invoked method.
      * Note, however, that this implicit resume acts exactly like
-     * {@link ThreadReference#resume}, so if the thread's suspend
+     * {@link ThreadMirror#resume}, so if the thread's suspend
      * count is greater than 1, it will remain in a suspended state
      * during the invocation and thus a deadlock could still occur.
      * By default, when the invocation completes,
@@ -268,7 +268,7 @@ public interface ObjectReference extends Value
      *         compatibility.
      * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
      */
-    Value invokeMethod(ThreadReference thread, Method method,
+    Value invokeMethod(ThreadMirror thread, Method method,
                        List<? extends Value> arguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,

@@ -321,7 +321,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	}
 
 	PacketStream sendInvokeCommand(
-			final ThreadReferenceImpl thread, final ClassTypeImpl refType, final MethodImpl method, final ValueImpl[] args, final int options)
+			final ThreadMirrorImpl thread, final ClassTypeImpl refType, final MethodImpl method, final ValueImpl[] args, final int options)
 	{
 		CommandSender sender = new CommandSender()
 		{
@@ -346,7 +346,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 
 	@Override
 	public Value invokeMethod(
-			ThreadReference threadIntf,
+			ThreadMirror threadIntf,
 			Method methodIntf,
 			List<? extends Value> origArguments,
 			int options) throws InvalidTypeException, IncompatibleThreadStateException, InvocationException, ClassNotLoadedException
@@ -356,7 +356,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		validateMirrorsOrNulls(origArguments);
 
 		MethodImpl method = (MethodImpl) methodIntf;
-		ThreadReferenceImpl thread = (ThreadReferenceImpl) threadIntf;
+		ThreadMirrorImpl thread = (ThreadMirrorImpl) threadIntf;
 
 		if(method.isStatic())
 		{

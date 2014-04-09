@@ -145,7 +145,7 @@ public interface VirtualMachine extends Mirror
 
 	/**
 	 * Returns a list of the currently running threads. For each
-	 * running thread in the target VM, a {@link ThreadReference}
+	 * running thread in the target VM, a {@link ThreadMirror}
 	 * that mirrors it is placed in the list.
 	 * The returned list contains threads created through
 	 * java.lang.Thread, all native threads attached to
@@ -156,11 +156,11 @@ public interface VirtualMachine extends Mirror
 	 * and thread objects that have
 	 * completed their execution are not included in the returned list.
 	 *
-	 * @return a list of {@link ThreadReference} objects, one for each
+	 * @return a list of {@link ThreadMirror} objects, one for each
 	 *         running thread in the mirrored VM.
 	 */
 	@NotNull
-	List<ThreadReference> allThreads();
+	List<ThreadMirror> allThreads();
 
 	/**
 	 * Suspends the execution of the application running in this
@@ -169,7 +169,7 @@ public interface VirtualMachine extends Mirror
 	 * Unlike {@link java.lang.Thread#suspend Thread.suspend()},
 	 * suspends of both the virtual machine and individual threads are
 	 * counted. Before a thread will run again, it must be resumed
-	 * (through {@link #resume} or {@link ThreadReference#resume})
+	 * (through {@link #resume} or {@link ThreadMirror#resume})
 	 * the same number of times it has been suspended.
 	 *
 	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
@@ -179,7 +179,7 @@ public interface VirtualMachine extends Mirror
 	/**
 	 * Continues the execution of the application running in this
 	 * virtual machine. All threads are resumed as documented in
-	 * {@link ThreadReference#resume}.
+	 * {@link ThreadMirror#resume}.
 	 *
 	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 * @see #suspend
@@ -235,7 +235,7 @@ public interface VirtualMachine extends Mirror
 	 * <ul>
 	 * <li>All event requests are cancelled.
 	 * <li>All threads suspended by {@link #suspend} or by
-	 * {@link ThreadReference#suspend} are resumed as many
+	 * {@link ThreadMirror#suspend} are resumed as many
 	 * times as necessary for them to run.
 	 * <li>Garbage collection is re-enabled in all cases where it was
 	 * disabled through {@link ObjectReference#disableCollection}.

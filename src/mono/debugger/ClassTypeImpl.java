@@ -126,7 +126,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    PacketStream sendInvokeCommand(final ThreadReferenceImpl thread,
+    PacketStream sendInvokeCommand(final ThreadMirrorImpl thread,
                                    final MethodImpl method,
                                    final ValueImpl[] args,
                                    final int options) {
@@ -149,7 +149,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return stream;
     }
 
-    PacketStream sendNewInstanceCommand(final ThreadReferenceImpl thread,
+    PacketStream sendNewInstanceCommand(final ThreadMirrorImpl thread,
                                    final MethodImpl method,
                                    final ValueImpl[] args,
                                    final int options) {
@@ -173,7 +173,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	public Value invokeMethod(ThreadReference threadIntf, Method methodIntf,
+	public Value invokeMethod(ThreadMirror threadIntf, Method methodIntf,
                               List<? extends Value> origArguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,
@@ -184,7 +184,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         validateMirrorsOrNulls(origArguments);
 
         MethodImpl method = (MethodImpl)methodIntf;
-        ThreadReferenceImpl thread = (ThreadReferenceImpl)threadIntf;
+        ThreadMirrorImpl thread = (ThreadMirrorImpl)threadIntf;
 
         validateMethodInvocation(method);
 
@@ -220,7 +220,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	public ObjectReference newInstance(ThreadReference threadIntf,
+	public ObjectReference newInstance(ThreadMirror threadIntf,
                                        Method methodIntf,
                                        List<? extends Value> origArguments,
                                        int options)
@@ -233,7 +233,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         validateMirrorsOrNulls(origArguments);
 
         MethodImpl method = (MethodImpl)methodIntf;
-        ThreadReferenceImpl thread = (ThreadReferenceImpl)threadIntf;
+        ThreadMirrorImpl thread = (ThreadMirrorImpl)threadIntf;
 
         validateConstructorInvocation(method);
 

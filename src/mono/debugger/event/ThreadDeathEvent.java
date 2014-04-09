@@ -40,7 +40,7 @@ import mono.debugger.*;
  *
  * @see EventQueue
  * @see VirtualMachine
- * @see ThreadReference
+ * @see mono.debugger.ThreadMirror
  *
  * @author Robert Field
  * @since  1.3
@@ -49,8 +49,8 @@ public interface ThreadDeathEvent extends Event {
     /**
      * Returns the thread which is terminating.
      *
-     * @return a {@link ThreadReference} which mirrors the event's thread in
+     * @return a {@link mono.debugger.ThreadMirror} which mirrors the event's thread in
      * the target VM.
      */
-    public ThreadReference thread();
+    public ThreadMirror thread();
 }

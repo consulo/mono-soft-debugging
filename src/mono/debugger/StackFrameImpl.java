@@ -25,14 +25,11 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Collections;
 
 public class StackFrameImpl extends MirrorImpl
@@ -43,13 +40,13 @@ public class StackFrameImpl extends MirrorImpl
      */
     private boolean isValid = true;
 
-    private final ThreadReferenceImpl thread;
+    private final ThreadMirrorImpl thread;
     private final long id;
     private final Location location;
     private Map<String, LocalVariable> visibleVariables =  null;
     private ObjectReference thisObject = null;
 
-    StackFrameImpl(VirtualMachine vm, ThreadReferenceImpl thread,
+    StackFrameImpl(VirtualMachine vm, ThreadMirrorImpl thread,
                    long id, Location location) {
         super(vm);
         this.thread = thread;
@@ -97,7 +94,7 @@ public class StackFrameImpl extends MirrorImpl
      * Need not be synchronized since it cannot be provably stale.
      */
     @Override
-	public ThreadReference thread() {
+	public ThreadMirror thread() {
         validateStackFrame();
         return thread;
     }

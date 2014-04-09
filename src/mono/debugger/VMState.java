@@ -51,7 +51,7 @@ class VMState {
 
     // This is cached only while the VM is suspended
     private static class Cache {
-        List<ThreadReference> threads = null; // cached Threads
+        List<ThreadMirror> threads = null; // cached Threads
     }
 
     private Cache cache = null;               // synchronized (this)
@@ -129,7 +129,7 @@ class VMState {
      * If resumingThread != null, then only that thread is being
      * resumed.
      */
-    synchronized void thaw(ThreadReference resumingThread) {
+    synchronized void thaw(ThreadMirror resumingThread) {
         if (cache != null) {
             if ((vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0) {
                 vm.printTrace("Clearing VM suspended cache");
@@ -191,8 +191,8 @@ class VMState {
     }
 
 	@NotNull
-    List<ThreadReference> allThreads() {
-        List<ThreadReference> threads = null;
+    List<ThreadMirror> allThreads() {
+        List<ThreadMirror> threads = null;
         try {
             Cache local = getCache();
 
@@ -201,7 +201,7 @@ class VMState {
                 threads = local.threads;
             }
             if (threads == null) {
-                threads = Arrays.asList((ThreadReference[])JDWP.VirtualMachine.AllThreads.
+                threads = Arrays.asList((ThreadMirror[])JDWP.VirtualMachine.AllThreads.
                                         process(vm).threads);
                 if (local != null) {
                     local.threads = threads;

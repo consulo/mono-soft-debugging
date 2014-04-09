@@ -5,7 +5,7 @@ import java.util.Map;
 
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrame;
-import mono.debugger.ThreadReference;
+import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
 
@@ -35,10 +35,10 @@ public class Main
 		Thread.sleep(10000L);
 		accept.suspend();
 
-		for(ThreadReference threadReference : accept.allThreads())
+		for(ThreadMirror threadMirror : accept.allThreads())
 		{
-			List<StackFrame> frames = threadReference.frames();
-			System.out.println("thread: '" + threadReference.name() + "' frames: " + frames);
+			List<StackFrame> frames = threadMirror.frames();
+			System.out.println("thread: '" + threadMirror.name() + "' frames: " + frames);
 		}
 
 		accept.dispose();

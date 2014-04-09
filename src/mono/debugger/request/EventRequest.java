@@ -159,7 +159,7 @@ public interface EventRequest extends Mirror {
      * <p>
      * Thread suspensions through events have the same functionality
      * as explicitly requested suspensions. See
-     * {@link mono.debugger.ThreadReference#suspend} and
+     * {@link mono.debugger.ThreadMirror#suspend} and
      * {@link mono.debugger.VirtualMachine#suspend} for details.
      *
      * @param policy the selected suspend policy.

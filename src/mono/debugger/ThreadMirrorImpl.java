@@ -36,7 +36,7 @@ import mono.debugger.protocol.Thread_GetName;
 import mono.debugger.protocol.Thread_GetState;
 import mono.debugger.request.BreakpointRequest;
 
-public class ThreadReferenceImpl extends ObjectReferenceWithType implements ThreadReference, VMListener
+public class ThreadMirrorImpl extends ObjectReferenceWithType implements ThreadMirror, VMListener
 {
 	static final int SUSPEND_STATUS_SUSPENDED = 0x1;
 	static final int SUSPEND_STATUS_BREAK = 0x2;
@@ -111,7 +111,7 @@ public class ThreadReferenceImpl extends ObjectReferenceWithType implements Thre
 	private List<WeakReference<ThreadListener>> listeners = new ArrayList<WeakReference<ThreadListener>>();
 
 
-	ThreadReferenceImpl(VirtualMachine aVm, long aRef)
+	ThreadMirrorImpl(VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
 		resetLocalCache();

@@ -25,7 +25,6 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
 import java.util.EventObject;
 
 /*
@@ -40,12 +39,12 @@ class ThreadAction extends EventObject {
 
     int id;
 
-    ThreadAction(ThreadReference thread, int id) {
+    ThreadAction(ThreadMirror thread, int id) {
         super(thread);
         this.id = id;
     }
-    ThreadReference thread() {
-        return (ThreadReference)getSource();
+    ThreadMirror thread() {
+        return (ThreadMirror)getSource();
     }
     int id() {
         return id;

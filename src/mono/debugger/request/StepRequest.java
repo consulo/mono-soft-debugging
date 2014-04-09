@@ -60,7 +60,7 @@ public interface StepRequest extends EventRequest {
     /**
      * @return the thread on which the step event is being requested.
      */
-    ThreadReference thread();
+    ThreadMirror thread();
 
     /**
      * @return the step size
