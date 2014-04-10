@@ -31,254 +31,288 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StackFrameImpl extends MirrorImpl
-                            implements StackFrame, ThreadListener
+public class StackFrameImpl extends MirrorImpl implements StackFrame, ThreadListener
 {
-    /* Once false, frame should not be used.
-     * access synchronized on (vm.state())
-     */
-    private boolean isValid = true;
+	/* Once false, frame should not be used.
+	 * access synchronized on (vm.state())
+	 */
+	private boolean isValid = true;
 
-    private final ThreadMirror thread;
-    private final long id;
-    private final Location location;
-    private Map<String, LocalVariable> visibleVariables =  null;
-    private ObjectReference thisObject = null;
+	private final ThreadMirror thread;
+	private final long id;
+	private final Location location;
+	private Map<String, LocalVariable> visibleVariables = null;
+	private ObjectReference thisObject = null;
 
-    StackFrameImpl(VirtualMachine vm, ThreadMirror thread,
-                   long id, Location location) {
-        super(vm);
-        this.thread = thread;
-        this.id = id;
-        this.location = location;
-        thread.addListener(this);
-    }
+	StackFrameImpl(
+			VirtualMachine vm, ThreadMirror thread, long id, Location location)
+	{
+		super(vm);
+		this.thread = thread;
+		this.id = id;
+		this.location = location;
+		thread.addListener(this);
+	}
 
-    /*
-     * ThreadListener implementation
-     * Must be synchronized since we must protect against
-     * sending defunct (isValid == false) stack ids to the back-end.
-     */
-    @Override
-	public boolean threadResumable(ThreadAction action) {
-        synchronized (vm.state()) {
-            if (isValid) {
-                isValid = false;
-                return false;   /* remove this stack frame as a listener */
-            } else {
-                throw new InternalException(
-                                  "Invalid stack frame thread listener");
-            }
-        }
-    }
+	/*
+	 * ThreadListener implementation
+	 * Must be synchronized since we must protect against
+	 * sending defunct (isValid == false) stack ids to the back-end.
+	 */
+	@Override
+	public boolean threadResumable(ThreadAction action)
+	{
+		synchronized(vm.state())
+		{
+			if(isValid)
+			{
+				isValid = false;
+				return false;   /* remove this stack frame as a listener */
+			}
+			else
+			{
+				throw new InternalException("Invalid stack frame thread listener");
+			}
+		}
+	}
 
-    void validateStackFrame() {
-        if (!isValid) {
-            throw new InvalidStackFrameException("Thread has been resumed");
-        }
-    }
+	void validateStackFrame()
+	{
+		if(!isValid)
+		{
+			throw new InvalidStackFrameException("Thread has been resumed");
+		}
+	}
 
-    /**
-     * Return the frame location.
-     * Need not be synchronized since it cannot be provably stale.
-     */
-    @Override
-	public Location location() {
-        validateStackFrame();
-        return location;
-    }
+	/**
+	 * Return the frame location.
+	 * Need not be synchronized since it cannot be provably stale.
+	 */
+	@Override
+	public Location location()
+	{
+		validateStackFrame();
+		return location;
+	}
 
-    /**
-     * Return the thread holding the frame.
-     * Need not be synchronized since it cannot be provably stale.
-     */
-    @Override
-	public ThreadMirror thread() {
-        validateStackFrame();
-        return thread;
-    }
+	/**
+	 * Return the thread holding the frame.
+	 * Need not be synchronized since it cannot be provably stale.
+	 */
+	@Override
+	public ThreadMirror thread()
+	{
+		validateStackFrame();
+		return thread;
+	}
 
-    @Override
-	public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof StackFrameImpl)) {
-            StackFrameImpl other = (StackFrameImpl)obj;
-            return (id == other.id) &&
-                   (thread().equals(other.thread())) &&
-                   (location().equals(other.location())) &&
-                    super.equals(obj);
-        } else {
-            return false;
-        }
-    }
+	@Override
+	public boolean equals(Object obj)
+	{
+		if((obj != null) && (obj instanceof StackFrameImpl))
+		{
+			StackFrameImpl other = (StackFrameImpl) obj;
+			return (id == other.id) &&
+					(thread().equals(other.thread())) &&
+					(location().equals(other.location())) &&
+					super.equals(obj);
+		}
+		else
+		{
+			return false;
+		}
+	}
 
-    @Override
-	public int hashCode() {
-        return (thread().hashCode() << 4) + ((int)id);
-    }
+	@Override
+	public int hashCode()
+	{
+		return (thread().hashCode() << 4) + ((int) id);
+	}
 
-    @Override
-	public ObjectReference thisObject() {
+	@Override
+	public ObjectReference thisObject()
+	{
 
-        return thisObject;
-    }
+		return thisObject;
+	}
 
-    /**
-     * Build the visible variable map.
-     * Need not be synchronized since it cannot be provably stale.
-     */
-    private void createVisibleVariables() throws AbsentInformationException {
-        if (visibleVariables == null) {
-            List<LocalVariable> allVariables = location.method().variables();
-            Map<String, LocalVariable> map = new HashMap<String, LocalVariable>(allVariables.size());
+	/**
+	 * Build the visible variable map.
+	 * Need not be synchronized since it cannot be provably stale.
+	 */
+	private void createVisibleVariables() throws AbsentInformationException
+	{
+		if(visibleVariables == null)
+		{
+			List<LocalVariable> allVariables = location.method().variables();
+			Map<String, LocalVariable> map = new HashMap<String, LocalVariable>(allVariables.size());
 
-            for (LocalVariable variable : allVariables) {
-                String name = variable.name();
-                if (variable.isVisible(this)) {
-                    LocalVariable existing = map.get(name);
-                    if ((existing == null) ||
-                        ((LocalVariableImpl)variable).hides(existing)) {
-                        map.put(name, variable);
-                    }
-                }
-            }
-            visibleVariables = map;
-        }
-    }
+			for(LocalVariable variable : allVariables)
+			{
+				String name = variable.name();
+				if(variable.isVisible(this))
+				{
+					LocalVariable existing = map.get(name);
+					if((existing == null) || ((LocalVariableImpl) variable).hides(existing))
+					{
+						map.put(name, variable);
+					}
+				}
+			}
+			visibleVariables = map;
+		}
+	}
 
-    /**
-     * Return the list of visible variable in the frame.
-     * Need not be synchronized since it cannot be provably stale.
-     */
-    @Override
-	public List<LocalVariable> visibleVariables() throws AbsentInformationException {
-        validateStackFrame();
-        createVisibleVariables();
-        List<LocalVariable> mapAsList = new ArrayList<LocalVariable>(visibleVariables.values());
-        Collections.sort(mapAsList);
-        return mapAsList;
-    }
+	/**
+	 * Return the list of visible variable in the frame.
+	 * Need not be synchronized since it cannot be provably stale.
+	 */
+	@Override
+	public List<LocalVariable> visibleVariables() throws AbsentInformationException
+	{
+		validateStackFrame();
+		createVisibleVariables();
+		List<LocalVariable> mapAsList = new ArrayList<LocalVariable>(visibleVariables.values());
+		Collections.sort(mapAsList);
+		return mapAsList;
+	}
 
-    /**
-     * Return a particular variable in the frame.
-     * Need not be synchronized since it cannot be provably stale.
-     */
-    @Override
-	public LocalVariable visibleVariableByName(String name) throws AbsentInformationException  {
-        validateStackFrame();
-        createVisibleVariables();
-        return visibleVariables.get(name);
-    }
+	/**
+	 * Return a particular variable in the frame.
+	 * Need not be synchronized since it cannot be provably stale.
+	 */
+	@Override
+	public LocalVariable visibleVariableByName(String name) throws AbsentInformationException
+	{
+		validateStackFrame();
+		createVisibleVariables();
+		return visibleVariables.get(name);
+	}
 
-    @Override
-	public Value getValue(LocalVariable variable) {
-        List<LocalVariable> list = new ArrayList<LocalVariable>(1);
-        list.add(variable);
-        return getValues(list).get(variable);
-    }
+	@Override
+	public Value getValue(LocalVariable variable)
+	{
+		List<LocalVariable> list = new ArrayList<LocalVariable>(1);
+		list.add(variable);
+		return getValues(list).get(variable);
+	}
 
-    @Override
-	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) {
-        validateStackFrame();
-        validateMirrors(variables);
+	@Override
+	public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables)
+	{
+		validateStackFrame();
+		validateMirrors(variables);
 
-        int count = variables.size();
-        JDWP.StackFrame.GetValues.SlotInfo[] slots =
-                           new JDWP.StackFrame.GetValues.SlotInfo[count];
+		int count = variables.size();
+		JDWP.StackFrame.GetValues.SlotInfo[] slots = new JDWP.StackFrame.GetValues.SlotInfo[count];
 
-        for (int i=0; i<count; ++i) {
-            LocalVariableImpl variable = (LocalVariableImpl)variables.get(i);
-            if (!variable.isVisible(this)) {
-                throw new IllegalArgumentException(variable.name() +
-                                 " is not valid at this frame location");
-            }
-            slots[i] = new JDWP.StackFrame.GetValues.SlotInfo(variable.slot(),
-                                      (byte)variable.signature().charAt(0));
-        }
+		for(int i = 0; i < count; ++i)
+		{
+			LocalVariableImpl variable = (LocalVariableImpl) variables.get(i);
+			if(!variable.isVisible(this))
+			{
+				throw new IllegalArgumentException(variable.name() + " is not valid at this frame location");
+			}
+			slots[i] = new JDWP.StackFrame.GetValues.SlotInfo(variable.slot(), (byte) variable.signature().charAt(0));
+		}
 
-        PacketStream ps;
+		PacketStream ps;
 
         /* protect against defunct frame id */
-        synchronized (vm.state()) {
-            validateStackFrame();
-            ps = JDWP.StackFrame.GetValues.enqueueCommand(vm, thread, id, slots);
-        }
+		synchronized(vm.state())
+		{
+			validateStackFrame();
+			ps = JDWP.StackFrame.GetValues.enqueueCommand(vm, thread, id, slots);
+		}
 
         /* actually get it, now that order is guaranteed */
-        ValueImpl[] values;
-        try {
-            values = JDWP.StackFrame.GetValues.waitForReply(vm, ps).values;
-        } catch (JDWPException exc) {
-            switch (exc.errorCode()) {
-                case JDWP.Error.INVALID_FRAMEID:
-                case JDWP.Error.THREAD_NOT_SUSPENDED:
-                case JDWP.Error.INVALID_THREAD:
-                    throw new InvalidStackFrameException();
-                default:
-                    throw exc.toJDIException();
-            }
-        }
+		ValueImpl[] values;
+		try
+		{
+			values = JDWP.StackFrame.GetValues.waitForReply(vm, ps).values;
+		}
+		catch(JDWPException exc)
+		{
+			switch(exc.errorCode())
+			{
+				case JDWP.Error.INVALID_FRAMEID:
+				case JDWP.Error.THREAD_NOT_SUSPENDED:
+				case JDWP.Error.INVALID_THREAD:
+					throw new InvalidStackFrameException();
+				default:
+					throw exc.toJDIException();
+			}
+		}
 
-        if (count != values.length) {
-            throw new InternalException(
-                      "Wrong number of values returned from target VM");
-        }
-        Map<LocalVariable, Value> map = new HashMap<LocalVariable, Value>(count);
-        for (int i=0; i<count; ++i) {
-            LocalVariableImpl variable = (LocalVariableImpl)variables.get(i);
-            map.put(variable, values[i]);
-        }
-        return map;
-    }
+		if(count != values.length)
+		{
+			throw new InternalException("Wrong number of values returned from target VM");
+		}
+		Map<LocalVariable, Value> map = new HashMap<LocalVariable, Value>(count);
+		for(int i = 0; i < count; ++i)
+		{
+			LocalVariableImpl variable = (LocalVariableImpl) variables.get(i);
+			map.put(variable, values[i]);
+		}
+		return map;
+	}
 
-    @Override
-	public void setValue(LocalVariable variableIntf, Value valueIntf)
-        throws InvalidTypeException, ClassNotLoadedException {
+	@Override
+	public void setValue(LocalVariable variableIntf, Value valueIntf) throws InvalidTypeException, ClassNotLoadedException
+	{
 
-        validateStackFrame();
-        validateMirror(variableIntf);
-        validateMirrorOrNull(valueIntf);
+		validateStackFrame();
+		validateMirror(variableIntf);
+		validateMirrorOrNull(valueIntf);
 
-        LocalVariableImpl variable = (LocalVariableImpl)variableIntf;
-        ValueImpl value = (ValueImpl)valueIntf;
+		LocalVariableImpl variable = (LocalVariableImpl) variableIntf;
+		ValueImpl value = (ValueImpl) valueIntf;
 
-        if (!variable.isVisible(this)) {
-            throw new IllegalArgumentException(variable.name() +
-                             " is not valid at this frame location");
-        }
+		if(!variable.isVisible(this))
+		{
+			throw new IllegalArgumentException(variable.name() + " is not valid at this frame location");
+		}
 
-        try {
-            // Validate and convert value if necessary
-            value = ValueImpl.prepareForAssignment(value, variable);
+		try
+		{
+			// Validate and convert value if necessary
+			value = ValueImpl.prepareForAssignment(value, variable);
 
-            JDWP.StackFrame.SetValues.SlotInfo[] slotVals =
-                new JDWP.StackFrame.SetValues.SlotInfo[1];
-            slotVals[0] = new JDWP.StackFrame.SetValues.
-                                       SlotInfo(variable.slot(), value);
+			JDWP.StackFrame.SetValues.SlotInfo[] slotVals = new JDWP.StackFrame.SetValues.SlotInfo[1];
+			slotVals[0] = new JDWP.StackFrame.SetValues.
+					SlotInfo(variable.slot(), value);
 
-            PacketStream ps;
+			PacketStream ps;
 
             /* protect against defunct frame id */
-            synchronized (vm.state()) {
-                validateStackFrame();
-                ps = JDWP.StackFrame.SetValues.
-                                     enqueueCommand(vm, thread, id, slotVals);
-            }
+			synchronized(vm.state())
+			{
+				validateStackFrame();
+				ps = JDWP.StackFrame.SetValues.
+						enqueueCommand(vm, thread, id, slotVals);
+			}
 
             /* actually set it, now that order is guaranteed */
-            try {
-                JDWP.StackFrame.SetValues.waitForReply(vm, ps);
-            } catch (JDWPException exc) {
-                switch (exc.errorCode()) {
-                case JDWP.Error.INVALID_FRAMEID:
-                case JDWP.Error.THREAD_NOT_SUSPENDED:
-                case JDWP.Error.INVALID_THREAD:
-                    throw new InvalidStackFrameException();
-                default:
-                    throw exc.toJDIException();
-                }
-            }
-        } catch (ClassNotLoadedException e) {
-            /*
+			try
+			{
+				JDWP.StackFrame.SetValues.waitForReply(vm, ps);
+			}
+			catch(JDWPException exc)
+			{
+				switch(exc.errorCode())
+				{
+					case JDWP.Error.INVALID_FRAMEID:
+					case JDWP.Error.THREAD_NOT_SUSPENDED:
+					case JDWP.Error.INVALID_THREAD:
+						throw new InvalidStackFrameException();
+					default:
+						throw exc.toJDIException();
+				}
+			}
+		}
+		catch(ClassNotLoadedException e)
+		{
+			/*
              * Since we got this exception,
              * the variable type must be a reference type. The value
              * we're trying to set is null, but if the variable's
@@ -286,54 +320,60 @@ public class StackFrameImpl extends MirrorImpl
              * class loader, then setting to null is essentially a
              * no-op, and we should allow it without an exception.
              */
-            if (value != null) {
-                throw e;
-            }
-        }
-    }
+			if(value != null)
+			{
+				throw e;
+			}
+		}
+	}
 
-    @Override
-	public List<Value> getArgumentValues() {
-        return Collections.emptyList();
-    }
+	@Override
+	public List<Value> getArgumentValues()
+	{
+		return Collections.emptyList();
+	}
 
-    void pop() throws IncompatibleThreadStateException {
-        validateStackFrame();
-        // flush caches and disable caching until command completion
-        CommandSender sender =
-            new CommandSender() {
-                @Override
-				public PacketStream send() {
-                    return JDWP.StackFrame.PopFrames.enqueueCommand(vm,
-                                 thread, id);
-                }
-        };
-        try {
-            PacketStream stream = thread.sendResumingCommand(sender);
-            JDWP.StackFrame.PopFrames.waitForReply(vm, stream);
-        } catch (JDWPException exc) {
-            switch (exc.errorCode()) {
-            case JDWP.Error.THREAD_NOT_SUSPENDED:
-                throw new IncompatibleThreadStateException(
-                         "Thread not current or suspended");
-            case JDWP.Error.INVALID_THREAD:   /* zombie */
-                throw new IncompatibleThreadStateException("zombie");
-            case JDWP.Error.NO_MORE_FRAMES:
-                throw new InvalidStackFrameException(
-                         "No more frames on the stack");
-            default:
-                throw exc.toJDIException();
-            }
-        }
+	void pop() throws IncompatibleThreadStateException
+	{
+		validateStackFrame();
+		// flush caches and disable caching until command completion
+		CommandSender sender = new CommandSender()
+		{
+			@Override
+			public PacketStream send()
+			{
+				return JDWP.StackFrame.PopFrames.enqueueCommand(vm, thread, id);
+			}
+		};
+		try
+		{
+			PacketStream stream = thread.sendResumingCommand(sender);
+			JDWP.StackFrame.PopFrames.waitForReply(vm, stream);
+		}
+		catch(JDWPException exc)
+		{
+			switch(exc.errorCode())
+			{
+				case JDWP.Error.THREAD_NOT_SUSPENDED:
+					throw new IncompatibleThreadStateException("Thread not current or suspended");
+				case JDWP.Error.INVALID_THREAD:   /* zombie */
+					throw new IncompatibleThreadStateException("zombie");
+				case JDWP.Error.NO_MORE_FRAMES:
+					throw new InvalidStackFrameException("No more frames on the stack");
+				default:
+					throw exc.toJDIException();
+			}
+		}
 
-        // enable caching - suspended again
-        vm.state().freeze();
-    }
+		// enable caching - suspended again
+		vm.state().freeze();
+	}
 
-    @Override
-	public String toString() {
-       return location.toString() + " in thread " + thread.toString();
-    }
+	@Override
+	public String toString()
+	{
+		return location.toString() + " in thread " + thread.toString();
+	}
 
 	@Override
 	public long id()
