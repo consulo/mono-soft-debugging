@@ -225,7 +225,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		/**
 		 * For MethodEntry and MethodExit
 		 */
-		public MethodMirrorOld method()
+		public MethodMirror method()
 		{
 			return location.method();
 		}

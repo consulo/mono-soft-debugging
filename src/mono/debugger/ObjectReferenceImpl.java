@@ -255,7 +255,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	@Override
 	public Value invokeMethod(
 			ThreadMirror threadIntf,
-			MethodMirrorOld methodIntf,
+			MethodMirror methodIntf,
 			List<? extends Value> origArguments,
 			int options) throws InvalidTypeException, IncompatibleThreadStateException, InvocationException, ClassNotLoadedException
 	{

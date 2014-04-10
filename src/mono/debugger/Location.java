@@ -99,9 +99,9 @@ public interface Location extends Mirror, Comparable<Location> {
     /**
      * Gets the method containing this Location.
      *
-     * @return the location's {@link MethodMirrorOld}.
+     * @return the location's {@link MethodMirror}.
      */
-    MethodMirrorOld method();
+    MethodMirror method();
 
     /**
      * Gets the code position within this location's method.

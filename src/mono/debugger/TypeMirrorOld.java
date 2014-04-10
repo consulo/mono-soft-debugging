@@ -108,7 +108,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
     static final int INVOKE_SINGLE_THREADED = 0x1;
 
     /**
-     * Invokes the specified static {@link MethodMirrorOld} in the
+     * Invokes the specified static {@link MethodMirror} in the
      * target VM. The
      * specified method can be defined in this class,
      * or in a superclass.
@@ -189,7 +189,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
      * {@link VirtualMachine#dispose}) the method invocation continues.
      *
      * @param thread the thread in which to invoke.
-     * @param method the {@link MethodMirrorOld} to invoke.
+     * @param method the {@link MethodMirror} to invoke.
      * @param arguments the list of {@link Value} arguments bound to the
      * invoked method. Values from the list are assigned to arguments
      * in the order they appear in the method signature.
@@ -218,7 +218,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
      *         compatibility.
      * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
      */
-    Value invokeMethod(ThreadMirror thread, MethodMirrorOld method,
+    Value invokeMethod(ThreadMirror thread, MethodMirror method,
                        List<? extends Value> arguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,
@@ -227,7 +227,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
 
     /**
      * Constructs a new instance of this type, using
-     * the given constructor {@link MethodMirrorOld} in the
+     * the given constructor {@link MethodMirror} in the
      * target VM. The
      * specified constructor must be defined in this class.
      * <p>
@@ -293,7 +293,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
      * {@link VirtualMachine#dispose}) the method invocation continues.
      *
      * @param thread the thread in which to invoke.
-     * @param method the constructor {@link MethodMirrorOld} to invoke.
+     * @param method the constructor {@link MethodMirror} to invoke.
      * @param arguments the list of {@link Value} arguments bound to the
      * invoked constructor. Values from the list are assigned to arguments
      * in the order they appear in the constructor signature.
@@ -324,7 +324,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
      * @throws VMCannotBeModifiedException if the VirtualMachine is read-only
      * - see {@link VirtualMachine#canBeModified()}.
      */
-    ObjectReference newInstance(ThreadMirror thread, MethodMirrorOld method,
+    ObjectReference newInstance(ThreadMirror thread, MethodMirror method,
                                 List<? extends Value> arguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,
@@ -332,7 +332,7 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
                                           InvocationException;
 
     /**
-     * Returns a the single non-abstract {@link MethodMirrorOld} visible from
+     * Returns a the single non-abstract {@link MethodMirror} visible from
      * this class that has the given name and signature.
      * See {@link ReferenceType#methodsByName(java.lang.String, java.lang.String)}
      * for information on signature format.
@@ -345,10 +345,10 @@ public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
      * @see ReferenceType#methodsByName(java.lang.String name, java.lang.String signature)
      * @param name the name of the method to find.
      * @param signature the signature of the method to find
-     * @return the {@link MethodMirrorOld} that matches the given
+     * @return the {@link MethodMirror} that matches the given
      * name and signature or <code>null</code> if there is no match.
      * @throws ClassNotPreparedException if methods are not yet available
      * because the class has not yet been prepared.
      */
-    MethodMirrorOld concreteMethodByName(String name, String signature);
+    MethodMirror concreteMethodByName(String name, String signature);
 }

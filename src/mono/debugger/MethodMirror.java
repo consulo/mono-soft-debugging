@@ -11,7 +11,7 @@ import mono.debugger.protocol.Method_GetParamInfo;
  * @author VISTALL
  * @since 10.04.14
  */
-public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
+public class MethodMirror extends MirrorWithIdAndName implements TypeComponent, Locatable, Comparable<MethodMirror>, MirrorWithId
 {
 	private TypeMirror myDeclarationType;
 	private Method_GetParamInfo myParamInfo;
@@ -54,127 +54,106 @@ public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 		return Method_GetName.process(vm, this).name;
 	}
 
-	@Override
 	public String returnTypeName()
 	{
 		return null;
 	}
 
-	@Override
 	public TypeMirror returnType()
 	{
 		return paramInfo().returnType;
 	}
 
-	@Override
 	public List<String> argumentTypeNames()
 	{
 		return null;
 	}
 
-	@Override
 	public List<Type> argumentTypes() throws ClassNotLoadedException
 	{
 		return null;
 	}
 
-	@Override
 	public boolean isAbstract()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isSynchronized()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isNative()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isVarArgs()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isBridge()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isConstructor()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isStaticInitializer()
 	{
 		return false;
 	}
 
-	@Override
 	public boolean isObsolete()
 	{
 		return false;
 	}
 
-	@Override
 	public List<Location> allLineLocations() throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public List<Location> allLineLocations(String sourceName) throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public List<Location> locationsOfLine(int lineNumber) throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public List<Location> locationsOfLine(String sourceName, int lineNumber) throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public Location locationOfCodeIndex(long codeIndex)
 	{
 		return null;
 	}
 
-	@Override
 	public List<LocalVariable> variables() throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public List<LocalVariable> arguments() throws AbsentInformationException
 	{
 		return null;
 	}
 
-	@Override
 	public byte[] bytecodes()
 	{
 		return new byte[0];
@@ -265,7 +244,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 	}
 
 	@Override
-	public int compareTo(MethodMirrorOld o)
+	public int compareTo(MethodMirror o)
 	{
 		return 0;
 	}

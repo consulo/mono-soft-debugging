@@ -45,11 +45,11 @@ public interface MethodExitEvent extends LocatableEvent {
     /**
      * Returns the method that was exited.
      *
-     * @return a {@link mono.debugger.MethodMirrorOld} which mirrors the method that was exited.
+     * @return a {@link mono.debugger.MethodMirror} which mirrors the method that was exited.
      * @throws mono.debugger.InvalidObjectException may be thrown if class
      * has been garbage collected.
      */
-    public MethodMirrorOld method();
+    public MethodMirror method();
 
     /**
      * Returns the value that the method will return.

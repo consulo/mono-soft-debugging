@@ -30,7 +30,7 @@ package mono.debugger;
  * type (class or interface).
  * This interface is the root of the type
  * component hierarchy which
- * includes {@link Field} and {@link MethodMirrorOld}.
+ * includes {@link Field} and {@link MethodMirror}.
  * Type components of the same name declared in different classes
  * (including those related by inheritance) have different
  * TypeComponent objects.
@@ -63,7 +63,7 @@ public interface TypeComponent extends Mirror, Accessible {
      * in the JNI documentation. It is a convenient, compact format for
      * for manipulating type information internally, not necessarily
      * for display to an end user. See {@link Field#typeName} and
-     * {@link MethodMirrorOld#returnTypeName} for ways to help get a more readable
+     * {@link MethodMirror#returnTypeName} for ways to help get a more readable
      * representation of the type.
      *
      * @see <a href="doc-files/signature.html">Type Signatures</a>

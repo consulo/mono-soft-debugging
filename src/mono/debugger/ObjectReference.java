@@ -142,7 +142,7 @@ public interface ObjectReference extends Value
     static final int INVOKE_NONVIRTUAL      = 0x2;
 
     /**
-     * Invokes the specified {@link MethodMirrorOld} on this object in the
+     * Invokes the specified {@link MethodMirror} on this object in the
      * target VM. The
      * specified method can be defined in this object's class,
      * in a superclass of this object's class, or in an interface
@@ -237,7 +237,7 @@ public interface ObjectReference extends Value
      * {@link VirtualMachine#dispose}) the method invocation continues.
      *
      * @param thread the thread in which to invoke.
-     * @param method the {@link MethodMirrorOld} to invoke.
+     * @param method the {@link MethodMirror} to invoke.
      * @param arguments the list of {@link Value} arguments bound to the
      * invoked method. Values from the list are assigned to arguments
      * in the order they appear in the method signature.
@@ -268,7 +268,7 @@ public interface ObjectReference extends Value
      *         compatibility.
      * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
      */
-    Value invokeMethod(ThreadMirror thread, MethodMirrorOld method,
+    Value invokeMethod(ThreadMirror thread, MethodMirror method,
                        List<? extends Value> arguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,

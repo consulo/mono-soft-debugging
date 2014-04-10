@@ -83,7 +83,7 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 	@Override
 	public Value invokeMethod(
 			ThreadMirror thread,
-			MethodMirrorOld method,
+			MethodMirror method,
 			List<? extends Value> arguments,
 			int options) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException
 	{
@@ -93,7 +93,7 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 	@Override
 	public ObjectReference newInstance(
 			ThreadMirror thread,
-			MethodMirrorOld method,
+			MethodMirror method,
 			List<? extends Value> arguments,
 			int options) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException
 	{
@@ -101,7 +101,7 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 	}
 
 	@Override
-	public MethodMirrorOld concreteMethodByName(String name, String signature)
+	public MethodMirror concreteMethodByName(String name, String signature)
 	{
 		return null;
 	}
@@ -203,31 +203,31 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 	}
 
 	@Override
-	public List<MethodMirrorOld> methods()
+	public List<MethodMirror> methods()
 	{
 		return null;
 	}
 
 	@Override
-	public List<MethodMirrorOld> visibleMethods()
+	public List<MethodMirror> visibleMethods()
 	{
 		return null;
 	}
 
 	@Override
-	public List<MethodMirrorOld> allMethods()
+	public List<MethodMirror> allMethods()
 	{
 		return null;
 	}
 
 	@Override
-	public List<MethodMirrorOld> methodsByName(String name)
+	public List<MethodMirror> methodsByName(String name)
 	{
 		return null;
 	}
 
 	@Override
-	public List<MethodMirrorOld> methodsByName(String name, String signature)
+	public List<MethodMirror> methodsByName(String name, String signature)
 	{
 		return null;
 	}

@@ -28,11 +28,11 @@ package mono.debugger;
 public class LocationImpl extends MirrorImpl implements Location
 {
 	private ReferenceTypeImpl declaringType;
-	private MethodMirrorOld method;
+	private MethodMirror method;
 	private long codeIndex;
 	private LineInfo baseLineInfo = null;
 
-	public LocationImpl(VirtualMachine vm, MethodMirrorOld method, long codeIndex)
+	public LocationImpl(VirtualMachine vm, MethodMirror method, long codeIndex)
 	{
 		super(vm);
 
@@ -97,7 +97,7 @@ public class LocationImpl extends MirrorImpl implements Location
 	}
 
 	@Override
-	public MethodMirrorOld method()
+	public MethodMirror method()
 	{
 
 		return method;

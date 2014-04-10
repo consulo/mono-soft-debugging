@@ -28,7 +28,7 @@ package mono.debugger;
 public class LocalVariableImpl extends MirrorImpl
                                implements LocalVariable, ValueContainer
 {
-    private final MethodMirrorOld method;
+    private final MethodMirror method;
     private final int slot;
     private final Location scopeStart;
     private final Location scopeEnd;
@@ -36,7 +36,7 @@ public class LocalVariableImpl extends MirrorImpl
     private final String signature;
     private String genericSignature = null;
 
-    LocalVariableImpl(VirtualMachine vm, MethodMirrorOld method,
+    LocalVariableImpl(VirtualMachine vm, MethodMirror method,
                       int slot, Location scopeStart, Location scopeEnd,
                       String name, String signature,
                       String genericSignature) {
@@ -109,8 +109,7 @@ public class LocalVariableImpl extends MirrorImpl
 
     @Override
 	public Type findType(String signature) throws ClassNotLoadedException {
-        ReferenceTypeImpl enclosing = (ReferenceTypeImpl)method.declaringType();
-        return enclosing.findType(signature);
+        return null;
     }
 
     @Override
@@ -126,7 +125,7 @@ public class LocalVariableImpl extends MirrorImpl
     @Override
 	public boolean isVisible(StackFrame frame) {
         validateMirror(frame);
-        MethodMirrorOld frameMethod = frame.location().method();
+        MethodMirror frameMethod = frame.location().method();
 
         if (!frameMethod.equals(method)) {
             throw new IllegalArgumentException(

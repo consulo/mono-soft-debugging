@@ -27,14 +27,14 @@ package mono.debugger;
 
 /**
  * A local variable in the target VM. Each variable declared within a
- * {@link MethodMirrorOld} has its own LocalVariable object. Variables of the same
+ * {@link MethodMirror} has its own LocalVariable object. Variables of the same
  * name declared in different scopes have different LocalVariable objects.
  * LocalVariables can be used alone to retrieve static information
  * about their declaration, or can be used in conjunction with a
  * {@link StackFrame} to set and get values.
  *
  * @see StackFrame
- * @see MethodMirrorOld
+ * @see MethodMirror
  *
  * @author Robert Field
  * @author Gordon Hirsch
@@ -139,7 +139,7 @@ public interface LocalVariable extends Mirror, Comparable<LocalVariable> {
      *
      * @return  true if the Object is a LocalVariable, if both LocalVariables
      * are contained in the same method (as determined by
-     * {@link MethodMirrorOld#equals}), and if both LocalVariables mirror
+     * {@link MethodMirror#equals}), and if both LocalVariables mirror
      * the same declaration within that method
      */
 	@Override

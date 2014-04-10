@@ -47,7 +47,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private String baseSourcePath = null;
 	protected int modifiers = -1;
 	private SoftReference<List<Field>> fieldsRef = null;
-	private SoftReference<List<MethodMirrorOld>> methodsRef = null;
+	private SoftReference<List<MethodMirror>> methodsRef = null;
 	private SoftReference<SDE> sdeRef = null;
 
 	private boolean isClassLoaderCached = false;
@@ -88,7 +88,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		sdeRef = null;
 	}
 
-	MethodMirrorOld getMethodMirror(long ref)
+	MethodMirror getMethodMirror(long ref)
 	{
 		return null;
 	}
@@ -469,7 +469,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	@Override
-	public List<MethodMirrorOld> methods()
+	public List<MethodMirror> methods()
 	{
 		return Collections.emptyList();
 	}
@@ -480,25 +480,25 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * Utility method used by subclasses to build lists of visible
 	 * methods.
 	 */
-	void addToMethodMap(Map<String, MethodMirrorOld> methodMap, List<MethodMirrorOld> methodList)
+	void addToMethodMap(Map<String, MethodMirror> methodMap, List<MethodMirror> methodList)
 	{
-		for(MethodMirrorOld method : methodList)
+		for(MethodMirror method : methodList)
 		{
 			methodMap.put(method.name().concat(method.signature()), method);
 		}
 	}
 
-	abstract void addVisibleMethods(Map<String, MethodMirrorOld> methodMap);
+	abstract void addVisibleMethods(Map<String, MethodMirror> methodMap);
 
 	@Override
-	public List<MethodMirrorOld> visibleMethods()
+	public List<MethodMirror> visibleMethods()
 	{
         /*
          * Build a collection of all visible methods. The hash
          * map allows us to do this efficiently by keying on the
          * concatenation of name and signature.
          */
-		Map<String, MethodMirrorOld> map = new HashMap<String, MethodMirrorOld>();
+		Map<String, MethodMirror> map = new HashMap<String, MethodMirror>();
 		addVisibleMethods(map);
 
         /*
@@ -507,20 +507,20 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
          * So, start over with allMethods() and use the hash map
          * to filter that ordered collection.
          */
-		List<MethodMirrorOld> list = allMethods();
+		List<MethodMirror> list = allMethods();
 		list.retainAll(map.values());
 		return list;
 	}
 
 	@Override
-	abstract public List<MethodMirrorOld> allMethods();
+	abstract public List<MethodMirror> allMethods();
 
 	@Override
-	public List<MethodMirrorOld> methodsByName(String name)
+	public List<MethodMirror> methodsByName(String name)
 	{
-		List<MethodMirrorOld> methods = visibleMethods();
-		ArrayList<MethodMirrorOld> retList = new ArrayList<MethodMirrorOld>(methods.size());
-		for(MethodMirrorOld candidate : methods)
+		List<MethodMirror> methods = visibleMethods();
+		ArrayList<MethodMirror> retList = new ArrayList<MethodMirror>(methods.size());
+		for(MethodMirror candidate : methods)
 		{
 			if(candidate.name().equals(name))
 			{
@@ -532,11 +532,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	@Override
-	public List<MethodMirrorOld> methodsByName(String name, String signature)
+	public List<MethodMirror> methodsByName(String name, String signature)
 	{
-		List<MethodMirrorOld> methods = visibleMethods();
-		ArrayList<MethodMirrorOld> retList = new ArrayList<MethodMirrorOld>(methods.size());
-		for(MethodMirrorOld candidate : methods)
+		List<MethodMirror> methods = visibleMethods();
+		ArrayList<MethodMirror> retList = new ArrayList<MethodMirror>(methods.size());
+		for(MethodMirror candidate : methods)
 		{
 			if(candidate.name().equals(name) && candidate.signature().equals(signature))
 			{
@@ -934,7 +934,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return ref;
 	}
 
-	int indexOf(MethodMirrorOld method)
+	int indexOf(MethodMirror method)
 	{
 		// Make sure they're all here - the obsolete method
 		// won't be found and so will have index -1
