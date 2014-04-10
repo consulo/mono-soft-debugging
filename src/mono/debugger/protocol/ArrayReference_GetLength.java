@@ -1,7 +1,7 @@
 package mono.debugger.protocol;
 
 import mono.debugger.JDWPException;
-import mono.debugger.ObjectMirror;
+import mono.debugger.ObjectValueMirror;
 import mono.debugger.PacketStream;
 import mono.debugger.VirtualMachineImpl;
 
@@ -13,16 +13,16 @@ public class ArrayReference_GetLength implements ArrayReference
 {
 	static final int COMMAND = 1;
 
-	public static ArrayReference_GetLength process(VirtualMachineImpl vm, ObjectMirror objectMirror) throws JDWPException
+	public static ArrayReference_GetLength process(VirtualMachineImpl vm, ObjectValueMirror objectValueMirror) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, objectMirror);
+		PacketStream ps = enqueueCommand(vm, objectValueMirror);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, ObjectMirror objectMirror)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, ObjectValueMirror objectValueMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		ps.writeId(objectMirror);
+		ps.writeId(objectValueMirror);
 		ps.send();
 		return ps;
 	}

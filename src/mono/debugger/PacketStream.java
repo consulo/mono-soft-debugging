@@ -478,10 +478,10 @@ public class PacketStream
 	}
 
 	@NotNull
-	public ObjectMirror readObjectMirror()
+	public ObjectValueMirror readObjectMirror()
 	{
 		int ref = readId();
-		return new ObjectMirror(vm, ref); //FIXME [VISTALL] caching?
+		return new ObjectValueMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
 	ClassObjectReferenceImpl readClassObjectReference()

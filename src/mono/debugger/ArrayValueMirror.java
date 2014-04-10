@@ -6,23 +6,23 @@ import mono.debugger.protocol.ArrayReference_GetLength;
  * @author VISTALL
  * @since 10.04.14
  */
-public class ArrayValueMirror extends ValueImpl
+public class ArrayValueMirror extends ValueImpl implements MirrorWithId
 {
 	private final byte myTag;
-	private final ObjectMirror myObjectMirror;
+	private final ObjectValueMirror myObjectValueMirror;
 
-	public ArrayValueMirror(VirtualMachine aVm, byte tag, ObjectMirror objectMirror)
+	public ArrayValueMirror(VirtualMachine aVm, byte tag, ObjectValueMirror objectValueMirror)
 	{
 		super(aVm);
 		myTag = tag;
-		myObjectMirror = objectMirror;
+		myObjectValueMirror = objectValueMirror;
 	}
 
 	public int length()
 	{
 		try
 		{
-			ArrayReference_GetLength.process(vm, myObjectMirror);
+			ArrayReference_GetLength.process(vm, myObjectValueMirror);
 		}
 		catch(JDWPException e)
 		{
@@ -55,5 +55,11 @@ public class ArrayValueMirror extends ValueImpl
 		StringBuilder builder = new StringBuilder();
 		builder.append("ArrayValue { type = ").append(type()).append(", length = ").append(length()).append(" }");
 		return builder.toString();
+	}
+
+	@Override
+	public long id()
+	{
+		return myObjectValueMirror.id();
 	}
 }
