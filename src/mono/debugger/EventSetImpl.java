@@ -302,51 +302,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 
 	}
-	class ClassPrepareEventImpl extends ThreadedEventImpl implements ClassPrepareEvent
-	{
-		private TypeMirror referenceType;
-
-		ClassPrepareEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ClassPrepare evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread);
-			//referenceType = this.vm.referenceType(evt.typeID);
-		}
-
-		@Override
-		public TypeMirror referenceType()
-		{
-			return referenceType;
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "ClassPrepareEvent";
-		}
-	}
-
-	class ClassUnloadEventImpl extends ThreadedEventImpl implements ClassUnloadEvent
-	{
-		private TypeMirror referenceType;
-
-		ClassUnloadEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ClassUnload evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread);
-			//referenceType = this.vm.referenceType(evt.typeID);
-		}
-
-		@Override
-		public TypeMirror referenceType()
-		{
-			return referenceType;
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "ClassUnloadEvent";
-		}
-	}
 
 	class ExceptionEventImpl extends LocatableEventImpl implements ExceptionEvent
 	{
