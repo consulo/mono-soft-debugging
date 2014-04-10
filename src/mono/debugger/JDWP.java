@@ -45,9 +45,6 @@ public class JDWP
 				return new GetTypes(vm, ps);
 			}
 
-			/**
-			 * Number of reference types that follow.
-			 */
 			final TypeMirror[] classes;
 
 			private GetTypes(VirtualMachineImpl vm, PacketStream ps)
@@ -502,10 +499,6 @@ public class JDWP
 					@Override
 					void write(PacketStream ps)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         loc(Location): " + loc);
-						}
 						ps.writeLocation(loc);
 					}
 				}
@@ -746,32 +739,11 @@ public class JDWP
 					VirtualMachineImpl vm, byte eventKind, byte suspendPolicy, Modifier[] modifiers)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.EventRequest.Set" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 eventKind(byte): " + eventKind);
-				}
 				ps.writeByte(eventKind);
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 suspendPolicy(byte): " + suspendPolicy);
-				}
 				ps.writeByte(suspendPolicy);
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 modifiers(Modifier[]): " + "");
-				}
 				ps.writeByte((byte) modifiers.length);
 				for(int i = 0; i < modifiers.length; i++)
 				{
-					if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-					{
-						ps.vm.printTrace("Sending:                     modifiers[i](Modifier): " + "");
-					}
 					modifiers[i].write(ps);
 				}
 				ps.send();

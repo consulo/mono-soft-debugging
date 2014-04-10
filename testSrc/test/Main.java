@@ -1,17 +1,18 @@
 package test;
 
-import java.util.List;
 import java.util.Map;
 
-import mono.debugger.AbsentInformationException;
-import mono.debugger.Location;
+import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
-import mono.debugger.MethodParameterMirror;
 import mono.debugger.SocketListeningConnector;
-import mono.debugger.StackFrameMirror;
-import mono.debugger.ThreadMirror;
+import mono.debugger.TypeMirror;
 import mono.debugger.VirtualMachine;
+import mono.debugger.VirtualMachineImpl;
 import mono.debugger.connect.Connector;
+import mono.debugger.event.EventSet;
+import mono.debugger.protocol.Method_GetDebugInfo;
+import mono.debugger.request.BreakpointRequest;
+import mono.debugger.request.EventRequestManager;
 
 /**
  * @author VISTALL
@@ -30,46 +31,46 @@ public class Main
 
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
-
 		accept.resume();
 
+		Thread.sleep(1000L);
 
-		System.out.println("wait 10 sec");
-
-		Thread.sleep(10000L);
 		accept.suspend();
 
-		for(ThreadMirror threadMirror : accept.allThreads())
+		TypeMirror typeMirror = accept.findTypes("Program", true)[0];
+
+		System.out.println(typeMirror.name());
+		int index = 0;
+		MethodMirror m  = null;
+		l:for(MethodMirror methodMirror : typeMirror.methods())
 		{
-			List<StackFrameMirror> frames = threadMirror.frames();
-			System.out.println("thread: '" + threadMirror.name());
-			System.out.println("frames: ");
-			for(StackFrameMirror stackFrameMirror : frames)
+			if("call4".equals(methodMirror.name()))
 			{
-				System.out.println(" -- frame: " + stackFrameMirror.id());
-				System.out.println(" --- flags: " + stackFrameMirror.flags());
-				Location location = stackFrameMirror.location();
-				MethodMirror method = location.method();
-				System.out.println(" --- method: " + method);
-				try
+				Method_GetDebugInfo debugInfo = Method_GetDebugInfo.process((VirtualMachineImpl) accept, methodMirror);
+				for(Method_GetDebugInfo.Entry entry : debugInfo.entries)
 				{
-					System.out.println(" --- method - thisObject: " + stackFrameMirror.thisObject());
+					if(entry.line == 44)
+					{
+						m = methodMirror;
+						index = entry.offset;
+						break l;
+					}
 				}
-				catch(AbsentInformationException e)
-				{
-					//e.printStackTrace();
-				}
-				for(MethodParameterMirror parameter : method.parameters())
-				{
-					System.out.println(" ---- parameter: " + parameter + " value: " + stackFrameMirror.parameterValue(parameter));
-				}
-				System.out.println(" --- class: " + method.declaringType());
-				System.out.println(" --- codeIndex: " + location.codeIndex());
 			}
 		}
 
-		accept.dispose();
+		EventRequestManager eventRequestManager = accept.eventRequestManager();
 
-		Thread.sleep(50000L);
+
+		BreakpointRequest breakpointRequest = eventRequestManager.createBreakpointRequest(new LocationImpl(accept, m, index));
+		breakpointRequest.enable();
+		accept.resume();
+
+		while(true)
+		{
+			EventSet remove = accept.eventQueue().remove();
+
+			Thread.sleep(100L);
+		}
 	}
 }

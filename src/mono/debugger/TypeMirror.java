@@ -2,6 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.Type_GetInfo;
+import mono.debugger.protocol.Type_GetMethods;
 
 /**
  * @author VISTALL
@@ -10,6 +11,7 @@ import mono.debugger.protocol.Type_GetInfo;
 public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 {
 	private Type_GetInfo myInfo;
+	private MethodMirror[] myMethodMirrors;
 
 	public TypeMirror(@NotNull VirtualMachine aVm, long id)
 	{
@@ -49,6 +51,23 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 	public String namespace()
 	{
 		return info().namespace;
+	}
+
+	@NotNull
+	public MethodMirror[] methods()
+	{
+		if(myMethodMirrors != null)
+		{
+			return myMethodMirrors;
+		}
+		try
+		{
+			return myMethodMirrors = Type_GetMethods.process(vm, this).methods;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
 	}
 
 	@Override

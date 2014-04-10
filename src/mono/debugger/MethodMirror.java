@@ -1,6 +1,7 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.protocol.Method_GetDeclarationType;
 import mono.debugger.protocol.Method_GetName;
 import mono.debugger.protocol.Method_GetParamInfo;

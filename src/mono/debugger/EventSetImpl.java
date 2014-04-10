@@ -502,10 +502,10 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 			case JDWP.EventKind.EXCEPTION:
 				return new ExceptionEventImpl(vm, (JDWP.Event.Composite.Events.Exception) comm);
-
+                                                 */
 			case JDWP.EventKind.BREAKPOINT:
 				return new BreakpointEventImpl(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
-
+			             /*
 			case JDWP.EventKind.METHOD_ENTRY:
 				return new MethodEntryEventImpl(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
 

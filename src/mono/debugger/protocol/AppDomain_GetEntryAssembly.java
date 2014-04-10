@@ -23,10 +23,6 @@ public class AppDomain_GetEntryAssembly implements AppDomain
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, AppDomainMirror appDomainMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") AppDomain_GetEntryAssembly" + (ps.pkt.flags != 0 ? ", " +"" + "FLAGS=" + ps.pkt.flags : ""));
-		}
 		ps.writeId(appDomainMirror);
 		ps.send();
 		return ps;
@@ -42,12 +38,6 @@ public class AppDomain_GetEntryAssembly implements AppDomain
 
 	private AppDomain_GetEntryAssembly(VirtualMachineImpl vm, PacketStream ps)
 	{
-		if(vm.traceReceives)
-		{
-			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") AppDomain_GetEntryAssembly" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-		}
-
 		assembly = ps.readAssemblyMirror();
 	}
 }

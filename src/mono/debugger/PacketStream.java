@@ -28,6 +28,7 @@ package mono.debugger;
 import java.io.ByteArrayOutputStream;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.SignatureConstants;
 
 public class PacketStream
@@ -375,10 +376,14 @@ public class PacketStream
 		return new ThreadMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
-	@NotNull
+	@Nullable
 	public AssemblyMirror readAssemblyMirror()
 	{
 		long ref = readId();
+		if(ref == 0)
+		{
+			return null;
+		}
 		return new AssemblyMirror(vm, ref);  //FIXME [VISTALL] caching?
 	}
 
