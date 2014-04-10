@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StackFrameImpl extends MirrorImpl implements StackFrame, ThreadListener
+public class StackFrameImpl extends MirrorImpl implements StackFrameOld, ThreadListener
 {
 	/* Once false, frame should not be used.
 	 * access synchronized on (vm.state())

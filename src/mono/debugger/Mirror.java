@@ -32,7 +32,7 @@ package mono.debugger;
  * in the target VM ({@link ObjectReference}), primitive values
  * (for example, {@link IntegerValue}), types (for example,
  * {@link ReferenceType}), dynamic application state (for example,
- * {@link StackFrame}), and even debugger-specific constructs (for example,
+ * {@link StackFrameOld}), and even debugger-specific constructs (for example,
  * {@link mono.debugger.request.BreakpointRequest}).
  * The {@link VirtualMachine} itself is also
  * considered a mirror, representing the composite state of the

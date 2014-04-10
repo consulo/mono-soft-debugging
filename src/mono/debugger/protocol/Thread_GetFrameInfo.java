@@ -23,25 +23,8 @@ public class Thread_GetFrameInfo implements Thread
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror thread, int startFrame, int length)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") Thread_GetFrameInfo" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : ""));
-		}
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-		}
 		ps.writeId(thread);
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 startFrame(int): " + startFrame);
-		}
 		ps.writeInt(startFrame);
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 length(int): " + length);
-		}
 		ps.writeInt(length);
 		ps.send();
 		return ps;
@@ -55,14 +38,8 @@ public class Thread_GetFrameInfo implements Thread
 
 	public static class Frame
 	{
-		/**
-		 * The ID of this frame.
-		 */
 		public final long frameID;
 
-		/**
-		 * The current location of this frame
-		 */
 		public final Location location;
 
 		public final byte flags;
@@ -70,20 +47,8 @@ public class Thread_GetFrameInfo implements Thread
 		private Frame(VirtualMachineImpl vm, PacketStream ps)
 		{
 			frameID = ps.readInt();
-			if(vm.traceReceives)
-			{
-				vm.printReceiveTrace(5, "frameID(long): " + frameID);
-			}
 			location = ps.readLocation();
-			if(vm.traceReceives)
-			{
-				vm.printReceiveTrace(5, "location(Location): " + location);
-			}
 			flags = ps.readByte();
-			if(vm.traceReceives)
-			{
-				vm.printReceiveTrace(5, "flags(byte): " + location);
-			}
 		}
 	}
 

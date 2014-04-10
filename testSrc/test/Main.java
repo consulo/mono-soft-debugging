@@ -7,7 +7,8 @@ import mono.debugger.Location;
 import mono.debugger.MethodMirror;
 import mono.debugger.MethodParameterMirror;
 import mono.debugger.SocketListeningConnector;
-import mono.debugger.StackFrame;
+import mono.debugger.StackFrameMirror;
+import mono.debugger.StackFrameOld;
 import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
@@ -40,18 +41,21 @@ public class Main
 
 		for(ThreadMirror threadMirror : accept.allThreads())
 		{
-			List<StackFrame> frames = threadMirror.frames();
+			List<StackFrameOld> frames = threadMirror.frames();
 			System.out.println("thread: '" + threadMirror.name());
 			System.out.println("frames: ");
-			for(StackFrame frame : frames)
+			for(StackFrameOld frame : frames)
 			{
-				System.out.println(" -- frame: " + frame.id());
-				Location location = frame.location();
-				MethodMirror method = (MethodMirror) location.method();
+				StackFrameMirror stackFrameMirror = (StackFrameMirror) frame;
+
+				System.out.println(" -- frame: " + stackFrameMirror.id());
+				System.out.println(" --- flags: " + stackFrameMirror.flags());
+				Location location = stackFrameMirror.location();
+				MethodMirror method = location.method();
 				System.out.println(" --- method: " + method);
 				for(MethodParameterMirror parameter : method.parameters())
 				{
-					System.out.println(" ---- parameter: " + parameter);
+					System.out.println(" ---- parameter: " + parameter + " value: " + stackFrameMirror.parameterValue(parameter));
 				}
 				System.out.println(" --- class: " + method.declaringType());
 				System.out.println(" --- codeIndex: " + location.codeIndex());

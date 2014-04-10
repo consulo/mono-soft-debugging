@@ -37,7 +37,7 @@ package mono.debugger;
  *                 ObjectReference.getValue(Field)}
  *   <TD>- value of a field
  * <TR>
- *   <TD>{@link StackFrame#getValue(mono.debugger.LocalVariable)
+ *   <TD>{@link StackFrameOld#getValue(mono.debugger.LocalVariable)
  *                 StackFrame.getValue(LocalVariable)}
  *   <TD>- value of a variable
  * <TR>

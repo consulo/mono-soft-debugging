@@ -74,7 +74,7 @@ package mono.debugger;
  * use {@link ReferenceType#availableStrata()}.
  *
  * @see mono.debugger.request.EventRequestManager
- * @see StackFrame
+ * @see StackFrameOld
  * @see mono.debugger.event.BreakpointEvent
  * @see mono.debugger.event.ExceptionEvent
  * @see Locatable

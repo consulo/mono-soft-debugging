@@ -92,7 +92,7 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 	private static class LocalCache
 	{
 		Thread_GetState myState = null;
-		List<StackFrame> frames = null;
+		List<StackFrameOld> frames = null;
 		int framesStart = -1;
 		int framesLength = 0;
 
@@ -244,7 +244,7 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
          */
 		try
 		{
-			StackFrame frame = frame(0);
+			StackFrameOld frame = frame(0);
 			Location location = frame.location();
 			List<BreakpointRequest> requests = vm.eventRequestManager().breakpointRequests();
 			Iterator<BreakpointRequest> iter = requests.iterator();
@@ -269,14 +269,14 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 		}
 	}
 
-	public List<StackFrame> frames() throws IncompatibleThreadStateException
+	public List<StackFrameOld> frames() throws IncompatibleThreadStateException
 	{
 		return privateFrames(0, -1);
 	}
 
-	public StackFrame frame(int index) throws IncompatibleThreadStateException
+	public StackFrameOld frame(int index) throws IncompatibleThreadStateException
 	{
-		List<StackFrame> list = privateFrames(index, 1);
+		List<StackFrameOld> list = privateFrames(index, 1);
 		return list.get(0);
 	}
 
@@ -307,7 +307,7 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 		return ((start + length) <= (snapshot.framesStart + snapshot.framesLength));
 	}
 
-	public List<StackFrame> frames(int start, int length) throws IncompatibleThreadStateException
+	public List<StackFrameOld> frames(int start, int length) throws IncompatibleThreadStateException
 	{
 		if(length < 0)
 		{
@@ -320,7 +320,7 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 	 * Private version of frames() allows "-1" to specify all
 	 * remaining frames.
 	 */
-	synchronized private List<StackFrame> privateFrames(int start, int length) throws IncompatibleThreadStateException
+	synchronized private List<StackFrameOld> privateFrames(int start, int length) throws IncompatibleThreadStateException
 	{
 
 		// Lock must be held while creating stack frames so if that two threads
@@ -332,7 +332,7 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 			{
 				Thread_GetFrameInfo.Frame[] jdwpFrames = Thread_GetFrameInfo.process(vm, this, start, length).frames;
 				int count = jdwpFrames.length;
-				snapshot.frames = new ArrayList<StackFrame>(count);
+				snapshot.frames = new ArrayList<StackFrameOld>(count);
 
 				for(int i = 0; i < count; i++)
 				{
@@ -340,7 +340,8 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 					{
 						throw new InternalException("Invalid frame location");
 					}
-					StackFrame frame = new StackFrameImpl(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location);
+					StackFrameOld frame = new StackFrameMirror(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location, StackFrameMirror
+							.StackFrameFlags.values()[jdwpFrames[i].flags]);
 					// Add to the frame list
 					snapshot.frames.add(frame);
 				}

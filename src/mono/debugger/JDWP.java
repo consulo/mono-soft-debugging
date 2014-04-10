@@ -5514,7 +5514,7 @@ public class JDWP
 		static final int METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 71;
 		static final int NOT_IMPLEMENTED = 100;
 		static final int NULL_POINTER = 100;
-		static final int ABSENT_INFORMATION = 101;
+		static final int ABSENT_INFORMATION = 105;
 		static final int INVALID_EVENT_TYPE = 102;
 		static final int ILLEGAL_ARGUMENT = 103;
 		static final int OUT_OF_MEMORY = 110;
