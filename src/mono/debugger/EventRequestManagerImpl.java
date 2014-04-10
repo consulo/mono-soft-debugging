@@ -43,377 +43,352 @@ import mono.debugger.request.*;
 // Remove SuppressWarning when we fix the warnings from List filters
 // and List[] requestLists. The generic array is not supported.
 @SuppressWarnings("unchecked")
-class EventRequestManagerImpl extends MirrorImpl
-                                       implements EventRequestManager
+class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 {
-    List<? extends EventRequest>[] requestLists;
-    private static int methodExitEventCmd = 0;
+	List<? extends EventRequest>[] requestLists;
+	private static int methodExitEventCmd = 0;
 
-    static int JDWPtoJDISuspendPolicy(byte jdwpPolicy) {
-        switch(jdwpPolicy) {
-            case JDWP.SuspendPolicy.ALL:
-                return EventRequest.SUSPEND_ALL;
-            case JDWP.SuspendPolicy.EVENT_THREAD:
-                return EventRequest.SUSPEND_EVENT_THREAD;
-        case JDWP.SuspendPolicy.NONE:
-                return EventRequest.SUSPEND_NONE;
-            default:
-                throw new IllegalArgumentException("Illegal policy constant: " + jdwpPolicy);
-        }
-    }
+	static int JDWPtoJDISuspendPolicy(byte jdwpPolicy)
+	{
+		switch(jdwpPolicy)
+		{
+			case JDWP.SuspendPolicy.ALL:
+				return EventRequest.SUSPEND_ALL;
+			case JDWP.SuspendPolicy.EVENT_THREAD:
+				return EventRequest.SUSPEND_EVENT_THREAD;
+			case JDWP.SuspendPolicy.NONE:
+				return EventRequest.SUSPEND_NONE;
+			default:
+				throw new IllegalArgumentException("Illegal policy constant: " + jdwpPolicy);
+		}
+	}
 
-    static byte JDItoJDWPSuspendPolicy(int jdiPolicy) {
-        switch(jdiPolicy) {
-            case EventRequest.SUSPEND_ALL:
-                return JDWP.SuspendPolicy.ALL;
-            case EventRequest.SUSPEND_EVENT_THREAD:
-                return JDWP.SuspendPolicy.EVENT_THREAD;
-            case EventRequest.SUSPEND_NONE:
-                return JDWP.SuspendPolicy.NONE;
-            default:
-                throw new IllegalArgumentException("Illegal policy constant: " + jdiPolicy);
-        }
-    }
+	static byte JDItoJDWPSuspendPolicy(int jdiPolicy)
+	{
+		switch(jdiPolicy)
+		{
+			case EventRequest.SUSPEND_ALL:
+				return JDWP.SuspendPolicy.ALL;
+			case EventRequest.SUSPEND_EVENT_THREAD:
+				return JDWP.SuspendPolicy.EVENT_THREAD;
+			case EventRequest.SUSPEND_NONE:
+				return JDWP.SuspendPolicy.NONE;
+			default:
+				throw new IllegalArgumentException("Illegal policy constant: " + jdiPolicy);
+		}
+	}
 
-    /*
-     * Override superclass back to default equality
-     */
-    @Override
-	public boolean equals(Object obj) {
-        return this == obj;
-    }
+	/*
+	 * Override superclass back to default equality
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		return this == obj;
+	}
 
-    @Override
-	public int hashCode() {
-        return System.identityHashCode(this);
-    }
+	@Override
+	public int hashCode()
+	{
+		return System.identityHashCode(this);
+	}
 
-    abstract class EventRequestImpl extends MirrorImpl implements EventRequest {
-        int id;
+	abstract class EventRequestImpl extends MirrorImpl implements EventRequest
+	{
+		int id;
 
-        /*
-         * This list is not protected by a synchronized wrapper. All
-         * access/modification should be protected by synchronizing on
-         * the enclosing instance of EventRequestImpl.
-         */
-        List<Object> filters = new ArrayList<Object>();
+		/*
+		 * This list is not protected by a synchronized wrapper. All
+		 * access/modification should be protected by synchronizing on
+		 * the enclosing instance of EventRequestImpl.
+		 */ List<Object> filters = new ArrayList<Object>();
 
-        boolean isEnabled = false;
-        boolean deleted = false;
-        byte suspendPolicy = JDWP.SuspendPolicy.ALL;
-        private Map<Object, Object> clientProperties = null;
+		boolean isEnabled = false;
+		boolean deleted = false;
+		byte suspendPolicy = JDWP.SuspendPolicy.ALL;
+		private Map<Object, Object> clientProperties = null;
 
-        EventRequestImpl() {
-            super(EventRequestManagerImpl.this.vm);
-        }
+		EventRequestImpl()
+		{
+			super(EventRequestManagerImpl.this.vm);
+		}
 
 
-        /*
-         * Override superclass back to default equality
-         */
-        @Override
-		public boolean equals(Object obj) {
-            return this == obj;
-        }
+		/*
+		 * Override superclass back to default equality
+		 */
+		@Override
+		public boolean equals(Object obj)
+		{
+			return this == obj;
+		}
 
-        @Override
-		public int hashCode() {
-            return System.identityHashCode(this);
-        }
+		@Override
+		public int hashCode()
+		{
+			return System.identityHashCode(this);
+		}
 
-        abstract int eventCmd();
+		abstract int eventCmd();
 
-        InvalidRequestStateException invalidState() {
-            return new InvalidRequestStateException(toString());
-        }
+		InvalidRequestStateException invalidState()
+		{
+			return new InvalidRequestStateException(toString());
+		}
 
-        String state() {
-            return deleted? " (deleted)" :
-                (isEnabled()? " (enabled)" : " (disabled)");
-        }
+		String state()
+		{
+			return deleted ? " (deleted)" : (isEnabled() ? " (enabled)" : " (disabled)");
+		}
 
-        /**
-         * @return all the event request of this kind
-         */
-        List requestList() {
-            return EventRequestManagerImpl.this.requestList(eventCmd());
-        }
+		/**
+		 * @return all the event request of this kind
+		 */
+		List requestList()
+		{
+			return EventRequestManagerImpl.this.requestList(eventCmd());
+		}
 
-        /**
-         * delete the event request
-         */
-        void delete() {
-            if (!deleted) {
-                requestList().remove(this);
-                disable(); /* must do BEFORE delete */
-                deleted = true;
-            }
-        }
+		/**
+		 * delete the event request
+		 */
+		void delete()
+		{
+			if(!deleted)
+			{
+				requestList().remove(this);
+				disable(); /* must do BEFORE delete */
+				deleted = true;
+			}
+		}
 
-        @Override
-		public boolean isEnabled() {
-            return isEnabled;
-        }
+		@Override
+		public boolean isEnabled()
+		{
+			return isEnabled;
+		}
 
-        @Override
-		public void enable() {
-            setEnabled(true);
-        }
+		@Override
+		public void enable()
+		{
+			setEnabled(true);
+		}
 
-        @Override
-		public void disable() {
-            setEnabled(false);
-        }
+		@Override
+		public void disable()
+		{
+			setEnabled(false);
+		}
 
-        @Override
-		public synchronized void setEnabled(boolean val) {
-            if (deleted) {
-                throw invalidState();
-            } else {
-                if (val != isEnabled) {
-                    if (isEnabled) {
-                        clear();
-                    } else {
-                        set();
-                    }
-                }
-            }
-        }
+		@Override
+		public synchronized void setEnabled(boolean val)
+		{
+			if(deleted)
+			{
+				throw invalidState();
+			}
+			else
+			{
+				if(val != isEnabled)
+				{
+					if(isEnabled)
+					{
+						clear();
+					}
+					else
+					{
+						set();
+					}
+				}
+			}
+		}
 
-        @Override
-		public synchronized void addCountFilter(int count) {
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-            if (count < 1) {
-                throw new IllegalArgumentException("count is less than one");
-            }
-            filters.add(JDWP.EventRequest.Set.Modifier.Count.create(count));
-        }
+		@Override
+		public synchronized void addCountFilter(int count)
+		{
+			if(isEnabled() || deleted)
+			{
+				throw invalidState();
+			}
+			if(count < 1)
+			{
+				throw new IllegalArgumentException("count is less than one");
+			}
+			filters.add(JDWP.EventRequest.Set.Modifier.Count.create(count));
+		}
 
-        @Override
-		public void setSuspendPolicy(int policy) {
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-            suspendPolicy = JDItoJDWPSuspendPolicy(policy);
-        }
+		@Override
+		public void setSuspendPolicy(int policy)
+		{
+			if(isEnabled() || deleted)
+			{
+				throw invalidState();
+			}
+			suspendPolicy = JDItoJDWPSuspendPolicy(policy);
+		}
 
-        @Override
-		public int suspendPolicy() {
-            return JDWPtoJDISuspendPolicy(suspendPolicy);
-        }
+		@Override
+		public int suspendPolicy()
+		{
+			return JDWPtoJDISuspendPolicy(suspendPolicy);
+		}
 
-        /**
-         * set (enable) the event request
-         */
-        synchronized void set() {
-            JDWP.EventRequest.Set.Modifier[] mods =
-                filters.toArray(
-                    new JDWP.EventRequest.Set.Modifier[filters.size()]);
-            try {
-                id = JDWP.EventRequest.Set.process(vm, (byte)eventCmd(),
-                                                   suspendPolicy, mods).requestID;
-            } catch (JDWPException exc) {
-                throw exc.toJDIException();
-            }
-            isEnabled = true;
-        }
+		/**
+		 * set (enable) the event request
+		 */
+		synchronized void set()
+		{
+			JDWP.EventRequest.Set.Modifier[] mods = filters.toArray(new JDWP.EventRequest.Set.Modifier[filters.size()]);
+			try
+			{
+				id = JDWP.EventRequest.Set.process(vm, (byte) eventCmd(), suspendPolicy, mods).requestID;
+			}
+			catch(JDWPException exc)
+			{
+				throw exc.toJDIException();
+			}
+			isEnabled = true;
+		}
 
-        synchronized void clear() {
-            try {
-                JDWP.EventRequest.Clear.process(vm, (byte)eventCmd(), id);
-            } catch (JDWPException exc) {
-                throw exc.toJDIException();
-            }
-            isEnabled = false;
-        }
+		synchronized void clear()
+		{
+			try
+			{
+				JDWP.EventRequest.Clear.process(vm, (byte) eventCmd(), id);
+			}
+			catch(JDWPException exc)
+			{
+				throw exc.toJDIException();
+			}
+			isEnabled = false;
+		}
 
-        /**
-         * @return a small Map
-         * @see #putProperty
-         * @see #getProperty
-         */
-        private Map<Object, Object> getProperties() {
-            if (clientProperties == null) {
-                clientProperties = new HashMap<Object, Object>(2);
-            }
-            return clientProperties;
-        }
+		/**
+		 * @return a small Map
+		 * @see #putProperty
+		 * @see #getProperty
+		 */
+		private Map<Object, Object> getProperties()
+		{
+			if(clientProperties == null)
+			{
+				clientProperties = new HashMap<Object, Object>(2);
+			}
+			return clientProperties;
+		}
 
-        /**
-         * Returns the value of the property with the specified key.  Only
-         * properties added with <code>putProperty</code> will return
-         * a non-null value.
-         *
-         * @return the value of this property or null
-         * @see #putProperty
-         */
-        @Override
-		public final Object getProperty(Object key) {
-            if (clientProperties == null) {
-                return null;
-            } else {
-                return getProperties().get(key);
-            }
-        }
+		/**
+		 * Returns the value of the property with the specified key.  Only
+		 * properties added with <code>putProperty</code> will return
+		 * a non-null value.
+		 *
+		 * @return the value of this property or null
+		 * @see #putProperty
+		 */
+		@Override
+		public final Object getProperty(Object key)
+		{
+			if(clientProperties == null)
+			{
+				return null;
+			}
+			else
+			{
+				return getProperties().get(key);
+			}
+		}
 
-        /**
-         * Add an arbitrary key/value "property" to this component.
-         *
-         * @see #getProperty
-         */
-        @Override
-		public final void putProperty(Object key, Object value) {
-            if (value != null) {
-                getProperties().put(key, value);
-            } else {
-                getProperties().remove(key);
-            }
-        }
-    }
+		/**
+		 * Add an arbitrary key/value "property" to this component.
+		 *
+		 * @see #getProperty
+		 */
+		@Override
+		public final void putProperty(Object key, Object value)
+		{
+			if(value != null)
+			{
+				getProperties().put(key, value);
+			}
+			else
+			{
+				getProperties().remove(key);
+			}
+		}
+	}
 
-    abstract class ThreadVisibleEventRequestImpl extends EventRequestImpl {
-        public synchronized void addThreadFilter(ThreadMirror thread) {
-            validateMirror(thread);
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-            filters.add(JDWP.EventRequest.Set.Modifier.ThreadOnly
-                                      .create((ThreadMirror)thread));
-        }
-    }
+	abstract class ThreadVisibleEventRequestImpl extends EventRequestImpl
+	{
+		public synchronized void addThreadFilter(ThreadMirror thread)
+		{
+			validateMirror(thread);
+			if(isEnabled() || deleted)
+			{
+				throw invalidState();
+			}
+			filters.add(JDWP.EventRequest.Set.Modifier.ThreadOnly.create((ThreadMirror) thread));
+		}
+	}
 
-    abstract class ClassVisibleEventRequestImpl
-                                  extends ThreadVisibleEventRequestImpl {
-        public synchronized void addClassFilter(TypeMirror clazz) {
-            validateMirror(clazz);
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-            filters.add(JDWP.EventRequest.Set.Modifier.ClassOnly.create((TypeMirror) clazz));
-        }
+	abstract class ClassVisibleEventRequestImpl extends ThreadVisibleEventRequestImpl
+	{
+		public synchronized void addClassFilter(TypeMirror clazz)
+		{
+			validateMirror(clazz);
+			if(isEnabled() || deleted)
+			{
+				throw invalidState();
+			}
+			filters.add(JDWP.EventRequest.Set.Modifier.ClassOnly.create((TypeMirror) clazz));
+		}
 
-        public synchronized void addClassFilter(String classPattern) {
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-            if (classPattern == null) {
-                throw new NullPointerException();
-            }
-            filters.add(JDWP.EventRequest.Set.Modifier.ClassMatch
-                                      .create(classPattern));
-        }
 
-        public synchronized void addClassExclusionFilter(String classPattern) {
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-            if (classPattern == null) {
-                throw new NullPointerException();
-            }
-            filters.add(JDWP.EventRequest.Set.Modifier.ClassExclude
-                                      .create(classPattern));
-        }
+	}
 
-        public synchronized void addInstanceFilter(ObjectValueMirror instance) {
-            validateMirror(instance);
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
+	class BreakpointRequestImpl extends ClassVisibleEventRequestImpl implements BreakpointRequest
+	{
+		private final Location location;
 
-            filters.add(JDWP.EventRequest.Set.Modifier.InstanceOnly
-                                      .create(instance));
-        }
-    }
+		BreakpointRequestImpl(Location location)
+		{
+			this.location = location;
+			filters.add(0, JDWP.EventRequest.Set.Modifier.LocationOnly.create(location));
+			requestList().add(this);
+		}
 
-    class BreakpointRequestImpl extends ClassVisibleEventRequestImpl
-                                     implements BreakpointRequest {
-        private final Location location;
+		@Override
+		public Location location()
+		{
+			return location;
+		}
 
-        BreakpointRequestImpl(Location location) {
-            this.location = location;
-            filters.add(0,JDWP.EventRequest.Set.Modifier.LocationOnly
-                                                 .create(location));
-            requestList().add(this);
-        }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.BREAKPOINT;
+		}
 
-        @Override
-		public Location location() {
-            return location;
-        }
+		@Override
+		public String toString()
+		{
+			return "breakpoint request " + location() + state();
+		}
+	}
 
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.BREAKPOINT;
-        }
 
-        @Override
-		public String toString() {
-            return "breakpoint request " + location() + state();
-        }
-    }
-
-    class ClassPrepareRequestImpl extends ClassVisibleEventRequestImpl
-                                     implements ClassPrepareRequest {
-        ClassPrepareRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.ASSEMBLY_LOAD;
-        }
-
-        @Override
-		public synchronized void addSourceNameFilter(String sourceNamePattern) {
-            if (isEnabled() || deleted) {
-                throw invalidState();
-            }
-
-            if (sourceNamePattern == null) {
-                throw new NullPointerException();
-            }
-
-            filters.add(JDWP.EventRequest.Set.Modifier.SourceNameMatch
-                                      .create(sourceNamePattern));
-        }
-
-        @Override
-		public String toString() {
-            return "class prepare request " + state();
-        }
-    }
-
-    class ClassUnloadRequestImpl extends ClassVisibleEventRequestImpl
-                                     implements ClassUnloadRequest {
-        ClassUnloadRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.ASSEMBLY_UNLOAD;
-        }
-
-        @Override
-		public String toString() {
-            return "class unload request " + state();
-        }
-    }
-
-    class ExceptionRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements ExceptionRequest {
+	class ExceptionRequestImpl extends ClassVisibleEventRequestImpl implements ExceptionRequest
+	{
 		TypeMirror exception = null;
-        boolean caught = true;
-        boolean uncaught = true;
+		boolean caught = true;
+		boolean uncaught = true;
 
-        ExceptionRequestImpl(TypeMirror refType,
-                          boolean notifyCaught, boolean notifyUncaught) {
-            exception = refType;
-            caught = notifyCaught;
-            uncaught = notifyUncaught;
-          /*  {
+		ExceptionRequestImpl(
+				TypeMirror refType, boolean notifyCaught, boolean notifyUncaught)
+		{
+			exception = refType;
+			caught = notifyCaught;
+			uncaught = notifyUncaught;
+		  /*  {
                 ReferenceTypeImpl exc;
                 if (exception == null) {
                     exc = new ClassTypeImpl(vm, 0);
@@ -423,56 +398,66 @@ class EventRequestManagerImpl extends MirrorImpl
                 filters.add(JDWP.EventRequest.Set.Modifier.ExceptionOnly.
                             create(exc, caught, uncaught));
             }  */
-            requestList().add(this);
-        }
+			requestList().add(this);
+		}
 
-        @Override
-		public TypeMirror exception() {
-            return exception;
-        }
+		@Override
+		public TypeMirror exception()
+		{
+			return exception;
+		}
 
-        @Override
-		public boolean notifyCaught() {
-            return caught;
-        }
+		@Override
+		public boolean notifyCaught()
+		{
+			return caught;
+		}
 
-        @Override
-		public boolean notifyUncaught() {
-            return uncaught;
-        }
+		@Override
+		public boolean notifyUncaught()
+		{
+			return uncaught;
+		}
 
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.EXCEPTION;
-        }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.EXCEPTION;
+		}
 
-        @Override
-		public String toString() {
-            return "exception request " + exception() + state();
-        }
-    }
+		@Override
+		public String toString()
+		{
+			return "exception request " + exception() + state();
+		}
+	}
 
-    class MethodEntryRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements MethodEntryRequest {
-        MethodEntryRequestImpl() {
-            requestList().add(this);
-        }
+	class MethodEntryRequestImpl extends ClassVisibleEventRequestImpl implements MethodEntryRequest
+	{
+		MethodEntryRequestImpl()
+		{
+			requestList().add(this);
+		}
 
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.METHOD_ENTRY;
-        }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.METHOD_ENTRY;
+		}
 
-        @Override
-		public String toString() {
-            return "method entry request " + state();
-        }
-    }
+		@Override
+		public String toString()
+		{
+			return "method entry request " + state();
+		}
+	}
 
-    class MethodExitRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements MethodExitRequest {
-        MethodExitRequestImpl() {
-            if (methodExitEventCmd == 0) {
+	class MethodExitRequestImpl extends ClassVisibleEventRequestImpl implements MethodExitRequest
+	{
+		MethodExitRequestImpl()
+		{
+			if(methodExitEventCmd == 0)
+			{
                 /*
                  * If we can get return values, then we always get them.
                  * Thus, for JDI MethodExitRequests, we always use the
@@ -483,343 +468,376 @@ class EventRequestManagerImpl extends MirrorImpl
                  * This call to canGetMethodReturnValues can't
                  * be done in the EventRequestManager ctor because that is too early.
                  */
-                methodExitEventCmd = JDWP.EventKind.METHOD_EXIT_WITH_RETURN_VALUE;
-            }
-            requestList().add(this);
-        }
+				methodExitEventCmd = JDWP.EventKind.METHOD_EXIT;
+			}
+			requestList().add(this);
+		}
 
-        @Override
-		int eventCmd() {
-            return EventRequestManagerImpl.methodExitEventCmd;
-        }
+		@Override
+		int eventCmd()
+		{
+			return EventRequestManagerImpl.methodExitEventCmd;
+		}
 
-        @Override
-		public String toString() {
-            return "method exit request " + state();
-        }
-    }
+		@Override
+		public String toString()
+		{
+			return "method exit request " + state();
+		}
+	}
 
-    class StepRequestImpl extends ClassVisibleEventRequestImpl
-                                      implements StepRequest {
-        ThreadMirror thread;
-        int size;
-        int depth;
+	class StepRequestImpl extends ClassVisibleEventRequestImpl implements StepRequest
+	{
+		ThreadMirror thread;
+		int size;
+		int depth;
 
-        StepRequestImpl(ThreadMirror thread, int size, int depth) {
-            this.thread = (ThreadMirror)thread;
-            this.size = size;
-            this.depth = depth;
+		StepRequestImpl(ThreadMirror thread, int size, int depth)
+		{
+			this.thread = (ThreadMirror) thread;
+			this.size = size;
+			this.depth = depth;
 
             /*
              * Translate size and depth to corresponding JDWP values.
              */
-            int jdwpSize;
-            switch (size) {
-                case STEP_MIN:
-                    jdwpSize = JDWP.StepSize.MIN;
-                    break;
-                case STEP_LINE:
-                    jdwpSize = JDWP.StepSize.LINE;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid step size");
-            }
+			int jdwpSize;
+			switch(size)
+			{
+				case STEP_MIN:
+					jdwpSize = JDWP.StepSize.MIN;
+					break;
+				case STEP_LINE:
+					jdwpSize = JDWP.StepSize.LINE;
+					break;
+				default:
+					throw new IllegalArgumentException("Invalid step size");
+			}
 
-            int jdwpDepth;
-            switch (depth) {
-                case STEP_INTO:
-                    jdwpDepth = JDWP.StepDepth.INTO;
-                    break;
-                case STEP_OVER:
-                    jdwpDepth = JDWP.StepDepth.OVER;
-                    break;
-                case STEP_OUT:
-                    jdwpDepth = JDWP.StepDepth.OUT;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid step depth");
-            }
+			int jdwpDepth;
+			switch(depth)
+			{
+				case STEP_INTO:
+					jdwpDepth = JDWP.StepDepth.INTO;
+					break;
+				case STEP_OVER:
+					jdwpDepth = JDWP.StepDepth.OVER;
+					break;
+				case STEP_OUT:
+					jdwpDepth = JDWP.StepDepth.OUT;
+					break;
+				default:
+					throw new IllegalArgumentException("Invalid step depth");
+			}
 
             /*
              * Make sure this isn't a duplicate
              */
-            List<StepRequest> requests = stepRequests();
-            Iterator<StepRequest> iter = requests.iterator();
-            while (iter.hasNext()) {
-                StepRequest request = iter.next();
-                if ((request != this) &&
-                        request.isEnabled() &&
-                        request.thread().equals(thread)) {
-                    throw new DuplicateRequestException(
-                        "Only one step request allowed per thread");
-                }
-            }
+			List<StepRequest> requests = stepRequests();
+			Iterator<StepRequest> iter = requests.iterator();
+			while(iter.hasNext())
+			{
+				StepRequest request = iter.next();
+				if((request != this) &&
+						request.isEnabled() &&
+						request.thread().equals(thread))
+				{
+					throw new DuplicateRequestException("Only one step request allowed per thread");
+				}
+			}
 
-            filters.add(JDWP.EventRequest.Set.Modifier.Step.
-                        create(this.thread, jdwpSize, jdwpDepth));
-            requestList().add(this);
+			filters.add(JDWP.EventRequest.Set.Modifier.Step.
+					create(this.thread, jdwpSize, jdwpDepth));
+			requestList().add(this);
 
-        }
-        @Override
-		public int depth() {
-            return depth;
-        }
+		}
 
-        @Override
-		public int size() {
-            return size;
-        }
+		@Override
+		public int depth()
+		{
+			return depth;
+		}
 
-        @Override
-		public ThreadMirror thread() {
-            return thread;
-        }
+		@Override
+		public int size()
+		{
+			return size;
+		}
 
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.SINGLE_STEP;
-        }
+		@Override
+		public ThreadMirror thread()
+		{
+			return thread;
+		}
 
-        @Override
-		public String toString() {
-            return "step request " + thread() + state();
-        }
-    }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.SINGLE_STEP;
+		}
 
-    class ThreadDeathRequestImpl extends ThreadVisibleEventRequestImpl
-                                      implements ThreadDeathRequest {
-        ThreadDeathRequestImpl() {
-            requestList().add(this);
-        }
+		@Override
+		public String toString()
+		{
+			return "step request " + thread() + state();
+		}
+	}
 
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.THREAD_DEATH;
-        }
+	class ThreadDeathRequestImpl extends ThreadVisibleEventRequestImpl implements ThreadDeathRequest
+	{
+		ThreadDeathRequestImpl()
+		{
+			requestList().add(this);
+		}
 
-        @Override
-		public String toString() {
-            return "thread death request " + state();
-        }
-    }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.THREAD_DEATH;
+		}
 
-    class ThreadStartRequestImpl extends ThreadVisibleEventRequestImpl
-                                      implements ThreadStartRequest {
-        ThreadStartRequestImpl() {
-            requestList().add(this);
-        }
+		@Override
+		public String toString()
+		{
+			return "thread death request " + state();
+		}
+	}
 
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.THREAD_START;
-        }
+	class ThreadStartRequestImpl extends ThreadVisibleEventRequestImpl implements ThreadStartRequest
+	{
+		ThreadStartRequestImpl()
+		{
+			requestList().add(this);
+		}
 
-        @Override
-		public String toString() {
-            return "thread start request " + state();
-        }
-    }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.THREAD_START;
+		}
 
-
-
-    class VMDeathRequestImpl extends EventRequestImpl
-                                        implements VMDeathRequest {
-        VMDeathRequestImpl() {
-            requestList().add(this);
-        }
-
-        @Override
-		int eventCmd() {
-            return JDWP.EventKind.VM_DEATH;
-        }
-
-        @Override
-		public String toString() {
-            return "VM death request " + state();
-        }
-    }
-
-    /**
-     * Constructor.
-     */
-    EventRequestManagerImpl(VirtualMachine vm) {
-        super(vm);
-        java.lang.reflect.Field[] ekinds =
-            JDWP.EventKind.class.getDeclaredFields();
-        int highest = 0;
-        for (int i = 0; i < ekinds.length; ++i) {
-            int val;
-            try {
-                val = ekinds[i].getInt(null);
-            } catch (IllegalAccessException exc) {
-                throw new RuntimeException("Got: " + exc);
-            }
-            if (val > highest) {
-                highest = val;
-            }
-        }
-        requestLists = new List[highest+1];
-        for (int i=0; i <= highest; i++) {
-            requestLists[i] = new ArrayList<EventRequest>();
-        }
-    }
-
-    @Override
-	public ClassPrepareRequest createClassPrepareRequest() {
-        return new ClassPrepareRequestImpl();
-    }
-
-    @Override
-	public ClassUnloadRequest createClassUnloadRequest() {
-        return new ClassUnloadRequestImpl();
-    }
-
-    @Override
-	public ExceptionRequest createExceptionRequest(TypeMirror refType,
-                                                   boolean notifyCaught,
-                                                   boolean notifyUncaught) {
-        validateMirrorOrNull(refType);
-        return new ExceptionRequestImpl(refType, notifyCaught, notifyUncaught);
-    }
-
-    @Override
-	public StepRequest createStepRequest(ThreadMirror thread,
-                                         int size, int depth) {
-        validateMirror(thread);
-        return new StepRequestImpl(thread, size, depth);
-    }
-
-    @Override
-	public ThreadDeathRequest createThreadDeathRequest() {
-        return new ThreadDeathRequestImpl();
-    }
-
-    @Override
-	public ThreadStartRequest createThreadStartRequest() {
-        return new ThreadStartRequestImpl();
-    }
-
-    @Override
-	public MethodEntryRequest createMethodEntryRequest() {
-        return new MethodEntryRequestImpl();
-    }
-
-    @Override
-	public MethodExitRequest createMethodExitRequest() {
-        return new MethodExitRequestImpl();
-    }
-
-    @Override
-	public BreakpointRequest createBreakpointRequest(Location location) {
-        validateMirror(location);
-        if (location.codeIndex() == -1) {
-            throw new NativeMethodException("Cannot set breakpoints on native methods");
-        }
-        return new BreakpointRequestImpl(location);
-    }
-
-    @Override
-	public VMDeathRequest createVMDeathRequest() {
-
-        return new VMDeathRequestImpl();
-    }
-
-    @Override
-	public void deleteEventRequest(EventRequest eventRequest) {
-        validateMirror(eventRequest);
-        ((EventRequestImpl)eventRequest).delete();
-    }
-
-    @Override
-	public void deleteEventRequests(List<? extends EventRequest> eventRequests) {
-        validateMirrors(eventRequests);
-        // copy the eventRequests to avoid ConcurrentModificationException
-        Iterator<? extends EventRequest> iter = (new ArrayList<EventRequest>(eventRequests)).iterator();
-        while (iter.hasNext()) {
-            ((EventRequestImpl)iter.next()).delete();
-        }
-    }
-
-    @Override
-	public void deleteAllBreakpoints() {
-        requestList(JDWP.EventKind.BREAKPOINT).clear();
-
-        try {
-            JDWP.EventRequest.ClearAllBreakpoints.process(vm);
-        } catch (JDWPException exc) {
-            throw exc.toJDIException();
-        }
-    }
-
-    @Override
-	public List<StepRequest> stepRequests() {
-        return (List<StepRequest>)unmodifiableRequestList(JDWP.EventKind.SINGLE_STEP);
-    }
-
-    @Override
-	public List<ClassPrepareRequest> classPrepareRequests() {
-        return (List<ClassPrepareRequest>)unmodifiableRequestList(JDWP.EventKind.ASSEMBLY_LOAD);
-    }
-
-    @Override
-	public List<ClassUnloadRequest> classUnloadRequests() {
-        return (List<ClassUnloadRequest>)unmodifiableRequestList(JDWP.EventKind.ASSEMBLY_UNLOAD);
-    }
-
-    @Override
-	public List<ThreadStartRequest> threadStartRequests() {
-        return (List<ThreadStartRequest>)unmodifiableRequestList(JDWP.EventKind.THREAD_START);
-    }
-
-    @Override
-	public List<ThreadDeathRequest> threadDeathRequests() {
-        return (List<ThreadDeathRequest>)unmodifiableRequestList(JDWP.EventKind.THREAD_DEATH);
-    }
-
-    @Override
-	public List<ExceptionRequest> exceptionRequests() {
-        return (List<ExceptionRequest>)unmodifiableRequestList(JDWP.EventKind.EXCEPTION);
-    }
-
-    @Override
-	public List<BreakpointRequest> breakpointRequests() {
-        return (List<BreakpointRequest>)unmodifiableRequestList(JDWP.EventKind.BREAKPOINT);
-    }
-
-    @Override
-	public List<MethodEntryRequest> methodEntryRequests() {
-        return (List<MethodEntryRequest>)unmodifiableRequestList(JDWP.EventKind.METHOD_ENTRY);
-    }
-
-    @Override
-	public List<MethodExitRequest> methodExitRequests() {
-        return (List<MethodExitRequest>)unmodifiableRequestList(
-                               EventRequestManagerImpl.methodExitEventCmd);
-    }
+		@Override
+		public String toString()
+		{
+			return "thread start request " + state();
+		}
+	}
 
 
-    @Override
-	public List<VMDeathRequest> vmDeathRequests() {
-        return (List<VMDeathRequest>)unmodifiableRequestList(JDWP.EventKind.VM_DEATH);
-    }
+	class VMDeathRequestImpl extends EventRequestImpl implements VMDeathRequest
+	{
+		VMDeathRequestImpl()
+		{
+			requestList().add(this);
+		}
 
-    List<? extends EventRequest> unmodifiableRequestList(int eventCmd) {
-        return Collections.unmodifiableList(requestList(eventCmd));
-    }
+		@Override
+		int eventCmd()
+		{
+			return JDWP.EventKind.VM_DEATH;
+		}
 
-    EventRequest request(int eventCmd, int requestId) {
-        List<? extends EventRequest> rl = requestList(eventCmd);
-        for (int i = rl.size() - 1; i >= 0; i--) {
-            EventRequestImpl er = (EventRequestImpl)rl.get(i);
-            if (er.id == requestId) {
-                return er;
-            }
-        }
-        return null;
-    }
+		@Override
+		public String toString()
+		{
+			return "VM death request " + state();
+		}
+	}
 
-    List<? extends EventRequest>  requestList(int eventCmd) {
-        return requestLists[eventCmd];
-    }
+	/**
+	 * Constructor.
+	 */
+	EventRequestManagerImpl(VirtualMachine vm)
+	{
+		super(vm);
+		java.lang.reflect.Field[] ekinds = JDWP.EventKind.class.getDeclaredFields();
+		int highest = 0;
+		for(int i = 0; i < ekinds.length; ++i)
+		{
+			int val;
+			try
+			{
+				val = ekinds[i].getInt(null);
+			}
+			catch(IllegalAccessException exc)
+			{
+				throw new RuntimeException("Got: " + exc);
+			}
+			if(val > highest)
+			{
+				highest = val;
+			}
+		}
+		requestLists = new List[highest + 1];
+		for(int i = 0; i <= highest; i++)
+		{
+			requestLists[i] = new ArrayList<EventRequest>();
+		}
+	}
+
+	@Override
+	public ExceptionRequest createExceptionRequest(
+			TypeMirror refType, boolean notifyCaught, boolean notifyUncaught)
+	{
+		validateMirrorOrNull(refType);
+		return new ExceptionRequestImpl(refType, notifyCaught, notifyUncaught);
+	}
+
+	@Override
+	public StepRequest createStepRequest(
+			ThreadMirror thread, int size, int depth)
+	{
+		validateMirror(thread);
+		return new StepRequestImpl(thread, size, depth);
+	}
+
+	@Override
+	public ThreadDeathRequest createThreadDeathRequest()
+	{
+		return new ThreadDeathRequestImpl();
+	}
+
+	@Override
+	public ThreadStartRequest createThreadStartRequest()
+	{
+		return new ThreadStartRequestImpl();
+	}
+
+	@Override
+	public MethodEntryRequest createMethodEntryRequest()
+	{
+		return new MethodEntryRequestImpl();
+	}
+
+	@Override
+	public MethodExitRequest createMethodExitRequest()
+	{
+		return new MethodExitRequestImpl();
+	}
+
+	@Override
+	public BreakpointRequest createBreakpointRequest(Location location)
+	{
+		validateMirror(location);
+		if(location.codeIndex() == -1)
+		{
+			throw new NativeMethodException("Cannot set breakpoints on native methods");
+		}
+		return new BreakpointRequestImpl(location);
+	}
+
+	@Override
+	public VMDeathRequest createVMDeathRequest()
+	{
+
+		return new VMDeathRequestImpl();
+	}
+
+	@Override
+	public void deleteEventRequest(EventRequest eventRequest)
+	{
+		validateMirror(eventRequest);
+		((EventRequestImpl) eventRequest).delete();
+	}
+
+	@Override
+	public void deleteEventRequests(List<? extends EventRequest> eventRequests)
+	{
+		validateMirrors(eventRequests);
+		// copy the eventRequests to avoid ConcurrentModificationException
+		Iterator<? extends EventRequest> iter = (new ArrayList<EventRequest>(eventRequests)).iterator();
+		while(iter.hasNext())
+		{
+			((EventRequestImpl) iter.next()).delete();
+		}
+	}
+
+	@Override
+	public void deleteAllBreakpoints()
+	{
+		requestList(JDWP.EventKind.BREAKPOINT).clear();
+
+		try
+		{
+			JDWP.EventRequest.ClearAllBreakpoints.process(vm);
+		}
+		catch(JDWPException exc)
+		{
+			throw exc.toJDIException();
+		}
+	}
+
+	@Override
+	public List<StepRequest> stepRequests()
+	{
+		return (List<StepRequest>) unmodifiableRequestList(JDWP.EventKind.SINGLE_STEP);
+	}
+
+	@Override
+	public List<ThreadStartRequest> threadStartRequests()
+	{
+		return (List<ThreadStartRequest>) unmodifiableRequestList(JDWP.EventKind.THREAD_START);
+	}
+
+	@Override
+	public List<ThreadDeathRequest> threadDeathRequests()
+	{
+		return (List<ThreadDeathRequest>) unmodifiableRequestList(JDWP.EventKind.THREAD_DEATH);
+	}
+
+	@Override
+	public List<ExceptionRequest> exceptionRequests()
+	{
+		return (List<ExceptionRequest>) unmodifiableRequestList(JDWP.EventKind.EXCEPTION);
+	}
+
+	@Override
+	public List<BreakpointRequest> breakpointRequests()
+	{
+		return (List<BreakpointRequest>) unmodifiableRequestList(JDWP.EventKind.BREAKPOINT);
+	}
+
+	@Override
+	public List<MethodEntryRequest> methodEntryRequests()
+	{
+		return (List<MethodEntryRequest>) unmodifiableRequestList(JDWP.EventKind.METHOD_ENTRY);
+	}
+
+	@Override
+	public List<MethodExitRequest> methodExitRequests()
+	{
+		return (List<MethodExitRequest>) unmodifiableRequestList(EventRequestManagerImpl.methodExitEventCmd);
+	}
+
+
+	@Override
+	public List<VMDeathRequest> vmDeathRequests()
+	{
+		return (List<VMDeathRequest>) unmodifiableRequestList(JDWP.EventKind.VM_DEATH);
+	}
+
+	List<? extends EventRequest> unmodifiableRequestList(int eventCmd)
+	{
+		return Collections.unmodifiableList(requestList(eventCmd));
+	}
+
+	EventRequest request(int eventCmd, int requestId)
+	{
+		List<? extends EventRequest> rl = requestList(eventCmd);
+		for(int i = rl.size() - 1; i >= 0; i--)
+		{
+			EventRequestImpl er = (EventRequestImpl) rl.get(i);
+			if(er.id == requestId)
+			{
+				return er;
+			}
+		}
+		return null;
+	}
+
+	List<? extends EventRequest> requestList(int eventCmd)
+	{
+		return requestLists[eventCmd];
+	}
 
 }

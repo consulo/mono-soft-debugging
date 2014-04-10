@@ -50,27 +50,6 @@ import mono.debugger.VirtualMachine;
  */
 
 public interface EventRequestManager extends Mirror {
-
-    /**
-     * Creates a new disabled {@link ClassPrepareRequest}.
-     * The new event request is added to the list managed by this
-     * EventRequestManager. Use {@link EventRequest#enable()} to
-     * activate this event request.
-     *
-     * @return the created {@link ClassPrepareRequest}
-     */
-    ClassPrepareRequest createClassPrepareRequest();
-
-    /**
-     * Creates a new disabled {@link ClassUnloadRequest}.
-     * The new event request is added to the list managed by this
-     * EventRequestManager. Use {@link EventRequest#enable()} to
-     * activate this event request.
-     *
-     * @return the created {@link ClassUnloadRequest}
-     */
-    ClassUnloadRequest createClassUnloadRequest();
-
     /**
      * Creates a new disabled {@link ThreadStartRequest}.
      * The new event request is added to the list managed by this
@@ -293,22 +272,6 @@ public interface EventRequestManager extends Mirror {
      * @return the all {@link StepRequest} objects.
      */
     List<StepRequest> stepRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled class prepare requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the all {@link ClassPrepareRequest} objects.
-     */
-    List<ClassPrepareRequest> classPrepareRequests();
-
-    /**
-     * Return an unmodifiable list of the enabled and disabled class unload requests.
-     * This list is a live view of these requests and thus changes as requests
-     * are added and deleted.
-     * @return the all {@link ClassUnloadRequest} objects.
-     */
-    List<ClassUnloadRequest> classUnloadRequests();
 
     /**
      * Return an unmodifiable list of the enabled and disabled thread start requests.

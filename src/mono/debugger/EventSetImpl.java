@@ -289,12 +289,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
 		}
 
-		MethodExitEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.MethodExitWithReturnValue evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
-			returnVal = evt.value;
-		}
-
 		@Override
 		public String eventName()
 		{
