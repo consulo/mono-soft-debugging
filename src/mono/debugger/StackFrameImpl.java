@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StackFrameImpl extends MirrorImpl implements StackFrameOld, ThreadListener
+public class StackFrameImpl extends MirrorImpl implements StackFrameOld
 {
 	/* Once false, frame should not be used.
 	 * access synchronized on (vm.state())
@@ -51,29 +51,6 @@ public class StackFrameImpl extends MirrorImpl implements StackFrameOld, ThreadL
 		this.thread = thread;
 		this.id = id;
 		this.location = location;
-		thread.addListener(this);
-	}
-
-	/*
-	 * ThreadListener implementation
-	 * Must be synchronized since we must protect against
-	 * sending defunct (isValid == false) stack ids to the back-end.
-	 */
-	@Override
-	public boolean threadResumable(ThreadAction action)
-	{
-		synchronized(vm.state())
-		{
-			if(isValid)
-			{
-				isValid = false;
-				return false;   /* remove this stack frame as a listener */
-			}
-			else
-			{
-				throw new InternalException("Invalid stack frame thread listener");
-			}
-		}
 	}
 
 	void validateStackFrame()
@@ -331,42 +308,6 @@ public class StackFrameImpl extends MirrorImpl implements StackFrameOld, ThreadL
 	public List<Value> getArgumentValues()
 	{
 		return Collections.emptyList();
-	}
-
-	void pop() throws IncompatibleThreadStateException
-	{
-		validateStackFrame();
-		// flush caches and disable caching until command completion
-		CommandSender sender = new CommandSender()
-		{
-			@Override
-			public PacketStream send()
-			{
-				return JDWP.StackFrame.PopFrames.enqueueCommand(vm, thread, id);
-			}
-		};
-		try
-		{
-			PacketStream stream = thread.sendResumingCommand(sender);
-			JDWP.StackFrame.PopFrames.waitForReply(vm, stream);
-		}
-		catch(JDWPException exc)
-		{
-			switch(exc.errorCode())
-			{
-				case JDWP.Error.THREAD_NOT_SUSPENDED:
-					throw new IncompatibleThreadStateException("Thread not current or suspended");
-				case JDWP.Error.INVALID_THREAD:   /* zombie */
-					throw new IncompatibleThreadStateException("zombie");
-				case JDWP.Error.NO_MORE_FRAMES:
-					throw new InvalidStackFrameException("No more frames on the stack");
-				default:
-					throw exc.toJDIException();
-			}
-		}
-
-		// enable caching - suspended again
-		vm.state().freeze();
 	}
 
 	@Override

@@ -498,7 +498,7 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_I4:
 				return new PrimitiveValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
-				return new PrimitiveValueMirror(vm, tag, null); //TODO [VISTALL] array support
+				return new ArrayValueMirror(vm, tag, readId());
 			default:
 				throw new IllegalArgumentException("Unsupported tag: " + tag);
 		}

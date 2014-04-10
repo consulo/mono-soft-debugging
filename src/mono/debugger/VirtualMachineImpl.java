@@ -42,7 +42,7 @@ import mono.debugger.protocol.VirtualMachine_GetVersion;
 import mono.debugger.protocol.VirtualMachine_SetProtocolVersion;
 import mono.debugger.request.EventRequestManager;
 
-public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, ThreadListener
+public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 {
 	final int sequenceNumber;
 
@@ -163,19 +163,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return state;
 	}
 
-	/*
-	 * ThreadListener implementation
-	 */
-	@Override
-	public boolean threadResumable(ThreadAction action)
-	{
-		/*
-		 * If any thread is resumed, the VM is considered not suspended.
-         * Just one thread is being resumed so pass it to thaw.
-         */
-		state.thaw(action.thread());
-		return true;
-	}
 
 	void validateVM()
 	{
@@ -543,11 +530,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 				case JDWP.Tag.STRING:
 					object = new StringReferenceImpl(vm, id);
 					break;
-				case JDWP.Tag.THREAD:
-					ThreadMirror thread = new ThreadMirror(vm, id);
-					thread.addListener(this);
-					object = thread;
-					break;
 				case JDWP.Tag.CLASS_OBJECT:
 					object = new ClassObjectReferenceImpl(vm, id);
 					break;
@@ -626,11 +608,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	StringReferenceImpl stringMirror(long id)
 	{
 		return (StringReferenceImpl) objectMirror(id, JDWP.Tag.STRING);
-	}
-
-	ThreadMirror threadMirror(long id)
-	{
-		return (ThreadMirror) objectMirror(id, JDWP.Tag.THREAD);
 	}
 
 	ClassObjectReferenceImpl classObjectMirror(long id)

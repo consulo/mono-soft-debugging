@@ -25,12 +25,12 @@
 
 package mono.debugger;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.Thread_GetFrameInfo;
 import mono.debugger.protocol.Thread_GetName;
 import mono.debugger.protocol.Thread_GetState;
@@ -46,7 +46,7 @@ import mono.debugger.request.BreakpointRequest;
  * @author James McIlree
  * @since 1.3
  */
-public class ThreadMirror extends ObjectReferenceWithType implements VMListener
+public class ThreadMirror extends MirrorWithIdAndName
 {
 	public static interface ThreadState
 	{
@@ -61,30 +61,6 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 		int AbortRequested = 0x00000080;
 		int Aborted = 0x00000100;
 	}
-
-	static final int SUSPEND_STATUS_SUSPENDED = 0x1;
-	static final int SUSPEND_STATUS_BREAK = 0x2;
-
-
-    /*
-	 * Some objects can only be created while a thread is suspended and are valid
-     * only while the thread remains suspended.  Examples are StackFrameImpl
-     * and MonitorInfoImpl.  When the thread resumes, these objects have to be
-     * marked as invalid so that their methods can throw
-     * InvalidStackFrameException if they are called.  To do this, such objects
-     * register themselves as listeners of the associated thread.  When the
-     * thread is resumed, its listeners are notified and mark themselves
-     * invalid.
-     * Also, note that ThreadMirror itself caches some info that
-     * is valid only as long as the thread is suspended.  When the thread
-     * is resumed, that cache must be purged.
-     * Lastly, note that ThreadMirror and its super, ObjectReferenceImpl
-     * cache some info that is only valid as long as the entire VM is suspended.
-     * If _any_ thread is resumed, this cache must be purged.  To handle this,
-     * both ThreadMirror and ObjectReferenceImpl register themselves as
-     * VMListeners so that they get notified when all threads are suspended and
-     * when any thread is resumed.
-     */
 
 	// This is cached only while this one thread is suspended.  Each time
 	// the thread is resumed, we abandon the current cache object and
@@ -129,49 +105,10 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 	}
 
 
-	// Listeners - synchronized on vm.state()
-	private List<WeakReference<ThreadListener>> listeners = new ArrayList<WeakReference<ThreadListener>>();
-
-
 	ThreadMirror(VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
 		resetLocalCache();
-		vm.state().addListener(this);
-	}
-
-	@Override
-	protected String description()
-	{
-		return "ThreadReference " + uniqueID();
-	}
-
-	/*
-	 * VMListener implementation
-	 */
-	@Override
-	public boolean vmNotSuspended(VMAction action)
-	{
-		if(action.resumingThread() == null)
-		{
-			// all threads are being resumed
-			synchronized(vm.state())
-			{
-				processThreadAction(new ThreadAction(this, ThreadAction.THREAD_RESUMABLE));
-			}
-
-		}
-
-        /*
-		 * Othewise, only one thread is being resumed:
-         *   if it is us,
-         *      we have already done our processThreadAction to notify our
-         *      listeners when we processed the resume.
-         *   if it is not us,
-         *      we don't want to notify our listeners
-         *       because we are not being resumed.
-         */
-		return super.vmNotSuspended(action);
 	}
 
 	/**
@@ -179,7 +116,9 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 	 * because the name can change via Thread.setName arbitrarily while this
 	 * thread is running.
 	 */
-	public String name()
+	@NotNull
+	@Override
+	public String nameImpl()
 	{
 		try
 		{
@@ -193,19 +132,6 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 		catch(JDWPException exc)
 		{
 			throw exc.toJDIException();
-		}
-	}
-
-	/*
-	 * Sends a command to the back end which is defined to do an
-	 * implicit vm-wide resume.
-	 */
-	PacketStream sendResumingCommand(CommandSender sender)
-	{
-		synchronized(vm.state())
-		{
-			processThreadAction(new ThreadAction(this, ThreadAction.THREAD_RESUMABLE));
-			return sender.send();
 		}
 	}
 
@@ -377,78 +303,9 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 		}
 	}
 
-	@Override
-	public String toString()
+	@Deprecated
+	public long ref()
 	{
-		return "(name='" + name() + "', " + "id=" + uniqueID() + ")";
-	}
-
-	@Override
-	int typeValueKey()
-	{
-		return JDWP.Tag.THREAD;
-	}
-
-	void addListener(ThreadListener listener)
-	{
-		synchronized(vm.state())
-		{
-			listeners.add(new WeakReference<ThreadListener>(listener));
-		}
-	}
-
-	void removeListener(ThreadListener listener)
-	{
-		synchronized(vm.state())
-		{
-			Iterator<WeakReference<ThreadListener>> iter = listeners.iterator();
-			while(iter.hasNext())
-			{
-				WeakReference<ThreadListener> ref = iter.next();
-				if(listener.equals(ref.get()))
-				{
-					iter.remove();
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Propagate the the thread state change information
-	 * to registered listeners.
-	 * Must be entered while synchronized on vm.state()
-	 */
-	private void processThreadAction(ThreadAction action)
-	{
-		synchronized(vm.state())
-		{
-			Iterator<WeakReference<ThreadListener>> iter = listeners.iterator();
-			while(iter.hasNext())
-			{
-				WeakReference<ThreadListener> ref = iter.next();
-				ThreadListener listener = ref.get();
-				if(listener != null)
-				{
-					switch(action.id())
-					{
-						case ThreadAction.THREAD_RESUMABLE:
-							if(!listener.threadResumable(action))
-							{
-								iter.remove();
-							}
-							break;
-					}
-				}
-				else
-				{
-					// Listener is unreachable; clean up
-					iter.remove();
-				}
-			}
-
-			// Discard our local cache
-			resetLocalCache();
-		}
+		return id();
 	}
 }
