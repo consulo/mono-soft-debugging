@@ -183,7 +183,12 @@ public class ThreadMirror extends ObjectReferenceWithType implements VMListener
 	{
 		try
 		{
-			return Thread_GetName.process(vm, this).threadName;
+			String threadName = Thread_GetName.process(vm, this).threadName;
+			if(threadName.length() == 0)
+			{
+				return "<main>";
+			}
+			return threadName;
 		}
 		catch(JDWPException exc)
 		{
