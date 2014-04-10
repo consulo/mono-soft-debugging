@@ -506,6 +506,8 @@ public class PacketStream
 				return new PrimitiveValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, tag, readObjectMirror());
+			case (byte) 0xf0:
+				return new NoObjectValue(vm);
 			default:
 				throw new IllegalArgumentException("Unsupported tag: " + tag);
 		}

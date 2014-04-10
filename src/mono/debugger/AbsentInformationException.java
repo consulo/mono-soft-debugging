@@ -31,7 +31,7 @@ package mono.debugger;
  * @author Gordon Hirsch
  * @since  1.3
  */
-public class AbsentInformationException extends Exception
+public class AbsentInformationException extends RuntimeException
 {
     private static final long serialVersionUID = 4988939309582416373L;
     public AbsentInformationException()

@@ -1,6 +1,7 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import mono.debugger.protocol.StackFrame_GetThis;
 import mono.debugger.protocol.StackFrame_GetValues;
 
 /**
@@ -48,9 +49,17 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		return myThreadMirror;
 	}
 
-	public ObjectReference thisObject()
+	@NotNull
+	public Value thisObject()
 	{
-		return null;
+		try
+		{
+			return StackFrame_GetThis.process(vm, myThreadMirror, this).value;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
 	}
 
 	@Override

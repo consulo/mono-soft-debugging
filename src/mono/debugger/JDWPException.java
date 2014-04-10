@@ -65,6 +65,8 @@ public class JDWPException extends Exception
 				return new IndexOutOfBoundsException();
 			case JDWP.Error.TYPE_MISMATCH:
 				return new InconsistentDebugInfoException();
+			case JDWP.Error.ABSENT_INFORMATION:
+				return new AbsentInformationException();
 			case JDWP.Error.INVALID_THREAD:
 				return new IllegalThreadStateException();
 			default:

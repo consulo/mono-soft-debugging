@@ -3,6 +3,7 @@ package test;
 import java.util.List;
 import java.util.Map;
 
+import mono.debugger.AbsentInformationException;
 import mono.debugger.Location;
 import mono.debugger.MethodMirror;
 import mono.debugger.MethodParameterMirror;
@@ -50,6 +51,14 @@ public class Main
 				Location location = stackFrameMirror.location();
 				MethodMirror method = location.method();
 				System.out.println(" --- method: " + method);
+				try
+				{
+					System.out.println(" --- method - thisObject: " + stackFrameMirror.thisObject());
+				}
+				catch(AbsentInformationException e)
+				{
+					//e.printStackTrace();
+				}
 				for(MethodParameterMirror parameter : method.parameters())
 				{
 					System.out.println(" ---- parameter: " + parameter + " value: " + stackFrameMirror.parameterValue(parameter));
