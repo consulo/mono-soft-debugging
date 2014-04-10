@@ -543,9 +543,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 				case JDWP.Tag.STRING:
 					object = new StringReferenceImpl(vm, id);
 					break;
-				case JDWP.Tag.ARRAY:
-					object = new ArrayReferenceImpl(vm, id);
-					break;
 				case JDWP.Tag.THREAD:
 					ThreadMirror thread = new ThreadMirror(vm, id);
 					thread.addListener(this);
@@ -629,11 +626,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 	StringReferenceImpl stringMirror(long id)
 	{
 		return (StringReferenceImpl) objectMirror(id, JDWP.Tag.STRING);
-	}
-
-	ArrayReferenceImpl arrayMirror(long id)
-	{
-		return (ArrayReferenceImpl) objectMirror(id, JDWP.Tag.ARRAY);
 	}
 
 	ThreadMirror threadMirror(long id)

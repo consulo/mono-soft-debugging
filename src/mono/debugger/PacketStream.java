@@ -442,12 +442,6 @@ public class PacketStream
 		return vm.stringMirror(ref);
 	}
 
-	ArrayReferenceImpl readArrayReference()
-	{
-		long ref = readObjectRef();
-		return vm.arrayMirror(ref);
-	}
-
 	@NotNull
 	public ThreadMirror readThreadMirror()
 	{
@@ -635,7 +629,6 @@ public class PacketStream
 	static boolean isObjectTag(byte tag)
 	{
 		return (tag == JDWP.Tag.OBJECT) ||
-				(tag == JDWP.Tag.ARRAY) ||
 				(tag == JDWP.Tag.STRING) ||
 				(tag == JDWP.Tag.THREAD) ||
 				(tag == JDWP.Tag.CLASS_OBJECT);

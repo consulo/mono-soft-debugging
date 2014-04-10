@@ -152,8 +152,7 @@ public class JNITypeParser {
         char key = signature.charAt(currentIndex++);
 
         switch(key) {
-            case (JDWP.Tag.ARRAY):
-                return  key + nextSignature();
+
 
             case (JDWP.Tag.OBJECT):
                 int endClass = signature.indexOf(SIGNATURE_ENDCLASS,
@@ -189,8 +188,7 @@ public class JNITypeParser {
         char key = signature.charAt(currentIndex++);
 
         switch(key) {
-            case (JDWP.Tag.ARRAY):
-                return  nextTypeName() + "[]";
+
 
             case (JDWP.Tag.BYTE):
                 return "byte";
