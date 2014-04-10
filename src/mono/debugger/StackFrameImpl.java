@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+
 public class StackFrameImpl extends MirrorImpl implements StackFrameOld
 {
 	/* Once false, frame should not be used.
@@ -65,6 +67,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrameOld
 	 * Return the frame location.
 	 * Need not be synchronized since it cannot be provably stale.
 	 */
+	@NotNull
 	@Override
 	public Location location()
 	{
@@ -76,6 +79,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrameOld
 	 * Return the thread holding the frame.
 	 * Need not be synchronized since it cannot be provably stale.
 	 */
+	@NotNull
 	@Override
 	public ThreadMirror thread()
 	{

@@ -3,6 +3,7 @@ package mono.debugger;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.StackFrame_GetValues;
 
 /**
@@ -37,12 +38,14 @@ public class StackFrameMirror extends MirrorImpl implements StackFrameOld
 		return myFlags;
 	}
 
+	@NotNull
 	@Override
 	public Location location()
 	{
 		return myLocation;
 	}
 
+	@NotNull
 	@Override
 	public ThreadMirror thread()
 	{

@@ -28,6 +28,8 @@ package mono.debugger;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The state of one method invocation on a thread's call stack.
  * As a thread executes, stack frames are pushed and popped from
@@ -78,6 +80,7 @@ public interface StackFrameOld extends Mirror, MirrorWithId, Locatable
 	 *                                    no longer valid.
 	 */
 	@Override
+	@NotNull
 	Location location();
 
 	/**
@@ -88,6 +91,7 @@ public interface StackFrameOld extends Mirror, MirrorWithId, Locatable
 	 *                                    invalid. Once the frame's thread is resumed, the stack frame is
 	 *                                    no longer valid.
 	 */
+	@NotNull
 	ThreadMirror thread();
 
 	/**
