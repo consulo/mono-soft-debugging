@@ -48,12 +48,12 @@ public class Method_GetDebugInfo implements Method
 	}
 
 	public final int maxIndex;
-	public final SourceFile[] sourceFiles;
 	public final Entry[] entries;
 
 	private Method_GetDebugInfo(VirtualMachineImpl vm, PacketStream ps)
 	{
 		maxIndex = ps.readInt();
+		final SourceFile[] sourceFiles;
 		if(vm.isAtLeastVersion(2, 13))
 		{
 			int count = ps.readId();

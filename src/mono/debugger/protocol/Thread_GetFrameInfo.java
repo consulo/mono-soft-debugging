@@ -52,31 +52,14 @@ public class Thread_GetFrameInfo implements Thread
 		}
 	}
 
-
-	/**
-	 * The number of frames retreived
-	 */
 	public final Frame[] frames;
 
 	private Thread_GetFrameInfo(VirtualMachineImpl vm, PacketStream ps)
 	{
-		if(vm.traceReceives)
-		{
-			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") Thread_GetFrameInfo" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-		}
-		if(vm.traceReceives)
-		{
-			vm.printReceiveTrace(4, "frames(Frame[]): " + "");
-		}
 		int framesCount = ps.readInt();
 		frames = new Frame[framesCount];
 		for(int i = 0; i < framesCount; i++)
 		{
-			if(vm.traceReceives)
-			{
-				vm.printReceiveTrace(5, "frames[i](Frame): " + "");
-			}
 			frames[i] = new Frame(vm, ps);
 		}
 	}
