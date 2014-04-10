@@ -208,9 +208,9 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		if(field.isStatic())
 		{
 			ReferenceType type = referenceType();
-			if(type instanceof TypeMirrorOld)
+			if(type instanceof TypeMirror)
 			{
-				((TypeMirrorOld) type).setValue(field, value);
+				((TypeMirror) type).setValue(field, value);
 				return;
 			}
 			else

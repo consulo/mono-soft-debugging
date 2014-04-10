@@ -10,7 +10,7 @@ import mono.debugger.protocol.Type_GetInfo;
  * @author VISTALL
  * @since 10.04.14
  */
-public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
+public class TypeMirror extends MirrorWithIdAndName implements ReferenceType, MirrorWithId
 {
 	private Type_GetInfo myInfo;
 
@@ -43,44 +43,37 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 	}
 
 	@NotNull
-	@Override
 	public String qualifiedName()
 	{
 		return info().fullName;
 	}
 
 	@NotNull
-	@Override
 	public String namespace()
 	{
 		return info().namespace;
 	}
 
-	@Override
-	public TypeMirrorOld superclass()
+	public TypeMirror superclass()
 	{
 		return null;
 	}
 
-	@Override
-	public List<TypeMirrorOld> subclasses()
+	public List<TypeMirror> subclasses()
 	{
 		return null;
 	}
 
-	@Override
 	public boolean isEnum()
 	{
 		return false;
 	}
 
-	@Override
 	public void setValue(Field field, Value value) throws InvalidTypeException, ClassNotLoadedException
 	{
 
 	}
 
-	@Override
 	public Value invokeMethod(
 			ThreadMirror thread,
 			MethodMirror method,
@@ -90,7 +83,6 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 		return null;
 	}
 
-	@Override
 	public ObjectReference newInstance(
 			ThreadMirror thread,
 			MethodMirror method,
@@ -100,7 +92,6 @@ public class TypeMirror extends MirrorWithIdAndName implements TypeMirrorOld
 		return null;
 	}
 
-	@Override
 	public MethodMirror concreteMethodByName(String name, String signature)
 	{
 		return null;

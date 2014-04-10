@@ -117,7 +117,7 @@ package mono.debugger;
  *   <TD headers="objref kind2">     a class instance</TD>
  *   <TD headers="objref example2">  <CODE>this</CODE></TD>
  *   <TD headers="objref mirrored2"> {@link ObjectReference}</TD>
- *   <TD headers="objref type2">     {@link TypeMirrorOld}</TD>
+ *   <TD headers="objref type2">     {@link TypeMirror}</TD>
  * <TR>
  *   <TD headers="objref kind2">     an array</TD>
  *   <TD headers="objref example2">  <CODE>new int[5]</CODE></TD>
@@ -127,27 +127,27 @@ package mono.debugger;
  *   <TD headers="objref kind2">     a string</TD>
  *   <TD headers="objref example2">  <CODE>"hello"</CODE></TD>
  *   <TD headers="objref mirrored2"> {@link StringReference}</TD>
- *   <TD headers="objref type2">     {@link TypeMirrorOld}</TD>
+ *   <TD headers="objref type2">     {@link TypeMirror}</TD>
  * <TR>
  *   <TD headers="objref kind2">     a thread</TD>
  *   <TD headers="objref example2">  <CODE>Thread.currentThread()</CODE></TD>
  *   <TD headers="objref mirrored2"> {@link ThreadMirror}</TD>
- *   <TD headers="objref type2">     {@link TypeMirrorOld}</TD>
+ *   <TD headers="objref type2">     {@link TypeMirror}</TD>
  * <TR>
  *   <TD headers="objref kind2">     a thread group</TD>
  *   <TD headers="objref example2">  <CODE>Thread.currentThread()<br>&nbsp;&nbsp;.getThreadGroup()</CODE></TD>
  *   <TD headers="objref mirrored2"> {@link ThreadGroupReference}</TD>
- *   <TD headers="objref type2">     {@link TypeMirrorOld}</TD>
+ *   <TD headers="objref type2">     {@link TypeMirror}</TD>
  * <TR>
  *   <TD headers="objref kind2">     a <CODE>java.lang.Class</CODE><br>instance</TD>
  *   <TD headers="objref example2">  <CODE>this.getClass()</CODE></TD>
  *   <TD headers="objref mirrored2"> {@link ClassObjectReference}</TD>
- *   <TD headers="objref type2">     {@link TypeMirrorOld}</TD>
+ *   <TD headers="objref type2">     {@link TypeMirror}</TD>
  * <TR>
  *   <TD headers="objref kind2">     a class loader</TD>
  *   <TD headers="objref example2">  <CODE>this.getClass()<br>&nbsp;&nbsp;.getClassLoader() </CODE></TD>
  *   <TD headers="objref mirrored2"> {@link ClassLoaderReference}</TD>
- *   <TD headers="objref type2">     {@link TypeMirrorOld}</TD>
+ *   <TD headers="objref type2">     {@link TypeMirror}</TD>
  * <TR BGCOLOR="#EEEEFF">
  *   <TH id="other" colspan=4>Other</TH>
  * <TR BGCOLOR="#EEEEFF">
