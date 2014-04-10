@@ -477,6 +477,13 @@ public class PacketStream
 		return new TypeMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
+	@NotNull
+	public ObjectMirror readObjectMirror()
+	{
+		int ref = readId();
+		return new ObjectMirror(vm, ref); //FIXME [VISTALL] caching?
+	}
+
 	ClassObjectReferenceImpl readClassObjectReference()
 	{
 		long ref = readObjectRef();
@@ -498,7 +505,7 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_I4:
 				return new PrimitiveValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
-				return new ArrayValueMirror(vm, tag, readId());
+				return new ArrayValueMirror(vm, tag, readObjectMirror());
 			default:
 				throw new IllegalArgumentException("Unsupported tag: " + tag);
 		}
