@@ -394,7 +394,13 @@ public abstract class MethodImpl extends TypeComponentImpl
         return arguments;
     }
 
-    @Override
+	@Override
+	public long id()
+	{
+		return ref;
+	}
+
+	@Override
 	public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(declaringType().name());

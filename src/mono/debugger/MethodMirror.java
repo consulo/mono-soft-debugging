@@ -3,6 +3,7 @@ package mono.debugger;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import mono.debugger.protocol.Method_GetName;
 
 /**
  * @author VISTALL
@@ -19,7 +20,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 	@Override
 	protected String nameImpl() throws JDWPException
 	{
-		return null;
+		return Method_GetName.process(vm, this).name;
 	}
 
 	@Override

@@ -29,17 +29,8 @@ public class LocationImpl extends MirrorImpl implements Location
 {
 	private ReferenceTypeImpl declaringType;
 	private MethodMirrorOld method;
-	private long methodRef;
 	private long codeIndex;
 	private LineInfo baseLineInfo = null;
-
-	public LocationImpl(VirtualMachine vm, long methodRef, long codeIndex)
-	{
-		super(vm);
-
-		this.methodRef = methodRef;
-		this.codeIndex = codeIndex;
-	}
 
 	public LocationImpl(VirtualMachine vm, MethodMirrorOld method, long codeIndex)
 	{
@@ -47,22 +38,7 @@ public class LocationImpl extends MirrorImpl implements Location
 
 		this.method = method;
 		this.codeIndex = method.isNative() ? -1 : codeIndex;
-		this.declaringType = (ReferenceTypeImpl) method.declaringType();
-	}
-
-	/*
-	 * This constructor allows lazy creation of the method mirror. This
-	 * can be a performance savings if the method mirror does not yet
-	 * exist.
-	 */
-	public LocationImpl(VirtualMachine vm, ReferenceTypeImpl declaringType, long methodRef, long codeIndex)
-	{
-		super(vm);
-
-		this.method = null;
-		this.codeIndex = codeIndex;
-		this.declaringType = declaringType;
-		this.methodRef = methodRef;
+		this.declaringType = null; //(ReferenceTypeImpl) method.declaringType();
 	}
 
 	@Override
@@ -123,14 +99,7 @@ public class LocationImpl extends MirrorImpl implements Location
 	@Override
 	public MethodMirrorOld method()
 	{
-		if(method == null)
-		{
-			method = declaringType.getMethodMirror(methodRef);
-			if(method.isNative())
-			{
-				codeIndex = -1;
-			}
-		}
+
 		return method;
 	}
 
@@ -139,12 +108,6 @@ public class LocationImpl extends MirrorImpl implements Location
 	{
 		method();  // be sure information is up-to-date
 		return codeIndex;
-	}
-
-	@Override
-	public long methodId()
-	{
-		return methodRef;
 	}
 
 	LineInfo getBaseLineInfo()
@@ -213,7 +176,7 @@ public class LocationImpl extends MirrorImpl implements Location
 	@Override
 	public String toString()
 	{
-		return "methodRef: " + methodRef + ", codeIndex: " + codeIndex;
+		return "method: " + method + ", codeIndex: " + codeIndex;
 		/*if(lineNumber() == -1)
 		{
 			return method().toString() + "+" + codeIndex();

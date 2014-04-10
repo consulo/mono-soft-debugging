@@ -48,4 +48,12 @@ public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWi
 	{
 		return obj != null && obj.getClass() == getClass() && id() == ((MirrorWithIdAndName) obj).id();
 	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append(getClass().getSimpleName()).append(" {").append(" id = ").append(id()).append(", name = ").append(name()).append(" }");
+		return builder.toString();
+	}
 }

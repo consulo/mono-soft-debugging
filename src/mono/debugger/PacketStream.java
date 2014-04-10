@@ -210,7 +210,7 @@ public class PacketStream
 
 	void writeLocation(Location location)
 	{
-		writeInt((int) location.methodId());
+		writeInt((int) location.method().id());
 		writeLong(location.codeIndex());
 	}
 
@@ -463,6 +463,12 @@ public class PacketStream
 		return new AppDomainMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
+	public MethodMirror readMethodMirror()
+	{
+		int ref = readId();
+		return new MethodMirror(vm, ref); //FIXME [VISTALL] caching?
+	}
+
 	ClassObjectReferenceImpl readClassObjectReference()
 	{
 		long ref = readObjectRef();
@@ -538,7 +544,7 @@ public class PacketStream
 	 */
 	public Location readLocation()
 	{
-		long methodRef = readId();
+		MethodMirror methodRef = readMethodMirror();
 		int codeIndex = readInt();
 		return new LocationImpl(vm, methodRef, codeIndex);
 	}
