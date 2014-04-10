@@ -48,7 +48,7 @@ public interface MethodEntryEvent extends LocatableEvent {
     /**
      * Returns the method that was entered.
      *
-     * @return a {@link Method} which mirrors the method that was entered.
+     * @return a {@link mono.debugger.MethodMirrorOld} which mirrors the method that was entered.
      */
-    public Method method();
+    public MethodMirrorOld method();
 }

@@ -42,7 +42,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	// Return the ClassTypeImpl upon which to invoke a method.
 	// By default it is our very own referenceType() but subclasses
 	// can override.
-	protected ClassTypeImpl invokableReferenceType(Method method)
+	protected ClassTypeImpl invokableReferenceType(MethodMirrorOld method)
 	{
 		return (ClassTypeImpl) referenceType();
 	}
@@ -259,7 +259,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		}
 	}
 
-	void validateMethodInvocation(Method method, int options) throws InvalidTypeException, InvocationException
+	void validateMethodInvocation(MethodMirrorOld method, int options) throws InvalidTypeException, InvocationException
 	{
 
         /*
@@ -311,7 +311,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
              * Since we are looking for a method with a real body, we
              * don't need to bother with interfaces/abstract methods.
              */
-			Method invoker = clazz.concreteMethodByName(method.name(), method.signature());
+			MethodMirrorOld invoker = clazz.concreteMethodByName(method.name(), method.signature());
 			//  isAssignableFrom check above guarantees non-null
 			invokedClass = (ClassTypeImpl) invoker.declaringType();
 		}
@@ -347,7 +347,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	@Override
 	public Value invokeMethod(
 			ThreadMirror threadIntf,
-			Method methodIntf,
+			MethodMirrorOld methodIntf,
 			List<? extends Value> origArguments,
 			int options) throws InvalidTypeException, IncompatibleThreadStateException, InvocationException, ClassNotLoadedException
 	{

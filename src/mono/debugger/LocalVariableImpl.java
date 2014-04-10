@@ -24,12 +24,11 @@
  */
 
 package mono.debugger;
-import mono.debugger.*;
 
 public class LocalVariableImpl extends MirrorImpl
                                implements LocalVariable, ValueContainer
 {
-    private final Method method;
+    private final MethodMirrorOld method;
     private final int slot;
     private final Location scopeStart;
     private final Location scopeEnd;
@@ -37,7 +36,7 @@ public class LocalVariableImpl extends MirrorImpl
     private final String signature;
     private String genericSignature = null;
 
-    LocalVariableImpl(VirtualMachine vm, Method method,
+    LocalVariableImpl(VirtualMachine vm, MethodMirrorOld method,
                       int slot, Location scopeStart, Location scopeEnd,
                       String name, String signature,
                       String genericSignature) {
@@ -127,7 +126,7 @@ public class LocalVariableImpl extends MirrorImpl
     @Override
 	public boolean isVisible(StackFrame frame) {
         validateMirror(frame);
-        Method frameMethod = frame.location().method();
+        MethodMirrorOld frameMethod = frame.location().method();
 
         if (!frameMethod.equals(method)) {
             throw new IllegalArgumentException(

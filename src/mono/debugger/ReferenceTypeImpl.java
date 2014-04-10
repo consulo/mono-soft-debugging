@@ -47,7 +47,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private String baseSourcePath = null;
 	protected int modifiers = -1;
 	private SoftReference<List<Field>> fieldsRef = null;
-	private SoftReference<List<Method>> methodsRef = null;
+	private SoftReference<List<MethodMirrorOld>> methodsRef = null;
 	private SoftReference<SDE> sdeRef = null;
 
 	private boolean isClassLoaderCached = false;
@@ -88,7 +88,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		sdeRef = null;
 	}
 
-	Method getMethodMirror(long ref)
+	MethodMirrorOld getMethodMirror(long ref)
 	{
 		if(ref == 0)
 		{
@@ -98,7 +98,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// Fetch all methods for the class, check performance impact
 		// Needs no synchronization now, since methods() returns
 		// unmodifiable local data
-		Iterator<Method> it = methods().iterator();
+		Iterator<MethodMirrorOld> it = methods().iterator();
 		while(it.hasNext())
 		{
 			MethodImpl method = (MethodImpl) it.next();
@@ -486,21 +486,21 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	@Override
-	public List<Method> methods()
+	public List<MethodMirrorOld> methods()
 	{
-		List<Method> methods = (methodsRef == null) ? null : methodsRef.get();
+		List<MethodMirrorOld> methods = (methodsRef == null) ? null : methodsRef.get();
 		if(methods == null)
 		{
 			methods = methods1_4();
 			methods = Collections.unmodifiableList(methods);
-			methodsRef = new SoftReference<List<Method>>(methods);
+			methodsRef = new SoftReference<List<MethodMirrorOld>>(methods);
 		}
 		return methods;
 	}
 
-	private List<Method> methods1_4()
+	private List<MethodMirrorOld> methods1_4()
 	{
-		List<Method> methods;
+		List<MethodMirrorOld> methods;
 		JDWP.ReferenceType.Methods.MethodInfo[] declared;
 		try
 		{
@@ -511,12 +511,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		{
 			throw exc.toJDIException();
 		}
-		methods = new ArrayList<Method>(declared.length);
+		methods = new ArrayList<MethodMirrorOld>(declared.length);
 		for(int i = 0; i < declared.length; i++)
 		{
 			JDWP.ReferenceType.Methods.MethodInfo mi = declared[i];
 
-			Method method = MethodImpl.createMethodImpl(vm, this, mi.methodID, mi.name, mi.signature, null, mi.modBits);
+			MethodMirrorOld method = MethodImpl.createMethodImpl(vm, this, mi.methodID, mi.name, mi.signature, null, mi.modBits);
 			methods.add(method);
 		}
 		return methods;
@@ -526,25 +526,25 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * Utility method used by subclasses to build lists of visible
 	 * methods.
 	 */
-	void addToMethodMap(Map<String, Method> methodMap, List<Method> methodList)
+	void addToMethodMap(Map<String, MethodMirrorOld> methodMap, List<MethodMirrorOld> methodList)
 	{
-		for(Method method : methodList)
+		for(MethodMirrorOld method : methodList)
 		{
 			methodMap.put(method.name().concat(method.signature()), method);
 		}
 	}
 
-	abstract void addVisibleMethods(Map<String, Method> methodMap);
+	abstract void addVisibleMethods(Map<String, MethodMirrorOld> methodMap);
 
 	@Override
-	public List<Method> visibleMethods()
+	public List<MethodMirrorOld> visibleMethods()
 	{
         /*
          * Build a collection of all visible methods. The hash
          * map allows us to do this efficiently by keying on the
          * concatenation of name and signature.
          */
-		Map<String, Method> map = new HashMap<String, Method>();
+		Map<String, MethodMirrorOld> map = new HashMap<String, MethodMirrorOld>();
 		addVisibleMethods(map);
 
         /*
@@ -553,20 +553,20 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
          * So, start over with allMethods() and use the hash map
          * to filter that ordered collection.
          */
-		List<Method> list = allMethods();
+		List<MethodMirrorOld> list = allMethods();
 		list.retainAll(map.values());
 		return list;
 	}
 
 	@Override
-	abstract public List<Method> allMethods();
+	abstract public List<MethodMirrorOld> allMethods();
 
 	@Override
-	public List<Method> methodsByName(String name)
+	public List<MethodMirrorOld> methodsByName(String name)
 	{
-		List<Method> methods = visibleMethods();
-		ArrayList<Method> retList = new ArrayList<Method>(methods.size());
-		for(Method candidate : methods)
+		List<MethodMirrorOld> methods = visibleMethods();
+		ArrayList<MethodMirrorOld> retList = new ArrayList<MethodMirrorOld>(methods.size());
+		for(MethodMirrorOld candidate : methods)
 		{
 			if(candidate.name().equals(name))
 			{
@@ -578,11 +578,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 
 	@Override
-	public List<Method> methodsByName(String name, String signature)
+	public List<MethodMirrorOld> methodsByName(String name, String signature)
 	{
-		List<Method> methods = visibleMethods();
-		ArrayList<Method> retList = new ArrayList<Method>(methods.size());
-		for(Method candidate : methods)
+		List<MethodMirrorOld> methods = visibleMethods();
+		ArrayList<MethodMirrorOld> retList = new ArrayList<MethodMirrorOld>(methods.size());
+		for(MethodMirrorOld candidate : methods)
 		{
 			if(candidate.name().equals(name) && candidate.signature().equals(signature))
 			{
@@ -898,7 +898,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 
 		List<Location> list = new ArrayList<Location>();  // location list
 
-		for(Iterator<Method> iter = methods().iterator(); iter.hasNext(); )
+		for(Iterator<MethodMirrorOld> iter = methods().iterator(); iter.hasNext(); )
 		{
 			MethodImpl method = (MethodImpl) iter.next();
 			try
@@ -935,12 +935,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		boolean someAbsent = false;
 		// A method that should have info, did
 		boolean somePresent = false;
-		List<Method> methods = methods();
+		List<MethodMirrorOld> methods = methods();
 
 
 		List<Location> list = new ArrayList<Location>();
 
-		Iterator<Method> iter = methods.iterator();
+		Iterator<MethodMirrorOld> iter = methods.iterator();
 		while(iter.hasNext())
 		{
 			MethodImpl method = (MethodImpl) iter.next();
@@ -1037,7 +1037,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return ref;
 	}
 
-	int indexOf(Method method)
+	int indexOf(MethodMirrorOld method)
 	{
 		// Make sure they're all here - the obsolete method
 		// won't be found and so will have index -1

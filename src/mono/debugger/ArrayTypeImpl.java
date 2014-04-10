@@ -64,13 +64,13 @@ public class ArrayTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	void addVisibleMethods(Map<String, Method> map) {
+	void addVisibleMethods(Map<String, MethodMirrorOld> map) {
         // arrays don't have methods
     }
 
     @Override
-	public List<Method> allMethods() {
-        return new ArrayList<Method>(0);   // arrays don't have methods
+	public List<MethodMirrorOld> allMethods() {
+        return new ArrayList<MethodMirrorOld>(0);   // arrays don't have methods
     }
 
     /*

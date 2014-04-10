@@ -38,7 +38,7 @@ public class ArrayReferenceImpl extends ObjectReferenceWithType
     }
 
     @Override
-	protected ClassTypeImpl invokableReferenceType(Method method) {
+	protected ClassTypeImpl invokableReferenceType(MethodMirrorOld method) {
         // The method has to be a method on Object since
         // arrays don't have methods nor any other 'superclasses'
         // So, use the ClassTypeImpl for Object instead of

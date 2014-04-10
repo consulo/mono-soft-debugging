@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MethodImpl extends TypeComponentImpl
-    implements Method {
+    implements MethodMirrorOld
+{
     private JNITypeParser signatureParser;
     abstract int argSlotCount() throws AbsentInformationException;
 
@@ -171,7 +172,7 @@ public abstract class MethodImpl extends TypeComponentImpl
     }
 
     @Override
-	public int compareTo(Method method) {
+	public int compareTo(MethodMirrorOld method) {
         ReferenceTypeImpl declaringType = (ReferenceTypeImpl)declaringType();
         int rc = declaringType.compareTo(method.declaringType());
         if (rc == 0) {

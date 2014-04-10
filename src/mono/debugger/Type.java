@@ -37,8 +37,8 @@ package mono.debugger;
  * or a compile-time type:
  * <BLOCKQUOTE>
  *  {@link Field#type()} <BR>
- *  {@link Method#returnType()} <BR>
- *  {@link Method#argumentTypes()} <BR>
+ *  {@link MethodMirrorOld#returnType()} <BR>
+ *  {@link MethodMirrorOld#argumentTypes()} <BR>
  *  {@link LocalVariable#type()} <BR>
  *  {@link ArrayType#componentType()}
  * </BLOCKQUOTE>

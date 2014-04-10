@@ -363,7 +363,7 @@ public interface ReferenceType
     Field fieldByName(String fieldName);
 
     /**
-     * Returns a list containing each {@link Method} declared
+     * Returns a list containing each {@link MethodMirrorOld} declared
      * directly in this type.
      * Inherited methods are not included. Constructors,
      * the initialization method if any, and any synthetic methods created
@@ -372,15 +372,15 @@ public interface ReferenceType
      * For arrays ({@link ArrayType}) and primitive classes, the returned
      * list is always empty.
      *
-     * @return a list {@link Method} objects; the list has length 0
+     * @return a list {@link MethodMirrorOld} objects; the list has length 0
      * if no methods exist.
      * @throws ClassNotPreparedException if this class not yet been
      * prepared.
      */
-    List<Method> methods();
+    List<MethodMirrorOld> methods();
 
     /**
-     * Returns a list containing each {@link Method}
+     * Returns a list containing each {@link MethodMirrorOld}
      * declared or inherited by this type. Methods from superclasses
      * or superinterfaces that that have been hidden or overridden
      * are not included.
@@ -393,15 +393,15 @@ public interface ReferenceType
      * For arrays ({@link ArrayType}) and primitive classes, the returned
      * list is always empty.
      *
-     * @return a List of {@link Method} objects; the list has length
+     * @return a List of {@link MethodMirrorOld} objects; the list has length
      * 0 if no visible methods exist.
      * @throws ClassNotPreparedException if this class not yet been
      * prepared.
      */
-    List<Method> visibleMethods();
+    List<MethodMirrorOld> visibleMethods();
 
     /**
-     * Returns a list containing each {@link Method} declared in this type,
+     * Returns a list containing each {@link MethodMirrorOld} declared in this type,
      * and its superclasses, implemented interfaces, and/or superinterfaces.
      * All declared and inherited
      * methods are included, regardless of whether they are hidden or
@@ -410,15 +410,15 @@ public interface ReferenceType
      * For arrays ({@link ArrayType}) and primitive classes, the returned
      * list is always empty.
      *
-     * @return a List of {@link Method} objects; the list has length
+     * @return a List of {@link MethodMirrorOld} objects; the list has length
      * 0 if no methods exist.
      * @throws ClassNotPreparedException if this class not yet been
      * prepared.
      */
-    List<Method> allMethods();
+    List<MethodMirrorOld> allMethods();
 
     /**
-     * Returns a List containing each visible {@link Method} that
+     * Returns a List containing each visible {@link MethodMirrorOld} that
      * has the given name.  This is most commonly used to
      * find overloaded methods.
      * <p>
@@ -429,15 +429,15 @@ public interface ReferenceType
      * list is always empty.
      *
      * @param name the name of the method to find.
-     * @return a List of {@link Method} objects that match the given
+     * @return a List of {@link MethodMirrorOld} objects that match the given
      * name; the list has length 0 if no matching methods are found.
      * @throws ClassNotPreparedException if this class not yet been
      * prepared.
      */
-    List<Method> methodsByName(String name);
+    List<MethodMirrorOld> methodsByName(String name);
 
     /**
-     * Returns a List containing each visible {@link Method} that
+     * Returns a List containing each visible {@link MethodMirrorOld} that
      * has the given name and signature.
      * The signature string is the
      * JNI signature for the target method:
@@ -459,13 +459,13 @@ public interface ReferenceType
      *
      * @param name the name of the method to find.
      * @param signature the signature of the method to find
-     * @return a List of {@link Method} objects that match the given
+     * @return a List of {@link MethodMirrorOld} objects that match the given
      * name and signature; the list has length 0 if no matching methods
      * are found.
      * @throws ClassNotPreparedException if this class not yet been
      * prepared.
      */
-    List<Method> methodsByName(String name, String signature);
+    List<MethodMirrorOld> methodsByName(String name, String signature);
 
     /**
      * Returns a List containing {@link ReferenceType} objects that are

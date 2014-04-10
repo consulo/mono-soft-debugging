@@ -39,7 +39,7 @@ import java.util.List;
  * @author James McIlree
  * @since  1.3
  */
-public interface Method extends TypeComponent, Locatable, Comparable<Method> {
+public interface MethodMirrorOld extends TypeComponent, Locatable, Comparable<MethodMirrorOld> {
 
     /**
      * Returns a text representation of the return type,

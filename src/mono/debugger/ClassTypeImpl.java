@@ -173,7 +173,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	public Value invokeMethod(ThreadMirror threadIntf, Method methodIntf,
+	public Value invokeMethod(ThreadMirror threadIntf, MethodMirrorOld methodIntf,
                               List<? extends Value> origArguments, int options)
                                    throws InvalidTypeException,
                                           ClassNotLoadedException,
@@ -221,7 +221,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
 
     @Override
 	public ObjectReference newInstance(ThreadMirror threadIntf,
-                                       Method methodIntf,
+                                       MethodMirrorOld methodIntf,
                                        List<? extends Value> origArguments,
                                        int options)
                                    throws InvalidTypeException,
@@ -269,9 +269,9 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	public Method concreteMethodByName(String name, String signature)  {
-       Method method = null;
-       for (Method candidate : visibleMethods()) {
+	public MethodMirrorOld concreteMethodByName(String name, String signature)  {
+       MethodMirrorOld method = null;
+       for (MethodMirrorOld candidate : visibleMethods()) {
            if (candidate.name().equals(name) &&
                candidate.signature().equals(signature) &&
                !candidate.isAbstract()) {
@@ -284,8 +284,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
    }
 
    @Override
-   public List<Method> allMethods() {
-        ArrayList<Method> list = new ArrayList<Method>(methods());
+   public List<MethodMirrorOld> allMethods() {
+        ArrayList<MethodMirrorOld> list = new ArrayList<MethodMirrorOld>(methods());
 
         ClassType clazz = superclass();
         while (clazz != null) {
@@ -305,7 +305,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         return inherited;
     }
 
-    void validateMethodInvocation(Method method)
+    void validateMethodInvocation(MethodMirrorOld method)
                                    throws InvalidTypeException,
                                           InvocationException {
         /*
@@ -326,7 +326,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         }
     }
 
-    void validateConstructorInvocation(Method method)
+    void validateConstructorInvocation(MethodMirrorOld method)
                                    throws InvalidTypeException,
                                           InvocationException {
         /*
@@ -346,7 +346,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	void addVisibleMethods(Map<String, Method> methodMap) {
+	void addVisibleMethods(Map<String, MethodMirrorOld> methodMap) {
         /*
          * Add methods from
          * parent types first, so that the methods in this class will
