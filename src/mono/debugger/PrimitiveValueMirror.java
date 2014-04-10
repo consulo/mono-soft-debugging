@@ -26,18 +26,6 @@ public class PrimitiveValueMirror extends ValueImpl
 	}
 
 	@Override
-	ValueImpl prepareForAssignmentTo(ValueContainer destination) throws InvalidTypeException, ClassNotLoadedException
-	{
-		return null;
-	}
-
-	@Override
-	int typeValueKey()
-	{
-		return myTag;
-	}
-
-	@Override
 	public TypeMirror type()
 	{
 		switch(myTag)

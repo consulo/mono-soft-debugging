@@ -27,45 +27,8 @@ package mono.debugger;
 
 abstract class ValueImpl extends MirrorImpl implements Value
 {
-
 	ValueImpl(VirtualMachine aVm)
 	{
 		super(aVm);
 	}
-
-	static ValueImpl prepareForAssignment(
-			Value value, ValueContainer destination) throws InvalidTypeException, ClassNotLoadedException
-	{
-		if(value == null)
-		{
-			/*
-             * TO DO: Centralize JNI signature knowledge
-             */
-			if(destination.signature().length() == 1)
-			{
-				throw new InvalidTypeException("Can't set a primitive type to null");
-			}
-			return null;    // no further checking or conversion necessary
-		}
-		else
-		{
-			return ((ValueImpl) value).prepareForAssignmentTo(destination);
-		}
-	}
-
-	static int typeValueKey(Value val)
-	{
-		if(val == null)
-		{
-			return JDWP.Tag.OBJECT;
-		}
-		else
-		{
-			return ((ValueImpl) val).typeValueKey();
-		}
-	}
-
-	abstract ValueImpl prepareForAssignmentTo(ValueContainer destination) throws InvalidTypeException, ClassNotLoadedException;
-
-	abstract int typeValueKey();
 }

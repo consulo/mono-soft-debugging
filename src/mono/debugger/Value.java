@@ -177,5 +177,5 @@ public interface Value extends Mirror
      * @return a {@link Type} which mirrors the value's type in the
      * target VM.
      */
-    Type type();
+    TypeMirror type();
 }

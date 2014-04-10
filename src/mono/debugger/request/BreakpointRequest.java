@@ -84,5 +84,5 @@ public interface BreakpointRequest extends EventRequest, Locatable {
      * enabled or has been deleted.
      * Filters may be added only to disabled requests.
      */
-    void addInstanceFilter(ObjectReference instance);
+    void addInstanceFilter(ObjectValueMirror instance);
 }

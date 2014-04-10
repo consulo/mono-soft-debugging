@@ -310,16 +310,16 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	}
 	class ClassPrepareEventImpl extends ThreadedEventImpl implements ClassPrepareEvent
 	{
-		private ReferenceType referenceType;
+		private TypeMirror referenceType;
 
 		ClassPrepareEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ClassPrepare evt)
 		{
 			super(virtualMachine, evt, evt.requestID, evt.thread);
-			referenceType = this.vm.referenceType(evt.typeID);
+			//referenceType = this.vm.referenceType(evt.typeID);
 		}
 
 		@Override
-		public ReferenceType referenceType()
+		public TypeMirror referenceType()
 		{
 			return referenceType;
 		}
@@ -333,16 +333,16 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 	class ClassUnloadEventImpl extends ThreadedEventImpl implements ClassUnloadEvent
 	{
-		private ReferenceType referenceType;
+		private TypeMirror referenceType;
 
 		ClassUnloadEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ClassUnload evt)
 		{
 			super(virtualMachine, evt, evt.requestID, evt.thread);
-			referenceType = this.vm.referenceType(evt.typeID);
+			//referenceType = this.vm.referenceType(evt.typeID);
 		}
 
 		@Override
-		public ReferenceType referenceType()
+		public TypeMirror referenceType()
 		{
 			return referenceType;
 		}
@@ -356,7 +356,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 	class ExceptionEventImpl extends LocatableEventImpl implements ExceptionEvent
 	{
-		private ObjectReference exception;
+		private ObjectValueMirror exception;
 		private Location catchLocation;
 
 		ExceptionEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.Exception evt)
@@ -367,7 +367,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 
 		@Override
-		public ObjectReference exception()
+		public ObjectValueMirror exception()
 		{
 			return exception;
 		}

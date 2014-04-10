@@ -69,5 +69,5 @@ public interface ClassPrepareEvent extends Event {
      * @return a {@link ReferenceType} which mirrors the class, interface, or
      * array which has been linked.
      */
-    public ReferenceType referenceType();
+    public TypeMirror referenceType();
 }

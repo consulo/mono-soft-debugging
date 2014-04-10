@@ -25,14 +25,7 @@
 
 package mono.debugger;
 
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.connect.spi.Connection;
@@ -60,15 +53,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	static int TRACE_RAW_RECEIVES = 0x02000000;
 
 	public boolean traceReceives = false;   // pre-compute because of frequency
-
-
-	// ObjectReference cache
-	// "objectsByID" protected by "synchronized(this)".
-	private final Map<Long, SoftObjectReference> objectsByID = new HashMap<Long, SoftObjectReference>();
-	private final ReferenceQueue<ObjectReferenceImpl> referenceQueue = new ReferenceQueue<ObjectReferenceImpl>();
-	static private final int DISPOSE_THRESHOLD = 50;
-	private final List<SoftObjectReference> batchedDisposeRequests = Collections.synchronizedList(new ArrayList<SoftObjectReference>
-			(DISPOSE_THRESHOLD + 10));
 
 	private AppDomainMirror myRootAppDomain;
 
@@ -162,7 +146,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	{
 		return state;
 	}
-
 
 	void validateVM()
 	{
@@ -432,13 +415,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		printTrace(sb.toString());
 	}
 
-	ReferenceTypeImpl referenceType(long ref)
-	{
-		return null;
-	}
-
-
-
 	void sendToTarget(Packet packet)
 	{
 		target.send(packet);
@@ -447,210 +423,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	void waitForTargetReply(Packet packet)
 	{
 		target.waitForReply(packet);
-        /*
-         * If any object disposes have been batched up, send them now.
-         */
-		processBatchedDisposes();
-	}
-
-	Type findBootType(String signature) throws ClassNotLoadedException
-	{
-		throw new IllegalArgumentException(signature);
-	}
-
-	private void processBatchedDisposes()
-	{
-		if(shutdown)
-		{
-			return;
-		}
-
-	}
-
-	private void batchForDispose(SoftObjectReference ref)
-	{
-		if((traceFlags & TRACE_OBJREFS) != 0)
-		{
-			printTrace("Batching object " + ref.key().longValue() +
-					" for dispose (ref count = " + ref.count() + ")");
-		}
-		batchedDisposeRequests.add(ref);
-	}
-
-	private void processQueue()
-	{
-		Reference<?> ref;
-		//if ((traceFlags & TRACE_OBJREFS) != 0) {
-		//    printTrace("Checking for softly reachable objects");
-		//}
-		while((ref = referenceQueue.poll()) != null)
-		{
-			SoftObjectReference softRef = (SoftObjectReference) ref;
-			removeObjectMirror(softRef);
-			batchForDispose(softRef);
-		}
-	}
-
-	synchronized ObjectReferenceImpl objectMirror(long id, int tag)
-	{
-
-		// Handle any queue elements that are not strongly reachable
-		processQueue();
-
-		if(id == 0)
-		{
-			return null;
-		}
-
-		ObjectReferenceImpl object = null;
-		Long key = new Long(id);
-
-        /*
-         * Attempt to retrieve an existing object object reference
-         */
-		Map<Long, SoftObjectReference> map = tagToMap(tag);
-
-		SoftObjectReference ref = map.get(key);
-		if(ref != null)
-		{
-			object = ref.object();
-		}
-
-        /*
-         * If the object wasn't in the table, or it's soft reference was
-         * cleared, create a new instance.
-         */
-		if(object == null)
-		{
-			switch(tag)
-			{
-				case JDWP.Tag.OBJECT:
-					object = new ObjectReferenceImpl(vm, id);
-					break;
-				case JDWP.Tag.STRING:
-					object = new StringReferenceImpl(vm, id);
-					break;
-				case JDWP.Tag.CLASS_OBJECT:
-					object = new ClassObjectReferenceImpl(vm, id);
-					break;
-				default:
-					throw new IllegalArgumentException("Invalid object tag: " + tag);
-			}
-			ref = new SoftObjectReference(key, object, referenceQueue);
-
-            /*
-             * If there was no previous entry in the table, we add one here
-             * If the previous entry was cleared, we replace it here.
-             */
-			map.put(key, ref);
-			if((traceFlags & TRACE_OBJREFS) != 0)
-			{
-				printTrace("Creating new " + object.getClass().getName() + " (id = " + id + ")");
-			}
-		}
-		else
-		{
-			ref.incrementCount();
-		}
-
-		return object;
-	}
-
-	synchronized void removeObjectMirror(ObjectReferenceImpl object)
-	{
-
-		// Handle any queue elements that are not strongly reachable
-		processQueue();
-
-		Map<Long, SoftObjectReference> map = tagToMap(object.typeValueKey());
-
-		SoftObjectReference ref = map.remove(new Long(object.ref()));
-		if(ref != null)
-		{
-			batchForDispose(ref);
-		}
-		else
-		{
-            /*
-             * If there's a live ObjectReference about, it better be part
-             * of the cache.
-             */
-			throw new InternalException("ObjectReference " + object.ref() + " not found in object cache");
-		}
-	}
-
-	Map<Long, SoftObjectReference> tagToMap(int tag)
-	{
-		Map<Long, SoftObjectReference> map;
-		switch(tag)
-		{
-			default:
-				map = objectsByID;
-				break;
-		}
-		return map;
-	}
-
-	synchronized void removeObjectMirror(SoftObjectReference ref)
-	{
-        /*
-         * This will remove the soft reference if it has not been
-         * replaced in the cache.
-         */
-		objectsByID.remove(ref.key());
-	}
-
-	ObjectReferenceImpl objectMirror(long id)
-	{
-		return objectMirror(id, JDWP.Tag.OBJECT);
-	}
-
-	StringReferenceImpl stringMirror(long id)
-	{
-		return (StringReferenceImpl) objectMirror(id, JDWP.Tag.STRING);
-	}
-
-	ClassObjectReferenceImpl classObjectMirror(long id)
-	{
-		return (ClassObjectReferenceImpl) objectMirror(id, JDWP.Tag.CLASS_OBJECT);
 	}
 
 	ThreadGroup threadGroupForJDI()
 	{
 		return threadGroupForJDI;
-	}
-
-	static private class SoftObjectReference extends SoftReference<ObjectReferenceImpl>
-	{
-		int count;
-		Long key;
-
-		SoftObjectReference(
-				Long key, ObjectReferenceImpl mirror, ReferenceQueue<ObjectReferenceImpl> queue)
-		{
-			super(mirror, queue);
-			this.count = 1;
-			this.key = key;
-		}
-
-		int count()
-		{
-			return count;
-		}
-
-		void incrementCount()
-		{
-			count++;
-		}
-
-		Long key()
-		{
-			return key;
-		}
-
-		ObjectReferenceImpl object()
-		{
-			return get();
-		}
 	}
 }

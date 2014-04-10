@@ -21,19 +21,7 @@ public class ObjectValueMirror extends ValueImpl implements MirrorWithId
 	}
 
 	@Override
-	ValueImpl prepareForAssignmentTo(ValueContainer destination) throws InvalidTypeException, ClassNotLoadedException
-	{
-		return null;
-	}
-
-	@Override
-	int typeValueKey()
-	{
-		return 0;
-	}
-
-	@Override
-	public Type type()
+	public TypeMirror type()
 	{
 		return null;
 	}

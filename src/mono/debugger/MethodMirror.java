@@ -1,7 +1,5 @@
 package mono.debugger;
 
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.Method_GetDeclarationType;
 import mono.debugger.protocol.Method_GetName;
@@ -11,7 +9,7 @@ import mono.debugger.protocol.Method_GetParamInfo;
  * @author VISTALL
  * @since 10.04.14
  */
-public class MethodMirror extends MirrorWithIdAndName implements TypeComponent, Locatable, Comparable<MethodMirror>, MirrorWithId
+public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
 {
 	private TypeMirror myDeclarationType;
 	private Method_GetParamInfo myParamInfo;
@@ -54,130 +52,7 @@ public class MethodMirror extends MirrorWithIdAndName implements TypeComponent, 
 		return Method_GetName.process(vm, this).name;
 	}
 
-	public String returnTypeName()
-	{
-		return null;
-	}
-
-	public TypeMirror returnType()
-	{
-		return paramInfo().returnType;
-	}
-
-	public List<String> argumentTypeNames()
-	{
-		return null;
-	}
-
-	public List<Type> argumentTypes() throws ClassNotLoadedException
-	{
-		return null;
-	}
-
-	public boolean isAbstract()
-	{
-		return false;
-	}
-
-	public boolean isSynchronized()
-	{
-		return false;
-	}
-
-	public boolean isNative()
-	{
-		return false;
-	}
-
-	public boolean isVarArgs()
-	{
-		return false;
-	}
-
-	public boolean isBridge()
-	{
-		return false;
-	}
-
-	public boolean isConstructor()
-	{
-		return false;
-	}
-
-	public boolean isStaticInitializer()
-	{
-		return false;
-	}
-
-	public boolean isObsolete()
-	{
-		return false;
-	}
-
-	public List<Location> allLineLocations() throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public List<Location> allLineLocations(String sourceName) throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public List<Location> locationsOfLine(int lineNumber) throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public List<Location> locationsOfLine(String sourceName, int lineNumber) throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public Location locationOfCodeIndex(long codeIndex)
-	{
-		return null;
-	}
-
-	public List<LocalVariable> variables() throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public List<LocalVariable> variablesByName(String name) throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public List<LocalVariable> arguments() throws AbsentInformationException
-	{
-		return null;
-	}
-
-	public byte[] bytecodes()
-	{
-		return new byte[0];
-	}
-
-	@Override
-	public Location location()
-	{
-		return null;
-	}
-
-	@Override
-	public String signature()
-	{
-		return null;
-	}
-
-	@Override
-	public String genericSignature()
-	{
-		return null;
-	}
-
-	@Override
+	@NotNull
 	public TypeMirror declaringType()
 	{
 		if(myDeclarationType != null)
@@ -193,59 +68,5 @@ public class MethodMirror extends MirrorWithIdAndName implements TypeComponent, 
 		{
 			throw e.toJDIException();
 		}
-	}
-
-	@Override
-	public boolean isStatic()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean isFinal()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean isSynthetic()
-	{
-		return false;
-	}
-
-	@Override
-	public int modifiers()
-	{
-		return 0;
-	}
-
-	@Override
-	public boolean isPrivate()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean isPackagePrivate()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean isProtected()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean isPublic()
-	{
-		return false;
-	}
-
-	@Override
-	public int compareTo(MethodMirror o)
-	{
-		return 0;
 	}
 }

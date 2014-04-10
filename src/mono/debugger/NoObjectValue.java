@@ -10,21 +10,8 @@ public class NoObjectValue extends ValueImpl
 	{
 		super(aVm);
 	}
-
 	@Override
-	ValueImpl prepareForAssignmentTo(ValueContainer destination) throws InvalidTypeException, ClassNotLoadedException
-	{
-		return null;
-	}
-
-	@Override
-	int typeValueKey()
-	{
-		return 0;
-	}
-
-	@Override
-	public Type type()
+	public TypeMirror type()
 	{
 		return null;
 	}

@@ -30,8 +30,8 @@ import java.util.List;
 import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.NativeMethodException;
-import mono.debugger.ReferenceType;
 import mono.debugger.ThreadMirror;
+import mono.debugger.TypeMirror;
 import mono.debugger.VirtualMachine;
 
 /**
@@ -113,7 +113,7 @@ public interface EventRequestManager extends Mirror {
      *
      * @return the created {@link ExceptionRequest}
      */
-    ExceptionRequest createExceptionRequest(ReferenceType refType,
+    ExceptionRequest createExceptionRequest(TypeMirror refType,
                                             boolean notifyCaught,
                                             boolean notifyUncaught);
 

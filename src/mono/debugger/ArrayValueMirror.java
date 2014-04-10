@@ -32,19 +32,7 @@ public class ArrayValueMirror extends ValueImpl implements MirrorWithId
 	}
 
 	@Override
-	ValueImpl prepareForAssignmentTo(ValueContainer destination) throws InvalidTypeException, ClassNotLoadedException
-	{
-		return null;
-	}
-
-	@Override
-	int typeValueKey()
-	{
-		return myTag;
-	}
-
-	@Override
-	public Type type()
+	public TypeMirror type()
 	{
 		return null;
 	}

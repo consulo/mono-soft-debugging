@@ -26,8 +26,6 @@
 package mono.debugger;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import edu.arizona.cs.mbel.signature.SignatureConstants;
@@ -217,61 +215,6 @@ public class PacketStream
 		writeLong(location.codeIndex());
 	}
 
-	void writeValue(Value val)
-	{
-		try
-		{
-			writeValueChecked(val);
-		}
-		catch(InvalidTypeException exc)
-		{  // should never happen
-			throw new RuntimeException("Internal error: Invalid Tag/Type pair");
-		}
-	}
-
-	void writeValueChecked(Value val) throws InvalidTypeException
-	{
-		writeByte((byte)ValueImpl.typeValueKey(val));
-		writeUntaggedValue(val);
-	}
-
-	void writeUntaggedValue(Value val)
-	{
-		try
-		{
-			writeUntaggedValueChecked(val);
-		}
-		catch(InvalidTypeException exc)
-		{  // should never happen
-			throw new RuntimeException("Internal error: Invalid Tag/Type pair");
-		}
-	}
-
-	void writeUntaggedValueChecked(Value val) throws InvalidTypeException
-	{
-		byte tag = (byte) ValueImpl.typeValueKey(val);
-		if(isObjectTag(tag))
-		{
-			if(val == null)
-			{
-				writeObjectRef(0);
-			}
-			else
-			{
-				if(!(val instanceof ObjectReference))
-				{
-					throw new InvalidTypeException();
-				}
-				writeObjectRef(((ObjectReferenceImpl) val).ref());
-			}
-		}
-		else
-		{
-			throw new IllegalArgumentException();
-		}
-	}
-
-
 	/**
 	 * Read byte represented as one bytes.
 	 */
@@ -425,23 +368,6 @@ public class PacketStream
 		return (int) readID(4);
 	}
 
-	ObjectReferenceImpl readTaggedObjectReference()
-	{
-		byte typeKey = readByte();
-		return vm.objectMirror(readObjectRef(), typeKey);
-	}
-
-	ObjectReferenceImpl readObjectReference()
-	{
-		return vm.objectMirror(readObjectRef());
-	}
-
-	StringReferenceImpl readStringReference()
-	{
-		long ref = readObjectRef();
-		return vm.stringMirror(ref);
-	}
-
 	@NotNull
 	public ThreadMirror readThreadMirror()
 	{
@@ -484,18 +410,6 @@ public class PacketStream
 		return new ObjectValueMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
-	ClassObjectReferenceImpl readClassObjectReference()
-	{
-		long ref = readObjectRef();
-		return vm.classObjectMirror(ref);
-	}
-
-	ReferenceTypeImpl readReferenceType()
-	{
-		long ref = readObjectRef();
-		return vm.referenceType(ref);
-	}
-
 	@NotNull
 	public Value readValue()
 	{
@@ -529,15 +443,6 @@ public class PacketStream
 		return readID(4);
 	}
 
-	/**
-	 * Read field represented as vm specific byte sequence.
-	 */
-	Field readField()
-	{
-		ReferenceTypeImpl refType = readReferenceType();
-		long fieldRef = readFieldRef();
-		return refType.getFieldMirror(fieldRef);
-	}
 
 	/**
 	 * Read frame represented as vm specific byte sequence.
@@ -545,30 +450,6 @@ public class PacketStream
 	long readFrameRef()
 	{
 		return readID(4);
-	}
-
-	/**
-	 * Read a value, first byte describes type of value to read.
-	 */
-	ValueImpl readValueOld()
-	{
-		byte typeKey = readByte();
-		return readUntaggedValue(typeKey);
-	}
-
-	ValueImpl readUntaggedValue(byte typeKey)
-	{
-		ValueImpl val = null;
-
-		if(isObjectTag(typeKey))
-		{
-			val = vm.objectMirror(readObjectRef(), typeKey);
-		}
-		else
-		{
-			throw new IllegalArgumentException();
-		}
-		return val;
 	}
 
 	/**
@@ -589,41 +470,6 @@ public class PacketStream
 		return array;
 	}
 
-	List<Value> readArrayRegion()
-	{
-		byte typeKey = readByte();
-		int length = readInt();
-		List<Value> list = new ArrayList<Value>(length);
-		boolean gettingObjects = isObjectTag(typeKey);
-		for(int i = 0; i < length; i++)
-		{
-            /*
-             * Each object comes back with a type key which might
-             * identify a more specific type than the type key we
-             * passed in, so we use it in the decodeValue call.
-             * (For primitives, we just use the original one)
-             */
-			if(gettingObjects)
-			{
-				typeKey = readByte();
-			}
-			Value value = readUntaggedValue(typeKey);
-			list.add(value);
-		}
-
-		return list;
-	}
-
-	void writeArrayRegion(List<Value> srcValues)
-	{
-		writeInt(srcValues.size());
-		for(int i = 0; i < srcValues.size(); i++)
-		{
-			Value value = srcValues.get(i);
-			writeUntaggedValue(value);
-		}
-	}
-
 	int skipBytes(int n)
 	{
 		inCursor += n;
@@ -633,13 +479,5 @@ public class PacketStream
 	byte command()
 	{
 		return (byte) pkt.cmd;
-	}
-
-	static boolean isObjectTag(byte tag)
-	{
-		return (tag == JDWP.Tag.OBJECT) ||
-				(tag == JDWP.Tag.STRING) ||
-				(tag == JDWP.Tag.THREAD) ||
-				(tag == JDWP.Tag.CLASS_OBJECT);
 	}
 }

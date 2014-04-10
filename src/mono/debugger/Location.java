@@ -84,7 +84,7 @@ package mono.debugger;
  * @author James McIlree
  * @since 1.3
  */
-public interface Location extends Mirror, Comparable<Location> {
+public interface Location extends Mirror {
 
     /**
      * Gets the type to which this Location belongs. Normally
@@ -94,7 +94,7 @@ public interface Location extends Mirror, Comparable<Location> {
      *
      * @return the {@link ReferenceType} containing this Location.
      */
-    ReferenceType declaringType();
+	TypeMirror declaringType();
 
     /**
      * Gets the method containing this Location.

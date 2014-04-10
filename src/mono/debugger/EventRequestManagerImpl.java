@@ -286,12 +286,12 @@ class EventRequestManagerImpl extends MirrorImpl
 
     abstract class ClassVisibleEventRequestImpl
                                   extends ThreadVisibleEventRequestImpl {
-        public synchronized void addClassFilter(ReferenceType clazz) {
+        public synchronized void addClassFilter(TypeMirror clazz) {
             validateMirror(clazz);
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
-            filters.add(JDWP.EventRequest.Set.Modifier.ClassOnly.create((ReferenceTypeImpl) clazz));
+            filters.add(JDWP.EventRequest.Set.Modifier.ClassOnly.create((TypeMirror) clazz));
         }
 
         public synchronized void addClassFilter(String classPattern) {
@@ -316,14 +316,14 @@ class EventRequestManagerImpl extends MirrorImpl
                                       .create(classPattern));
         }
 
-        public synchronized void addInstanceFilter(ObjectReference instance) {
+        public synchronized void addInstanceFilter(ObjectValueMirror instance) {
             validateMirror(instance);
             if (isEnabled() || deleted) {
                 throw invalidState();
             }
 
             filters.add(JDWP.EventRequest.Set.Modifier.InstanceOnly
-                                      .create((ObjectReferenceImpl)instance));
+                                      .create(instance));
         }
     }
 
@@ -404,11 +404,11 @@ class EventRequestManagerImpl extends MirrorImpl
 
     class ExceptionRequestImpl extends ClassVisibleEventRequestImpl
                                       implements ExceptionRequest {
-        ReferenceType exception = null;
+		TypeMirror exception = null;
         boolean caught = true;
         boolean uncaught = true;
 
-        ExceptionRequestImpl(ReferenceType refType,
+        ExceptionRequestImpl(TypeMirror refType,
                           boolean notifyCaught, boolean notifyUncaught) {
             exception = refType;
             caught = notifyCaught;
@@ -427,7 +427,7 @@ class EventRequestManagerImpl extends MirrorImpl
         }
 
         @Override
-		public ReferenceType exception() {
+		public TypeMirror exception() {
             return exception;
         }
 
@@ -675,7 +675,7 @@ class EventRequestManagerImpl extends MirrorImpl
     }
 
     @Override
-	public ExceptionRequest createExceptionRequest(ReferenceType refType,
+	public ExceptionRequest createExceptionRequest(TypeMirror refType,
                                                    boolean notifyCaught,
                                                    boolean notifyUncaught) {
         validateMirrorOrNull(refType);

@@ -35,15 +35,15 @@ package mono.debugger;
 public class InvocationException extends Exception
 {
     private static final long serialVersionUID = 6066780907971918568L;
-    ObjectReference exception;
+    ObjectValueMirror exception;
 
-    public InvocationException(ObjectReference exception)
+    public InvocationException(ObjectValueMirror exception)
     {
         super("Exception occurred in target VM");
         this.exception = exception;
     }
 
-    public ObjectReference exception()
+    public ObjectValueMirror exception()
     {
         return exception;
     }

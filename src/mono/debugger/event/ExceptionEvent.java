@@ -54,7 +54,7 @@ public interface ExceptionEvent extends LocatableEvent {
      * @return an {@link ObjectReference} which mirrors the thrown object in
      * the target VM.
      */
-    public ObjectReference exception();
+    public ObjectValueMirror exception();
 
     /**
      * Gets the location where the exception will be caught. An exception

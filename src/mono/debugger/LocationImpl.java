@@ -27,18 +27,15 @@ package mono.debugger;
 
 public class LocationImpl extends MirrorImpl implements Location
 {
-	private ReferenceTypeImpl declaringType;
 	private MethodMirror method;
 	private long codeIndex;
-	private LineInfo baseLineInfo = null;
 
 	public LocationImpl(VirtualMachine vm, MethodMirror method, long codeIndex)
 	{
 		super(vm);
 
 		this.method = method;
-		this.codeIndex = method.isNative() ? -1 : codeIndex;
-		this.declaringType = null; //(ReferenceTypeImpl) method.declaringType();
+		this.codeIndex = codeIndex;
 	}
 
 	@Override
@@ -60,119 +57,49 @@ public class LocationImpl extends MirrorImpl implements Location
 	@Override
 	public int hashCode()
 	{
-		/*
-         * TO DO: better hash code?
-         */
 		return method().hashCode() + (int) codeIndex();
 	}
 
-	@Override
-	public int compareTo(Location object)
-	{
-		LocationImpl other = (LocationImpl) object;
-		int rc = method().compareTo(other.method());
-		if(rc == 0)
-		{
-			long diff = codeIndex() - other.codeIndex();
-			if(diff < 0)
-			{
-				return -1;
-			}
-			else if(diff > 0)
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		return rc;
-	}
 
 	@Override
-	public ReferenceType declaringType()
+	public TypeMirror declaringType()
 	{
-		return declaringType;
+		return method.declaringType();
 	}
 
 	@Override
 	public MethodMirror method()
 	{
-
 		return method;
 	}
 
 	@Override
 	public long codeIndex()
 	{
-		method();  // be sure information is up-to-date
 		return codeIndex;
-	}
-
-	LineInfo getBaseLineInfo()
-	{
-		LineInfo lineInfo = null;
-
-
-
-		return lineInfo;
-	}
-
-	LineInfo getLineInfo()
-	{
-		return getBaseLineInfo();
-	}
-
-	void addBaseLineInfo(LineInfo lineInfo)
-	{
-		baseLineInfo = lineInfo;
 	}
 
 	@Override
 	public String sourceName() throws AbsentInformationException
 	{
-		return sourceName0();
-	}
-
-	String sourceName0() throws AbsentInformationException
-	{
-		return getLineInfo().liSourceName();
+		return "";
 	}
 
 	@Override
 	public String sourcePath() throws AbsentInformationException
 	{
-		return sourcePath0();
-	}
-
-	String sourcePath0() throws AbsentInformationException
-	{
-		return getLineInfo().liSourcePath();
+		return "";
 	}
 
 	@Override
 	public int lineNumber()
 	{
-		return lineNumber0();
-	}
-
-	int lineNumber0()
-	{
-		return getLineInfo().liLineNumber();
+		return 0;
 	}
 
 	@Override
 	public String toString()
 	{
 		return "method: " + method + ", codeIndex: " + codeIndex;
-		/*if(lineNumber() == -1)
-		{
-			return method().toString() + "+" + codeIndex();
-		}
-		else
-		{
-			return declaringType().name() + ":" + lineNumber();
-		}   */
 	}
 }
