@@ -21,6 +21,17 @@
             <SOURCES />
           </library>
         </orderEntry>
+        <orderEntry type="module-library">
+          <library>
+            <CLASSES>
+              <root url="jar://$MODULE_DIR$/lib/dotnet-asm.jar!/" />
+            </CLASSES>
+            <DOCUMENTATION />
+            <SOURCES>
+              <root url="jar://$MODULE_DIR$/libSrc/dotnet-asm-sources.jar!/" />
+            </SOURCES>
+          </library>
+        </orderEntry>
       </module>
     </modules>
   </component>
