@@ -45,6 +45,8 @@ public class JDWPException extends Exception
 	{
 		switch(errorCode)
 		{
+			case JDWP.Error.NOT_SUSPENDED:
+				return new NotSuspendedException();
 			case JDWP.Error.INVALID_OBJECT:
 				return new InvalidObjectException();
 			case JDWP.Error.VM_DEAD:

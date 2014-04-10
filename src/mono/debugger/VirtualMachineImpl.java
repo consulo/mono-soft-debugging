@@ -112,12 +112,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		target = new TargetVM(this, connection);
 
         /*
-         * Set up a thread to handle events processed internally
-         * the JDI implementation.
-         */
-		EventQueueImpl internalEventQueue = new EventQueueImpl(this, target);
-		new InternalEventHandler(this, internalEventQueue);
-        /*
          * Initialize client access to event setting and handling
          */
 		eventQueue = new EventQueueImpl(this, target);
