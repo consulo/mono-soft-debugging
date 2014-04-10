@@ -422,12 +422,6 @@ public class PacketStream
 		return (int) readID(4);
 	}
 
-	public AppDomainMirror readAppDomainReference()
-	{
-		int ref = readId();
-		return new AppDomainMirror(vm, ref);
-	}
-
 	ObjectReferenceImpl readTaggedObjectReference()
 	{
 		byte typeKey = readByte();
@@ -451,16 +445,22 @@ public class PacketStream
 		return vm.arrayMirror(ref);
 	}
 
-	ThreadMirror readThreadReference()
+	public ThreadMirror readThreadMirror()
 	{
 		long ref = readObjectRef();
-		return new ThreadMirror(vm, ref); //FIXME [VISTALL] test variable
+		return new ThreadMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
-	public AssemblyMirror readAssemblyReference()
+	public AssemblyMirror readAssemblyMirror()
 	{
 		long ref = readId();
-		return new AssemblyMirror(vm, ref);
+		return new AssemblyMirror(vm, ref);  //FIXME [VISTALL] caching?
+	}
+
+	public AppDomainMirror readAppDomainMirror()
+	{
+		int ref = readId();
+		return new AppDomainMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
 	ClassObjectReferenceImpl readClassObjectReference()

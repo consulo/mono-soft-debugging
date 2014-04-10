@@ -45,7 +45,7 @@ public class AppDomain_GetRootDomain implements AppDomain
 			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") AppDomain_GetRootDomain" + (ps.pkt.flags != 0 ? ", " +
 					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
 		}
-		myAppDomainMirror = ps.readAppDomainReference();
+		myAppDomainMirror = ps.readAppDomainMirror();
 		if(vm.traceReceives)
 		{
 			vm.printReceiveTrace(4, "appDomainReference: " + myAppDomainMirror);

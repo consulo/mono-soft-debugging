@@ -48,6 +48,6 @@ public class AppDomain_GetEntryAssembly implements AppDomain
 					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
 		}
 
-		assembly = ps.readAssemblyReference();
+		assembly = ps.readAssemblyMirror();
 	}
 }

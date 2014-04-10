@@ -52,7 +52,7 @@ public class AppDomain_GetAssemblies implements AppDomain
 		assemblies = new AssemblyMirror[count];
 		for(int i = 0; i < assemblies.length; i++)
 		{
-			assemblies[i] = ps.readAssemblyReference();
+			assemblies[i] = ps.readAssemblyMirror();
 		}
 	}
 }

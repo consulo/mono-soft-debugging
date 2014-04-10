@@ -163,7 +163,7 @@ public class JDWP
 				threads = new ThreadMirror[threadsCount];
 				for(int i = 0; i < threadsCount; i++)
 				{
-					threads[i] = ps.readThreadReference();
+					threads[i] = ps.readThreadMirror();
 					if(vm.traceReceives)
 					{
 						vm.printReceiveTrace(5, "threads[i](ThreadMirror): " + (threads[i] == null ? "NULL" : "ref=" + threads[i].ref()));
@@ -5517,7 +5517,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5561,7 +5561,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5610,7 +5610,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5665,7 +5665,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5718,7 +5718,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5776,7 +5776,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5875,7 +5875,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5945,7 +5945,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -5991,7 +5991,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -6026,12 +6026,12 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
-						assembly = ps.readAssemblyReference();
+						assembly = ps.readAssemblyMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.id()));
@@ -6065,12 +6065,12 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
 						}
-						assembly = ps.readAssemblyReference();
+						assembly = ps.readAssemblyMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "assembly(AssemblyReferene): " + (assembly == null ? "NULL" : "ref=" + assembly.id()));
@@ -6131,7 +6131,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
@@ -6177,7 +6177,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
-						thread = ps.readThreadReference();
+						thread = ps.readThreadMirror();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
