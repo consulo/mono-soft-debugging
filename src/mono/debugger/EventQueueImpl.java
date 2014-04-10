@@ -119,23 +119,6 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
         return eventSet;
     }
 
-    EventSet removeInternal() throws InterruptedException {
-        EventSet eventSet;
-        do {
-            // Waiting forever, so removeUnfiltered() is never null
-            eventSet = removeUnfiltered(0).internalFilter();
-        } while (eventSet == null || eventSet.isEmpty());
-
-        /*
-         * Currently, no internal events are requested with a suspend
-         * policy other than none, so we don't check for notifySuspend()
-         * here. If this changes in the future, there is much
-         * infrastructure that needs to be updated.
-         */
-
-        return eventSet;
-    }
-
     private TimerThread startTimerThread(long timeout) {
         TimerThread thread = new TimerThread(timeout);
         thread.setDaemon(true);

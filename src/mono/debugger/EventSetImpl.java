@@ -53,7 +53,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	private VirtualMachineImpl vm; // we implement Mirror
 	private Packet pkt;
 	private byte suspendPolicy;
-	private EventSetImpl internalEventSet;
 
 	@Override
 	public String toString()
@@ -512,13 +511,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				case CLIENT_EVENT:
 					addEvent(evt);
 					break;
-				case INTERNAL_EVENT:
-					if(internalEventSet == null)
-					{
-						internalEventSet = new EventSetImpl(this.vm, null);
-					}
-					internalEventSet.addEvent(evt);
-					break;
 				default:
 					throw new InternalException("Invalid event destination");
 			}
@@ -546,14 +538,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	EventSet userFilter()
 	{
 		return this;
-	}
-
-	/**
-	 * Filter out user events.
-	 */
-	EventSet internalFilter()
-	{
-		return this.internalEventSet;
 	}
 
 	public EventImpl createEvent(JDWP.Event.Composite.Events evt)
