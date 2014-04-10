@@ -5,6 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.Method_GetDeclarationType;
 import mono.debugger.protocol.Method_GetName;
+import mono.debugger.protocol.Method_GetParamInfo;
 
 /**
  * @author VISTALL
@@ -13,10 +14,37 @@ import mono.debugger.protocol.Method_GetName;
 public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 {
 	private TypeMirror myDeclarationType;
+	private Method_GetParamInfo myParamInfo;
 
 	public MethodMirror(@NotNull VirtualMachine aVm, long id)
 	{
 		super(aVm, id);
+	}
+
+	public Method_GetParamInfo paramInfo()
+	{
+		if(myParamInfo != null)
+		{
+			return myParamInfo;
+		}
+		try
+		{
+			return myParamInfo = Method_GetParamInfo.process(vm, this);
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	public MethodParameterMirror[] parameters()
+	{
+		return paramInfo().parameters;
+	}
+
+	public int genericParameterCount()
+	{
+		return paramInfo().genericParameterCount;
 	}
 
 	@NotNull
@@ -33,9 +61,9 @@ public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 	}
 
 	@Override
-	public Type returnType() throws ClassNotLoadedException
+	public TypeMirror returnType()
 	{
-		return null;
+		return paramInfo().returnType;
 	}
 
 	@Override

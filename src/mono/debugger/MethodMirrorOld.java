@@ -73,11 +73,8 @@ public interface MethodMirrorOld extends TypeComponent, Locatable, Comparable<Me
      * @see Type
      * @see Field#type() Field.type() - for usage examples
      * @return the return {@link Type} of this method.
-     * @throws ClassNotLoadedException if the type has not yet been
-     * created or loaded
-     * through the appropriate class loader.
      */
-    Type returnType() throws ClassNotLoadedException;
+    TypeMirror returnType();
 
     /**
      * Returns a list containing a text representation of the type

@@ -25,10 +25,8 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents methods which have changed when the class was redefined.
@@ -53,8 +51,8 @@ public class ObsoleteMethodImpl extends NonConcreteMethodImpl {
     }
 
     @Override
-	public Type returnType() throws ClassNotLoadedException {
-        throw new ClassNotLoadedException("type unknown");
+	public TypeMirror returnType() {
+        throw new IllegalArgumentException("type unknown");
     }
 
     @Override

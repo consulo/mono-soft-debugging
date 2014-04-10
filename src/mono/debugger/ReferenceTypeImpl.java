@@ -1111,7 +1111,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return isPA;
 	}
 
-	Type findType(String signature) throws ClassNotLoadedException
+	TypeMirror findType(String signature)
 	{
 		return null;
 	}

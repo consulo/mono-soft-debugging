@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import mono.debugger.Location;
-import mono.debugger.MethodMirrorOld;
+import mono.debugger.MethodMirror;
+import mono.debugger.MethodParameterMirror;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrame;
 import mono.debugger.ThreadMirror;
@@ -46,8 +47,12 @@ public class Main
 			{
 				System.out.println(" -- frame: " + frame.id());
 				Location location = frame.location();
-				MethodMirrorOld method = location.method();
+				MethodMirror method = (MethodMirror) location.method();
 				System.out.println(" --- method: " + method);
+				for(MethodParameterMirror parameter : method.parameters())
+				{
+					System.out.println(" ---- parameter: " + parameter);
+				}
 				System.out.println(" --- class: " + method.declaringType());
 				System.out.println(" --- codeIndex: " + location.codeIndex());
 			}

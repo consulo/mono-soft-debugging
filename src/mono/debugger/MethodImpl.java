@@ -135,11 +135,11 @@ public abstract class MethodImpl extends TypeComponentImpl
     }
 
     @Override
-	public Type returnType() throws ClassNotLoadedException {
+	public TypeMirror returnType()  {
         return findType(returnSignature());
     }
 
-    public Type findType(String signature) throws ClassNotLoadedException {
+    public TypeMirror findType(String signature) {
         ReferenceTypeImpl enclosing = (ReferenceTypeImpl)declaringType();
         return enclosing.findType(signature);
     }
