@@ -36,15 +36,6 @@ public class JDWP
 			static PacketStream enqueueCommand(VirtualMachineImpl vm, String signature, boolean ignoreCase)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.GetTypes" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 signature(String): " + signature);
-				}
 				ps.writeString(signature);
 				ps.writeBoolean(ignoreCase);
 				ps.send();
@@ -57,50 +48,18 @@ public class JDWP
 				return new GetTypes(vm, ps);
 			}
 
-			static class ClassInfo
-			{
-				/**
-				 * Matching loaded reference type
-				 */
-				final int typeID;
-
-
-				private ClassInfo(VirtualMachineImpl vm, PacketStream ps)
-				{
-					typeID = ps.readClassRef();
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "typeID(int): " + "ref=" + typeID);
-					}
-				}
-			}
-
-
 			/**
 			 * Number of reference types that follow.
 			 */
-			final ClassInfo[] classes;
+			final TypeMirror[] classes;
 
 			private GetTypes(VirtualMachineImpl vm, PacketStream ps)
 			{
-				if(vm.traceReceives)
-				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.GetTypes" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-				}
-				if(vm.traceReceives)
-				{
-					vm.printReceiveTrace(4, "classes(ClassInfo[]): " + "");
-				}
 				int classesCount = ps.readInt();
-				classes = new ClassInfo[classesCount];
+				classes = new TypeMirror[classesCount];
 				for(int i = 0; i < classesCount; i++)
 				{
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "classes[i](ClassInfo): " + "");
-					}
-					classes[i] = new ClassInfo(vm, ps);
+					classes[i] = ps.readTypeMirror();
 				}
 			}
 		}

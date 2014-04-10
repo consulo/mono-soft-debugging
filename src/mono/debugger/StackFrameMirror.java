@@ -107,8 +107,7 @@ public class StackFrameMirror extends MirrorImpl implements StackFrameOld
 		try
 		{
 			StackFrame_GetValues process = StackFrame_GetValues.process(vm, myThreadMirror, this, new int[]{-(int) (parameter.id() + 1)});
-			System.out.println("parameterValue");
-			return null;
+			return process.values[0];
 		}
 		catch(JDWPException e)
 		{

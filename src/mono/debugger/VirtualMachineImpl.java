@@ -61,12 +61,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	public boolean traceReceives = false;   // pre-compute because of frequency
 
-	// ReferenceType access - updated with class prepare and unload events
-	// Protected by "synchronized(this)". "retrievedAllTypes" may be
-	// tested unsynchronized (since once true, it stays true), but must
-	// be set synchronously
-	private Map<Long, ReferenceType> typesByID;
-
 
 	// ObjectReference cache
 	// "objectsByID" protected by "synchronized(this)".
@@ -237,13 +231,17 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	@NotNull
 	@Override
-	public List<ReferenceType> findTypes(String className, boolean ignoreCase)
+	public TypeMirror[] findTypes(String typeName, boolean ignoreCase)
 	{
 		validateVM();
-		//String signature = JNITypeParser.typeNameToSignature(className);
-		List<ReferenceType> list = findTypesImpl(className, ignoreCase);
-
-		return Collections.unmodifiableList(list);
+		try
+		{
+			return JDWP.VirtualMachine.GetTypes.process(vm, typeName, ignoreCase).classes;
+		}
+		catch(JDWPException exc)
+		{
+			throw exc.toJDIException();
+		}
 	}
 
 	@NotNull
@@ -447,103 +445,12 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		printTrace(sb.toString());
 	}
 
-	private synchronized ReferenceTypeImpl addReferenceType(long id, String signature)
+	ReferenceTypeImpl referenceType(long ref)
 	{
 		return null;
 	}
 
-	synchronized void removeReferenceType(ReferenceType signature)
-	{
-		if(typesByID == null)
-		{
-			return;
-		}
 
-		if(typesByID.remove(((ReferenceTypeImpl) signature).ref()) != null)
-		{
-			findTypesImpl(signature.name(), true);
-		}
-	}
-
-	private void initReferenceTypes()
-	{
-		typesByID = new HashMap<Long, ReferenceType>(300);
-	}
-
-	ReferenceTypeImpl referenceType(long ref)
-	{
-		return referenceType(ref, null);
-	}
-
-
-	ReferenceTypeImpl referenceType(long id, String signature)
-	{
-		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
-		{
-			StringBuilder sb = new StringBuilder();
-			sb.append("Looking up ");
-			sb.append("Class");
-
-			if(signature != null)
-			{
-				sb.append(", signature='").append(signature).append("'");
-			}
-			sb.append(", id=").append(id);
-			vm.printTrace(sb.toString());
-		}
-		if(id == 0)
-		{
-			return null;
-		}
-		else
-		{
-			ReferenceTypeImpl retType = null;
-			synchronized(this)
-			{
-				if(typesByID != null)
-				{
-					retType = (ReferenceTypeImpl) typesByID.get(new Long(id));
-				}
-				if(retType == null)
-				{
-					retType = addReferenceType(id, signature);
-				}
-			}
-			return retType;
-		}
-	}
-
-	private List<ReferenceType> findTypesImpl(String name, boolean ignoreCase)
-	{
-		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
-		{
-			vm.printTrace("Retrieving matching ReferenceTypes, name=" + name);
-		}
-		JDWP.VirtualMachine.GetTypes.ClassInfo[] cinfos;
-		try
-		{
-			cinfos = JDWP.VirtualMachine.GetTypes.process(vm, name, ignoreCase).classes;
-		}
-		catch(JDWPException exc)
-		{
-			throw exc.toJDIException();
-		}
-
-		int count = cinfos.length;
-		List<ReferenceType> list = new ArrayList<ReferenceType>(count);
-
-		// Hold lock during processing to improve performance
-		synchronized(this)
-		{
-			for(int i = 0; i < count; i++)
-			{
-				JDWP.VirtualMachine.GetTypes.ClassInfo ci = cinfos[i];
-				ReferenceTypeImpl type = referenceType(ci.typeID, name);
-				list.add(type);
-			}
-		}
-		return list;
-	}
 
 	void sendToTarget(Packet packet)
 	{

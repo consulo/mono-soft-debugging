@@ -4,6 +4,7 @@ import mono.debugger.JDWPException;
 import mono.debugger.PacketStream;
 import mono.debugger.StackFrameMirror;
 import mono.debugger.ThreadMirror;
+import mono.debugger.Value;
 import mono.debugger.VirtualMachineImpl;
 
 /**
@@ -42,13 +43,14 @@ public class StackFrame_GetValues implements StackFrame
 		return new StackFrame_GetValues(vm, ps, length);
 	}
 
+	public Value[] values;
 
 	private StackFrame_GetValues(VirtualMachineImpl vm, PacketStream ps, int length)
 	{
+		values = new Value[length];
 		for(int i = 0; i < length; i++)
 		{
-			byte value = ps.readByte();
-			System.out.println("valuee: " + value);
+			values[i] = ps.readValue();
 		}
 	}
 }

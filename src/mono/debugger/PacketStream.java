@@ -29,6 +29,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+import edu.arizona.cs.mbel.signature.SignatureConstants;
+
 public class PacketStream
 {
 	public final VirtualMachineImpl vm;
@@ -445,30 +448,35 @@ public class PacketStream
 		return vm.arrayMirror(ref);
 	}
 
+	@NotNull
 	public ThreadMirror readThreadMirror()
 	{
 		long ref = readObjectRef();
 		return new ThreadMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
+	@NotNull
 	public AssemblyMirror readAssemblyMirror()
 	{
 		long ref = readId();
 		return new AssemblyMirror(vm, ref);  //FIXME [VISTALL] caching?
 	}
 
+	@NotNull
 	public AppDomainMirror readAppDomainMirror()
 	{
 		int ref = readId();
 		return new AppDomainMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
+	@NotNull
 	public MethodMirror readMethodMirror()
 	{
 		int ref = readId();
 		return new MethodMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
+	@NotNull
 	public TypeMirror readTypeMirror()
 	{
 		int ref = readId();
@@ -485,6 +493,21 @@ public class PacketStream
 	{
 		long ref = readObjectRef();
 		return vm.referenceType(ref);
+	}
+
+	@NotNull
+	public Value readValue()
+	{
+		byte tag = readByte();
+		switch(tag)
+		{
+			case SignatureConstants.ELEMENT_TYPE_I4:
+				return new PrimitiveValueMirror(vm, tag, readInt());
+			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
+				return new PrimitiveValueMirror(vm, tag, null); //TODO [VISTALL] array support
+			default:
+				throw new IllegalArgumentException("Unsupported tag: " + tag);
+		}
 	}
 
 	/**

@@ -55,7 +55,7 @@ package mono.debugger;
  * <TABLE BORDER=1 SUMMARY="Maps each kind of value to a mirrored
  *  instance of a subinterface of Value">
  * <TR BGCOLOR="#EEEEFF">
- *   <TH id="primval" colspan=4>Subinterfaces of {@link PrimitiveValue}</TH>
+ *   <TH id="primval" colspan=4>Subinterfaces of {@link PrimitiveValueMirror}</TH>
  * <TR BGCOLOR="#EEEEFF">
  *   <TH id="kind"     align="left">Kind of value</TH>
  *   <TH id="example"  align="left">For example -<br>expression in target</TH>
