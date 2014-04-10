@@ -123,7 +123,7 @@ public class LocalVariableImpl extends MirrorImpl
     }
 
     @Override
-	public boolean isVisible(StackFrameOld frame) {
+	public boolean isVisible(StackFrameMirror frame) {
         validateMirror(frame);
         MethodMirror frameMethod = frame.location().method();
 

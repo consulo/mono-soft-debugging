@@ -31,9 +31,9 @@ package mono.debugger;
  * name declared in different scopes have different LocalVariable objects.
  * LocalVariables can be used alone to retrieve static information
  * about their declaration, or can be used in conjunction with a
- * {@link StackFrameOld} to set and get values.
+ * {@link StackFrameMirror} to set and get values.
  *
- * @see StackFrameOld
+ * @see StackFrameMirror
  * @see MethodMirror
  *
  * @author Robert Field
@@ -113,9 +113,9 @@ public interface LocalVariable extends Mirror, Comparable<LocalVariable> {
 
     /**
      * Determines whether this variable can be accessed from the given
-     * {@link StackFrameOld}.
+     * {@link StackFrameMirror}.
      *
-     * See {@link StackFrameOld#visibleVariables} for a complete description
+     * See {@link StackFrameMirror#visibleVariables} for a complete description
      * variable visibility in this interface.
      *
      * @param frame the StackFrame querying visibility
@@ -124,7 +124,7 @@ public interface LocalVariable extends Mirror, Comparable<LocalVariable> {
      * @throws IllegalArgumentException if the stack frame's method
      * does not match this variable's method.
      */
-    boolean isVisible(StackFrameOld frame);
+    boolean isVisible(StackFrameMirror frame);
 
     /**
      * Determines if this variable is an argument to its method.

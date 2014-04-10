@@ -68,7 +68,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 	private static class LocalCache
 	{
 		Thread_GetState myState = null;
-		List<StackFrameOld> frames = null;
+		List<StackFrameMirror> frames = null;
 		int framesStart = -1;
 		int framesLength = 0;
 
@@ -170,7 +170,7 @@ public class ThreadMirror extends MirrorWithIdAndName
          */
 		try
 		{
-			StackFrameOld frame = frame(0);
+			StackFrameMirror frame = frame(0);
 			Location location = frame.location();
 			List<BreakpointRequest> requests = vm.eventRequestManager().breakpointRequests();
 			Iterator<BreakpointRequest> iter = requests.iterator();
@@ -195,14 +195,14 @@ public class ThreadMirror extends MirrorWithIdAndName
 		}
 	}
 
-	public List<StackFrameOld> frames() throws IncompatibleThreadStateException
+	public List<StackFrameMirror> frames() throws IncompatibleThreadStateException
 	{
 		return privateFrames(0, -1);
 	}
 
-	public StackFrameOld frame(int index) throws IncompatibleThreadStateException
+	public StackFrameMirror frame(int index) throws IncompatibleThreadStateException
 	{
-		List<StackFrameOld> list = privateFrames(index, 1);
+		List<StackFrameMirror> list = privateFrames(index, 1);
 		return list.get(0);
 	}
 
@@ -233,7 +233,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		return ((start + length) <= (snapshot.framesStart + snapshot.framesLength));
 	}
 
-	public List<StackFrameOld> frames(int start, int length) throws IncompatibleThreadStateException
+	public List<StackFrameMirror> frames(int start, int length) throws IncompatibleThreadStateException
 	{
 		if(length < 0)
 		{
@@ -246,7 +246,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 	 * Private version of frames() allows "-1" to specify all
 	 * remaining frames.
 	 */
-	synchronized private List<StackFrameOld> privateFrames(int start, int length) throws IncompatibleThreadStateException
+	synchronized private List<StackFrameMirror> privateFrames(int start, int length) throws IncompatibleThreadStateException
 	{
 
 		// Lock must be held while creating stack frames so if that two threads
@@ -258,7 +258,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 			{
 				Thread_GetFrameInfo.Frame[] jdwpFrames = Thread_GetFrameInfo.process(vm, this, start, length).frames;
 				int count = jdwpFrames.length;
-				snapshot.frames = new ArrayList<StackFrameOld>(count);
+				snapshot.frames = new ArrayList<StackFrameMirror>(count);
 
 				for(int i = 0; i < count; i++)
 				{
@@ -266,7 +266,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 					{
 						throw new InternalException("Invalid frame location");
 					}
-					StackFrameOld frame = new StackFrameMirror(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location, StackFrameMirror
+					StackFrameMirror frame = new StackFrameMirror(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location, StackFrameMirror
 							.StackFrameFlags.values()[jdwpFrames[i].flags]);
 					// Add to the frame list
 					snapshot.frames.add(frame);

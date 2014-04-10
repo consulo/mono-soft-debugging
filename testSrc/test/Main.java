@@ -8,7 +8,6 @@ import mono.debugger.MethodMirror;
 import mono.debugger.MethodParameterMirror;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrameMirror;
-import mono.debugger.StackFrameOld;
 import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachine;
 import mono.debugger.connect.Connector;
@@ -41,14 +40,11 @@ public class Main
 
 		for(ThreadMirror threadMirror : accept.allThreads())
 		{
-			List<StackFrameOld> frames = threadMirror.frames();
+			List<StackFrameMirror> frames = threadMirror.frames();
 			System.out.println("thread: '" + threadMirror.name());
 			System.out.println("frames: ");
-			for(StackFrameOld frame : frames)
+			for(StackFrameMirror stackFrameMirror : frames)
 			{
-				StackFrameMirror stackFrameMirror = (StackFrameMirror) frame;
-
-
 				System.out.println(" -- frame: " + stackFrameMirror.id());
 				System.out.println(" --- flags: " + stackFrameMirror.flags());
 				Location location = stackFrameMirror.location();
