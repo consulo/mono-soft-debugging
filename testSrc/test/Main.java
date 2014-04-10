@@ -48,6 +48,7 @@ public class Main
 			{
 				StackFrameMirror stackFrameMirror = (StackFrameMirror) frame;
 
+
 				System.out.println(" -- frame: " + stackFrameMirror.id());
 				System.out.println(" --- flags: " + stackFrameMirror.flags());
 				Location location = stackFrameMirror.location();

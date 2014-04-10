@@ -23,15 +23,6 @@ public class Method_GetDeclarationType implements Method
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, MethodMirror methodMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") Method_GetDeclarationType" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : ""));
-		}
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 method(MethodMirror): " + "ref=" + methodMirror.id());
-		}
 		ps.writeId(methodMirror);
 		ps.send();
 		return ps;
@@ -43,20 +34,10 @@ public class Method_GetDeclarationType implements Method
 		return new Method_GetDeclarationType(vm, ps);
 	}
 
-
 	public final TypeMirror declarationType;
 
 	private Method_GetDeclarationType(VirtualMachineImpl vm, PacketStream ps)
 	{
-		if(vm.traceReceives)
-		{
-			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") Method_GetDeclarationType" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-		}
 		declarationType = ps.readTypeMirror();
-		if(vm.traceReceives)
-		{
-			vm.printReceiveTrace(4, "declarationType): " + declarationType);
-		}
 	}
 }
