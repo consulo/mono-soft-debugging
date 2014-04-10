@@ -6200,18 +6200,15 @@ public class JDWP
 						return ALT_ID;
 					}
 
-					/**
-					 * Request that generated event
-					 */
 					public final int requestID;
+					public final ThreadMirror thread;
+					public final int exitCode;
 
 					VMDeath(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
+						thread = ps.readThreadMirror();
+						exitCode = vm.isAtLeastVersion(2, 27) ? ps.readInt() : 0;
 					}
 				}
 			}
@@ -6314,6 +6311,7 @@ public class JDWP
 		static final int TRANSPORT_INIT = 510;
 		static final int NATIVE_METHOD = 511;
 		static final int INVALID_COUNT = 512;
+		static final int NOT_SUSPENDED = 101;
 	}
 
 	static class EventKind

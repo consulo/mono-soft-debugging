@@ -68,11 +68,14 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public class VMDeathEvent extends EventSetImpl.EventImpl
+public class VMDeathEvent extends EventSetImpl.ThreadedEventImpl
 {
+	public final int exitCode;
+
 	public VMDeathEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.VMDeath evt)
 	{
-		super(virtualMachine, evt, evt.requestID);
+		super(virtualMachine, evt, evt.requestID, evt.thread);
+		exitCode = evt.exitCode;
 	}
 
 	@Override
