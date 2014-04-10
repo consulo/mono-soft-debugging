@@ -3,6 +3,7 @@ package mono.debugger;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import mono.debugger.protocol.Method_GetDeclarationType;
 import mono.debugger.protocol.Method_GetName;
 
 /**
@@ -11,6 +12,8 @@ import mono.debugger.protocol.Method_GetName;
  */
 public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 {
+	private TypeMirror myDeclarationType;
+
 	public MethodMirror(@NotNull VirtualMachine aVm, long id)
 	{
 		super(aVm, id);
@@ -168,9 +171,21 @@ public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 	}
 
 	@Override
-	public ReferenceType declaringType()
+	public TypeMirror declaringType()
 	{
-		return null;
+		if(myDeclarationType != null)
+		{
+			return myDeclarationType;
+		}
+
+		try
+		{
+			return myDeclarationType = Method_GetDeclarationType.process(vm, this).declarationType;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
 	}
 
 	@Override
@@ -225,11 +240,5 @@ public class MethodMirror extends MirrorWithIdAndName implements MethodMirrorOld
 	public int compareTo(MethodMirrorOld o)
 	{
 		return 0;
-	}
-
-	@Override
-	public VirtualMachine virtualMachine()
-	{
-		return null;
 	}
 }

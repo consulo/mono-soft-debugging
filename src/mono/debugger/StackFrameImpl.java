@@ -412,4 +412,10 @@ public class StackFrameImpl extends MirrorImpl
 	public String toString() {
        return location.toString() + " in thread " + thread.toString();
     }
+
+	@Override
+	public long id()
+	{
+		return id;
+	}
 }

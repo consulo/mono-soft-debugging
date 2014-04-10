@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ClassTypeImpl extends ReferenceTypeImpl
     implements TypeMirrorOld
 {
@@ -41,7 +43,21 @@ public class ClassTypeImpl extends ReferenceTypeImpl
         super(aVm, aRef);
     }
 
-    @Override
+	@NotNull
+	@Override
+	public String qualifiedName()
+	{
+		return null;
+	}
+
+	@NotNull
+	@Override
+	public String namespace()
+	{
+		return null;
+	}
+
+	@Override
 	public TypeMirrorOld superclass() {
         if(!cachedSuperclass)  {
             ClassTypeImpl sup = null;
@@ -379,4 +395,10 @@ public class ClassTypeImpl extends ReferenceTypeImpl
 	public String toString() {
        return "class " + name();
     }
+
+	@Override
+	public long id()
+	{
+		return ref;
+	}
 }

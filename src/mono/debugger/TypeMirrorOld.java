@@ -27,6 +27,8 @@ package mono.debugger;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A mirror of a class in the target VM. A ClassType is a refinement
  * of {@link ReferenceType} that applies to true classes in the JLS
@@ -41,7 +43,13 @@ import java.util.List;
  * @author James McIlree
  * @since  1.3
  */
-public interface TypeMirrorOld extends ReferenceType {
+public interface TypeMirrorOld extends ReferenceType, MirrorWithId {
+	@NotNull
+	String qualifiedName();
+
+	@NotNull
+	String namespace();
+
     /**
      * Gets the superclass of this class.
      *

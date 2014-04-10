@@ -469,6 +469,12 @@ public class PacketStream
 		return new MethodMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
+	public TypeMirror readTypeMirror()
+	{
+		int ref = readId();
+		return new TypeMirror(vm, ref); //FIXME [VISTALL] caching?
+	}
+
 	ClassObjectReferenceImpl readClassObjectReference()
 	{
 		long ref = readObjectRef();

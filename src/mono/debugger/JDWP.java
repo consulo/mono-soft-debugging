@@ -455,12 +455,12 @@ public class JDWP
 				fullName = ps.readString();
 				if(vm.traceReceives)
 				{
-					vm.printReceiveTrace(4, "fullName(String): " + fullName);
+					vm.printReceiveTrace(4, "qualifiedName(String): " + fullName);
 				}
 				assemblyId = ps.readInt();
 				if(vm.traceReceives)
 				{
-					vm.printReceiveTrace(4, "fullName(assemblyId): " + assemblyId);
+					vm.printReceiveTrace(4, "qualifiedName(assemblyId): " + assemblyId);
 				}
 			}
 		}
