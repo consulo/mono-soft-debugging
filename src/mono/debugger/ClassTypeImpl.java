@@ -30,19 +30,19 @@ import java.util.List;
 import java.util.Map;
 
 public class ClassTypeImpl extends ReferenceTypeImpl
-    implements ClassType
+    implements TypeMirrorOld
 {
     private boolean cachedSuperclass = false;
-    private ClassType superclass = null;
+    private TypeMirrorOld superclass = null;
     private int lastLine = -1;
-    private List<ClassType> interfaces = null;
+    private List<TypeMirrorOld> interfaces = null;
 
     protected ClassTypeImpl(VirtualMachine aVm,long aRef) {
         super(aVm, aRef);
     }
 
     @Override
-	public ClassType superclass() {
+	public TypeMirrorOld superclass() {
         if(!cachedSuperclass)  {
             ClassTypeImpl sup = null;
             try {
@@ -67,8 +67,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl
     }
 
     @Override
-	public List<ClassType> subclasses() {
-        List<ClassType> subs = new ArrayList<ClassType>();
+	public List<TypeMirrorOld> subclasses() {
+        List<TypeMirrorOld> subs = new ArrayList<TypeMirrorOld>();
 
 
         return subs;
@@ -76,7 +76,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
 
     @Override
 	public boolean isEnum() {
-        ClassType superclass = superclass();
+        TypeMirrorOld superclass = superclass();
         if (superclass != null &&
             superclass.name().equals("java.lang.Enum")) {
             return true;
@@ -287,7 +287,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl
    public List<MethodMirrorOld> allMethods() {
         ArrayList<MethodMirrorOld> list = new ArrayList<MethodMirrorOld>(methods());
 
-        ClassType clazz = superclass();
+        TypeMirrorOld clazz = superclass();
         while (clazz != null) {
             list.addAll(clazz.methods());
             clazz = clazz.superclass();

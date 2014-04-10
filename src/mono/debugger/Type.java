@@ -88,7 +88,7 @@ package mono.debugger;
  * <TR>
  *   <TD headers="reftype declared2"><I>a class</I></TD>
  *   <TD headers="reftype example2"><CODE>Date</CODE></TD>
- *   <TD headers="reftype mirrored2">{@link ClassType}</TD>
+ *   <TD headers="reftype mirrored2">{@link TypeMirrorOld}</TD>
  * <TR>
  *   <TD headers="reftype declared2"><I>an interface</I></TD>
  *   <TD headers="reftype example2"><CODE>Runnable</CODE></TD>
@@ -108,7 +108,7 @@ package mono.debugger;
  *   <TD headers="reftype example2"><CODE>Date[]</CODE></TD>
  *   <TD headers="reftype mirrored2">{@link ArrayType} whose
  *         {@link ArrayType#componentType() componentType()} is
- *         {@link ClassType}</TD>
+ *         {@link TypeMirrorOld}</TD>
  * <TR>
  *   <TD headers="reftype declared2"><I>an array</I></TD>
  *   <TD headers="reftype example2"><CODE>Runnable[]</CODE></TD>

@@ -41,25 +41,25 @@ import java.util.List;
  * @author James McIlree
  * @since  1.3
  */
-public interface ClassType extends ReferenceType {
+public interface TypeMirrorOld extends ReferenceType {
     /**
      * Gets the superclass of this class.
      *
-     * @return a {@link ClassType} that mirrors the superclass
+     * @return a {@link TypeMirrorOld} that mirrors the superclass
      * of this class in the target VM. If no such class exists,
      * returns null
      */
-    ClassType superclass();
+    TypeMirrorOld superclass();
 
     /**
      * Gets the currently loaded, direct subclasses of this class.
      * No ordering of this list is guaranteed.
      *
-     * @return a List of {@link ClassType} objects each mirroring a loaded
+     * @return a List of {@link TypeMirrorOld} objects each mirroring a loaded
      * subclass of this class in the target VM. If no such classes
      * exist, this method returns a zero-length list.
      */
-    List<ClassType> subclasses();
+    List<TypeMirrorOld> subclasses();
 
     /**
      * Determine if this class was declared as an enum.
@@ -106,7 +106,7 @@ public interface ClassType extends ReferenceType {
      * or in a superclass.
      * The method must be a static method
      * but not a static initializer.
-     * Use {@link ClassType#newInstance} to create a new object and
+     * Use {@link TypeMirrorOld#newInstance} to create a new object and
      * run its constructor.
      * <p>
      * The method invocation will occur in the specified thread.
@@ -330,7 +330,7 @@ public interface ClassType extends ReferenceType {
      * for information on signature format.
      * <p>
      * The returned method (if non-null) is a component of
-     * {@link ClassType}.
+     * {@link TypeMirrorOld}.
      *
      * @see ReferenceType#visibleMethods
      * @see ReferenceType#methodsByName(java.lang.String name)

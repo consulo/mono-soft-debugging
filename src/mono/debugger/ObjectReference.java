@@ -72,7 +72,7 @@ public interface ObjectReference extends Value
      * always return the same ReferenceType over the lifetime of the
      * mirrored object.
      * <p>
-     * The returned ReferenceType will be a {@link ClassType} or
+     * The returned ReferenceType will be a {@link TypeMirrorOld} or
      * {@link ArrayType} and never an {@link InterfaceType}.
      *
      * @return the {@link ReferenceType} for this object.
@@ -148,7 +148,7 @@ public interface ObjectReference extends Value
      * in a superclass of this object's class, or in an interface
      * implemented by this object. The method may be a static method
      * or an instance method, but not a static initializer or constructor.
-     * Use {@link ClassType#newInstance} to create a new object and
+     * Use {@link TypeMirrorOld#newInstance} to create a new object and
      * run its constructor.
      * <p>
      * The method invocation will occur in the specified thread.

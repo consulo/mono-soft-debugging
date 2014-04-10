@@ -88,7 +88,7 @@ public interface Location extends Mirror, Comparable<Location> {
 
     /**
      * Gets the type to which this Location belongs. Normally
-     * the declaring type is a {@link ClassType}, but executable
+     * the declaring type is a {@link TypeMirrorOld}, but executable
      * locations also may exist within the static initializer of an
      * {@link InterfaceType}.
      *

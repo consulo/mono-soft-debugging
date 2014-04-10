@@ -34,7 +34,7 @@ import java.util.Map;
  * <cite>The Java&trade; Language Specification</cite>.
  * All ReferenceType objects belong to one of the following
  * subinterfaces:
- * {@link ClassType} for classes,
+ * {@link TypeMirrorOld} for classes,
  * {@link InterfaceType} for interfaces, and
  * {@link ArrayType} for arrays.
  * Note that primitive classes (for example, the
@@ -387,7 +387,7 @@ public interface ReferenceType
      * <p>
      * Note that despite this exclusion, multiple inherited methods
      * with the same signature can be present in the returned list, but
-     * at most one can be a member of a {@link ClassType}.
+     * at most one can be a member of a {@link TypeMirrorOld}.
      * See JLS section 8.4.6 for details.
      * <p>
      * For arrays ({@link ArrayType}) and primitive classes, the returned
@@ -450,8 +450,8 @@ public interface ReferenceType
      * in the JLS (8.4.6) to determine visibility.
      * <p>
      * At most one method in the list is a concrete method and a
-     * component of {@link ClassType}; any other methods in the list
-     * are abstract. Use {@link ClassType#concreteMethodByName} to
+     * component of {@link TypeMirrorOld}; any other methods in the list
+     * are abstract. Use {@link TypeMirrorOld#concreteMethodByName} to
      * retrieve only the matching concrete method.
      * <p>
      * For arrays ({@link ArrayType}) and primitive classes, the returned
