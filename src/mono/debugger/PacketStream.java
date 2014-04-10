@@ -524,7 +524,7 @@ public class PacketStream
 	/**
 	 * Read a value, first byte describes type of value to read.
 	 */
-	ValueImpl readValue()
+	ValueImpl readValueOld()
 	{
 		byte typeKey = readByte();
 		return readUntaggedValue(typeKey);

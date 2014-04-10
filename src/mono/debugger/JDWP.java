@@ -825,7 +825,7 @@ public class JDWP
 				values = new ValueImpl[valuesCount];
 				for(int i = 0; i < valuesCount; i++)
 				{
-					values[i] = ps.readValue();
+					values[i] = ps.readValueOld();
 					if(vm.traceReceives)
 					{
 						vm.printReceiveTrace(5, "values[i](ValueImpl): " + values[i]);
@@ -2643,7 +2643,7 @@ public class JDWP
 				values = new ValueImpl[valuesCount];
 				for(int i = 0; i < valuesCount; i++)
 				{
-					values[i] = ps.readValue();
+					values[i] = ps.readValueOld();
 					if(vm.traceReceives)
 					{
 						vm.printReceiveTrace(5, "values[i](ValueImpl): " + values[i]);
@@ -4208,7 +4208,7 @@ public class JDWP
 				values = new ValueImpl[valuesCount];
 				for(int i = 0; i < valuesCount; i++)
 				{
-					values[i] = ps.readValue();
+					values[i] = ps.readValueOld();
 					if(vm.traceReceives)
 					{
 						vm.printReceiveTrace(5, "values[i](ValueImpl): " + values[i]);
@@ -5008,7 +5008,7 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "location(Location): " + location);
 						}
-						value = ps.readValue();
+						value = ps.readValueOld();
 						if(vm.traceReceives)
 						{
 							vm.printReceiveTrace(6, "value(ValueImpl): " + value);
