@@ -449,31 +449,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 
 	private synchronized ReferenceTypeImpl addReferenceType(long id, String signature)
 	{
-		if(typesByID == null)
-		{
-			initReferenceTypes();
-		}
-		ReferenceTypeImpl type = new ClassTypeImpl(vm, id);
-        /*
-         * If a signature was specified, make sure to set it ASAP, to
-         * prevent any needless JDWP command to retrieve it. (for example,
-         * typesBySignature.add needs the signature, to maintain proper
-         * ordering.
-         */
-		if(signature != null)
-		{
-			type.setSignature(signature);
-		}
-
-		typesByID.put(new Long(id), type);
-
-		if((vm.traceFlags & VirtualMachine.TRACE_REFTYPES) != 0)
-		{
-			vm.printTrace("Caching new ReferenceType, sig=" + signature +
-					", id=" + id);
-		}
-
-		return type;
+		return null;
 	}
 
 	synchronized void removeReferenceType(ReferenceType signature)
@@ -499,15 +475,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, Th
 		return referenceType(ref, null);
 	}
 
-	ClassTypeImpl classType(long ref)
-	{
-		return (ClassTypeImpl) referenceType(ref, null);
-	}
-
-	ArrayTypeImpl arrayType(long ref)
-	{
-		return (ArrayTypeImpl) referenceType(ref, null);
-	}
 
 	ReferenceTypeImpl referenceType(long id, String signature)
 	{

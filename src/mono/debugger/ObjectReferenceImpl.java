@@ -39,14 +39,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 	boolean addedListener = false;
 
 
-	// Return the ClassTypeImpl upon which to invoke a method.
-	// By default it is our very own referenceType() but subclasses
-	// can override.
-	protected ClassTypeImpl invokableReferenceType(MethodMirrorOld method)
-	{
-		return (ClassTypeImpl) referenceType();
-	}
-
 	public ObjectReferenceImpl(VirtualMachine aVm, long aRef)
 	{
 		super(aVm);
@@ -259,90 +251,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 		}
 	}
 
-	void validateMethodInvocation(MethodMirrorOld method, int options) throws InvalidTypeException, InvocationException
-	{
-
-        /*
-         * Method must be in this object's class, a superclass, or
-         * implemented interface
-         */
-		ReferenceTypeImpl declType = (ReferenceTypeImpl) method.declaringType();
-		if(!declType.isAssignableFrom(this))
-		{
-			throw new IllegalArgumentException("Invalid method");
-		}
-
-		ClassTypeImpl clazz = invokableReferenceType(method);
-
-        /*
-         * Method must be a non-constructor
-         */
-		if(method.isConstructor())
-		{
-			throw new IllegalArgumentException("Cannot invoke constructor");
-		}
-
-        /*
-         * For nonvirtual invokes, method must have a body
-         */
-		if((options & INVOKE_NONVIRTUAL) != 0)
-		{
-			if(method.isAbstract())
-			{
-				throw new IllegalArgumentException("Abstract method");
-			}
-		}
-
-        /*
-         * Get the class containing the method that will be invoked.
-         * This class is needed only for proper validation of the
-         * method argument types.
-         */
-		ClassTypeImpl invokedClass;
-		if((options & INVOKE_NONVIRTUAL) != 0)
-		{
-			// No overrides in non-virtual invokes
-			invokedClass = clazz;
-		}
-		else
-		{
-            /*
-             * For virtual invokes, find any override of the method.
-             * Since we are looking for a method with a real body, we
-             * don't need to bother with interfaces/abstract methods.
-             */
-			MethodMirrorOld invoker = clazz.concreteMethodByName(method.name(), method.signature());
-			//  isAssignableFrom check above guarantees non-null
-			invokedClass = (ClassTypeImpl) invoker.declaringType();
-		}
-        /* The above code is left over from previous versions.
-         * We haven't had time to divine the intent.  jjh, 7/31/2003
-         */
-	}
-
-	PacketStream sendInvokeCommand(
-			final ThreadMirror thread, final ClassTypeImpl refType, final MethodImpl method, final ValueImpl[] args, final int options)
-	{
-		CommandSender sender = new CommandSender()
-		{
-			@Override
-			public PacketStream send()
-			{
-				return JDWP.ObjectReference.InvokeMethod.enqueueCommand(vm, ObjectReferenceImpl.this, thread, refType, method.ref(), args, options);
-			}
-		};
-
-		PacketStream stream;
-		if((options & INVOKE_SINGLE_THREADED) != 0)
-		{
-			stream = thread.sendResumingCommand(sender);
-		}
-		else
-		{
-			stream = vm.sendResumingCommand(sender);
-		}
-		return stream;
-	}
 
 	@Override
 	public Value invokeMethod(
@@ -351,66 +259,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference, V
 			List<? extends Value> origArguments,
 			int options) throws InvalidTypeException, IncompatibleThreadStateException, InvocationException, ClassNotLoadedException
 	{
-		validateMirror(threadIntf);
-		validateMirror(methodIntf);
-		validateMirrorsOrNulls(origArguments);
-
-		MethodImpl method = (MethodImpl) methodIntf;
-		ThreadMirror thread = (ThreadMirror) threadIntf;
-
-		if(method.isStatic())
-		{
-			if(referenceType() instanceof TypeMirrorOld)
-			{
-				TypeMirrorOld type = (TypeMirrorOld) referenceType();
-				return type.invokeMethod(thread, method, origArguments, options);
-			}
-			else
-			{
-				throw new IllegalArgumentException("Invalid type for static method invocation");
-			}
-		}
-
-		validateMethodInvocation(method, options);
-
-		List<Value> arguments = method.validateAndPrepareArgumentsForInvoke(origArguments);
-
-		ValueImpl[] args = arguments.toArray(new ValueImpl[0]);
-		JDWP.ObjectReference.InvokeMethod ret;
-		try
-		{
-			PacketStream stream = sendInvokeCommand(thread, invokableReferenceType(method), method, args, options);
-			ret = JDWP.ObjectReference.InvokeMethod.waitForReply(vm, stream);
-		}
-		catch(JDWPException exc)
-		{
-			if(exc.errorCode() == JDWP.Error.INVALID_THREAD)
-			{
-				throw new IncompatibleThreadStateException();
-			}
-			else
-			{
-				throw exc.toJDIException();
-			}
-		}
-
-        /*
-         * There is an implict VM-wide suspend at the conclusion
-         * of a normal (non-single-threaded) method invoke
-         */
-		if((options & INVOKE_SINGLE_THREADED) == 0)
-		{
-			vm.notifySuspend();
-		}
-
-		if(ret.exception != null)
-		{
-			throw new InvocationException(ret.exception);
-		}
-		else
-		{
-			return ret.returnValue;
-		}
+		return null;
 	}
 
 	/* leave synchronized to keep count accurate */

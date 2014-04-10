@@ -146,13 +146,7 @@ public class LocalVariableImpl extends MirrorImpl
 
     @Override
 	public boolean isArgument() {
-        try {
-            MethodImpl method = (MethodImpl)scopeStart.method();
-            return (slot < method.argSlotCount());
-        } catch (AbsentInformationException e) {
-            // If this variable object exists, there shouldn't be absent info
-            throw new InternalException();
-        }
+        return false;
     }
 
     int slot() {

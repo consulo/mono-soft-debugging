@@ -112,20 +112,9 @@ public class LocationImpl extends MirrorImpl implements Location
 
 	LineInfo getBaseLineInfo()
 	{
-		LineInfo lineInfo;
+		LineInfo lineInfo = null;
 
-        /* check if there is cached info to use */
-		if(baseLineInfo != null)
-		{
-			return baseLineInfo;
-		}
 
-        /* compute the line info */
-		MethodImpl methodImpl = (MethodImpl) method();
-		lineInfo = methodImpl.codeIndexToLineInfo(codeIndex());
-
-        /* cache it */
-		addBaseLineInfo(lineInfo);
 
 		return lineInfo;
 	}

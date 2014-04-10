@@ -25,12 +25,11 @@
 
 package mono.debugger;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Collections;
 
 public class StackFrameImpl extends MirrorImpl
                             implements StackFrame, ThreadListener
@@ -119,37 +118,7 @@ public class StackFrameImpl extends MirrorImpl
 
     @Override
 	public ObjectReference thisObject() {
-        validateStackFrame();
-        MethodImpl currentMethod = (MethodImpl)location.method();
-        if (currentMethod.isStatic() || currentMethod.isNative()) {
-            return null;
-        } else {
-            if (thisObject == null) {
-                PacketStream ps;
 
-                /* protect against defunct frame id */
-                synchronized (vm.state()) {
-                    validateStackFrame();
-                    ps = JDWP.StackFrame.ThisObject.
-                                      enqueueCommand(vm, thread, id);
-                }
-
-                /* actually get it, now that order is guaranteed */
-                try {
-                    thisObject = JDWP.StackFrame.ThisObject.
-                                      waitForReply(vm, ps).objectThis;
-                } catch (JDWPException exc) {
-                    switch (exc.errorCode()) {
-                    case JDWP.Error.INVALID_FRAMEID:
-                    case JDWP.Error.THREAD_NOT_SUSPENDED:
-                    case JDWP.Error.INVALID_THREAD:
-                        throw new InvalidStackFrameException();
-                    default:
-                        throw exc.toJDIException();
-                    }
-                }
-            }
-        }
         return thisObject;
     }
 
@@ -325,54 +294,7 @@ public class StackFrameImpl extends MirrorImpl
 
     @Override
 	public List<Value> getArgumentValues() {
-        validateStackFrame();
-        MethodImpl mmm = (MethodImpl)location.method();
-        List<String> argSigs = mmm.argumentSignatures();
-        int count = argSigs.size();
-        JDWP.StackFrame.GetValues.SlotInfo[] slots =
-                           new JDWP.StackFrame.GetValues.SlotInfo[count];
-
-        int slot;
-        if (mmm.isStatic()) {
-            slot = 0;
-        } else {
-            slot = 1;
-        }
-        for (int ii = 0; ii < count; ++ii) {
-            char sigChar = argSigs.get(ii).charAt(0);
-            slots[ii] = new JDWP.StackFrame.GetValues.SlotInfo(slot++,(byte)sigChar);
-            if (sigChar == 'J' || sigChar == 'D') {
-                slot++;
-            }
-        }
-
-        PacketStream ps;
-
-        /* protect against defunct frame id */
-        synchronized (vm.state()) {
-            validateStackFrame();
-            ps = JDWP.StackFrame.GetValues.enqueueCommand(vm, thread, id, slots);
-        }
-
-        ValueImpl[] values;
-        try {
-            values = JDWP.StackFrame.GetValues.waitForReply(vm, ps).values;
-        } catch (JDWPException exc) {
-            switch (exc.errorCode()) {
-                case JDWP.Error.INVALID_FRAMEID:
-                case JDWP.Error.THREAD_NOT_SUSPENDED:
-                case JDWP.Error.INVALID_THREAD:
-                    throw new InvalidStackFrameException();
-                default:
-                    throw exc.toJDIException();
-            }
-        }
-
-        if (count != values.length) {
-            throw new InternalException(
-                      "Wrong number of values returned from target VM");
-        }
-        return Arrays.asList((Value[])values);
+        return Collections.emptyList();
     }
 
     void pop() throws IncompatibleThreadStateException {

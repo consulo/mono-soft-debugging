@@ -413,7 +413,7 @@ class EventRequestManagerImpl extends MirrorImpl
             exception = refType;
             caught = notifyCaught;
             uncaught = notifyUncaught;
-            {
+          /*  {
                 ReferenceTypeImpl exc;
                 if (exception == null) {
                     exc = new ClassTypeImpl(vm, 0);
@@ -422,7 +422,7 @@ class EventRequestManagerImpl extends MirrorImpl
                 }
                 filters.add(JDWP.EventRequest.Set.Modifier.ExceptionOnly.
                             create(exc, caught, uncaught));
-            }
+            }  */
             requestList().add(this);
         }
 

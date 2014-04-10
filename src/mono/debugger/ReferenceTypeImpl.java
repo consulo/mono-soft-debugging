@@ -90,24 +90,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 
 	MethodMirrorOld getMethodMirror(long ref)
 	{
-		if(ref == 0)
-		{
-			// obsolete method
-			return new ObsoleteMethodImpl(vm, this);
-		}
-		// Fetch all methods for the class, check performance impact
-		// Needs no synchronization now, since methods() returns
-		// unmodifiable local data
-		Iterator<MethodMirrorOld> it = methods().iterator();
-		while(it.hasNext())
-		{
-			MethodImpl method = (MethodImpl) it.next();
-			if(method.ref() == ref)
-			{
-				return method;
-			}
-		}
-		throw new IllegalArgumentException("Invalid method id: " + ref);
+		return null;
 	}
 
 	Field getFieldMirror(long ref)
@@ -488,39 +471,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<MethodMirrorOld> methods()
 	{
-		List<MethodMirrorOld> methods = (methodsRef == null) ? null : methodsRef.get();
-		if(methods == null)
-		{
-			methods = methods1_4();
-			methods = Collections.unmodifiableList(methods);
-			methodsRef = new SoftReference<List<MethodMirrorOld>>(methods);
-		}
-		return methods;
+		return Collections.emptyList();
 	}
 
-	private List<MethodMirrorOld> methods1_4()
-	{
-		List<MethodMirrorOld> methods;
-		JDWP.ReferenceType.Methods.MethodInfo[] declared;
-		try
-		{
-			declared = JDWP.ReferenceType.Methods.
-					process(vm, this).declared;
-		}
-		catch(JDWPException exc)
-		{
-			throw exc.toJDIException();
-		}
-		methods = new ArrayList<MethodMirrorOld>(declared.length);
-		for(int i = 0; i < declared.length; i++)
-		{
-			JDWP.ReferenceType.Methods.MethodInfo mi = declared[i];
 
-			MethodMirrorOld method = MethodImpl.createMethodImpl(vm, this, mi.methodID, mi.name, mi.signature, null, mi.modBits);
-			methods.add(method);
-		}
-		return methods;
-	}
 
 	/*
 	 * Utility method used by subclasses to build lists of visible
@@ -894,32 +848,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<Location> allLineLocations(String sourceName) throws AbsentInformationException
 	{
-		boolean someAbsent = false; // A method that should have info, didn't
-
-		List<Location> list = new ArrayList<Location>();  // location list
-
-		for(Iterator<MethodMirrorOld> iter = methods().iterator(); iter.hasNext(); )
-		{
-			MethodImpl method = (MethodImpl) iter.next();
-			try
-			{
-				list.addAll(method.allLineLocations(sourceName));
-			}
-			catch(AbsentInformationException exc)
-			{
-				someAbsent = true;
-			}
-		}
-
-		// If we retrieved no line info, and at least one of the methods
-		// should have had some (as determined by an
-		// AbsentInformationException being thrown) then we rethrow
-		// the AbsentInformationException.
-		if(someAbsent && list.size() == 0)
-		{
-			throw new AbsentInformationException();
-		}
-		return list;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -931,39 +860,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	@Override
 	public List<Location> locationsOfLine(String sourceName, int lineNumber) throws AbsentInformationException
 	{
-		// A method that should have info, didn't
-		boolean someAbsent = false;
-		// A method that should have info, did
-		boolean somePresent = false;
-		List<MethodMirrorOld> methods = methods();
-
-
-		List<Location> list = new ArrayList<Location>();
-
-		Iterator<MethodMirrorOld> iter = methods.iterator();
-		while(iter.hasNext())
-		{
-			MethodImpl method = (MethodImpl) iter.next();
-			// eliminate native and abstract to eliminate
-			// false positives
-			if(!method.isAbstract() && !method.isNative())
-			{
-				try
-				{
-					list.addAll(method.locationsOfLine(sourceName, lineNumber));
-					somePresent = true;
-				}
-				catch(AbsentInformationException exc)
-				{
-					someAbsent = true;
-				}
-			}
-		}
-		if(someAbsent && !somePresent)
-		{
-			throw new AbsentInformationException();
-		}
-		return list;
+	return Collections.emptyList();
 	}
 
 	@Override

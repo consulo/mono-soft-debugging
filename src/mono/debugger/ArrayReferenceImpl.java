@@ -37,14 +37,6 @@ public class ArrayReferenceImpl extends ObjectReferenceWithType
         super(aVm,aRef);
     }
 
-    @Override
-	protected ClassTypeImpl invokableReferenceType(MethodMirrorOld method) {
-        // The method has to be a method on Object since
-        // arrays don't have methods nor any other 'superclasses'
-        // So, use the ClassTypeImpl for Object instead of
-        // the ArrayTypeImpl for the array itself.
-        return (ClassTypeImpl)method.declaringType();
-    }
 
     ArrayTypeImpl arrayType() {
         return (ArrayTypeImpl)type();
