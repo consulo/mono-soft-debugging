@@ -18,6 +18,12 @@ public class StringValueMirror extends ValueImpl<String>
 	}
 
 	@NotNull
+	public ObjectValueMirror object()
+	{
+		return myObjectValueMirror;
+	}
+
+	@NotNull
 	@Override
 	public String value()
 	{

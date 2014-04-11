@@ -7,6 +7,7 @@ import mono.debugger.*;
 import mono.debugger.connect.Connector;
 import mono.debugger.event.EventSet;
 import mono.debugger.protocol.Method_GetDebugInfo;
+import mono.debugger.protocol.VirtualMachine_InvokeMethod;
 import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequestManager;
 
@@ -25,19 +26,12 @@ public class Main
 		argumentMap.get(SocketListeningConnector.ARG_LOCALADDR).setValue("127.0.0.1");
 		argumentMap.get(SocketListeningConnector.ARG_PORT).setValue("10110");
 
-		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
+		VirtualMachineImpl accept = (VirtualMachineImpl) socketListeningConnector.accept(argumentMap);
 
 		accept.resume();
 		accept.suspend();
 
 		TypeMirror typeMirror = accept.findTypes("MyClass", true)[0];
-
-		FieldMirror[] fields = typeMirror.fields();
-		for(FieldMirror field : fields)
-		{
-			System.out.println("field: " + field + " is static " + field.isStatic());
-		}
-
 
 		int index = 0;
 		MethodMirror m  = null;
@@ -45,7 +39,7 @@ public class Main
 		{
 			if("call".equals(methodMirror.name()))
 			{
-				Method_GetDebugInfo debugInfo = Method_GetDebugInfo.process((VirtualMachineImpl) accept, methodMirror);
+				Method_GetDebugInfo debugInfo = Method_GetDebugInfo.process(accept, methodMirror);
 				for(Method_GetDebugInfo.Entry entry : debugInfo.entries)
 				{
 					if(entry.line == 20)
@@ -83,10 +77,13 @@ public class Main
 					{
 						continue;
 					}
-					FieldMirror[] fields1 = type.fields();
-					PropertyMirror[] properties = type.properties();
 
-					List<FieldOrPropertyMirror> mirrors = type.fieldAndProperties(true);
+					TypeMirror object = accept.findTypes("System.Object", true)[0];
+
+					MethodMirror toString = object.findMethodByName("ToString");
+
+					VirtualMachine_InvokeMethod process = VirtualMachine_InvokeMethod.process(accept, frame.thread(), InvokeFlags.DISABLE_BREAKPOINTS, toString,
+							(ObjectValueMirror) value);
 					System.out.println("b");
 				}
 			}

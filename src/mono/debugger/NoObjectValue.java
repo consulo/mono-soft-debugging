@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * @author VISTALL
  * @since 10.04.14
  */
-public class NoObjectValue extends ValueImpl<Object>
+public class NoObjectValue extends ValueImpl<Object> implements MirrorWithId
 {
 	public NoObjectValue(VirtualMachine aVm)
 	{
@@ -29,5 +29,11 @@ public class NoObjectValue extends ValueImpl<Object>
 	public void accept(@NotNull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitNoObjectValue(this);
+	}
+
+	@Override
+	public long id()
+	{
+		return 0;
 	}
 }

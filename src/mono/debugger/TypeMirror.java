@@ -86,6 +86,18 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 		}
 	}
 
+	public MethodMirror findMethodByName(@NotNull String name)
+	{
+		for(MethodMirror methodMirror : methods())
+		{
+			if(methodMirror.name().equals(name))
+			{
+				return methodMirror;
+			}
+		}
+		return null;
+	}
+
 	@NotNull
 	public FieldMirror[] fields()
 	{

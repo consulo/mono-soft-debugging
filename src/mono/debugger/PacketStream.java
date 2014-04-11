@@ -33,6 +33,8 @@ import edu.arizona.cs.mbel.signature.SignatureConstants;
 
 public class PacketStream
 {
+	private static final byte NULL_VALUE = (byte) 0xf0;
+
 	public final VirtualMachineImpl vm;
 	private int inCursor = 0;
 	public final Packet pkt;
@@ -142,53 +144,38 @@ public class PacketStream
 		writeInt((int) data.id());
 	}
 
-	void writeID(int size, long data)
+	public void writeValue(Value<?> value)
 	{
-		switch(size)
+		if(value instanceof StringValueMirror)
 		{
-			case 8:
-				writeLong(data);
-				break;
-			case 4:
-				writeInt((int) data);
-				break;
-			case 2:
-				writeShort((short) data);
-				break;
-			default:
-				throw new UnsupportedOperationException("JDWP: ID size not supported: " + size);
+			writeByte(SignatureConstants.ELEMENT_TYPE_STRING);
+			writeId(((StringValueMirror) value).object());
 		}
-	}
-
-	void writeNullObjectRef()
-	{
-		writeObjectRef(0);
+		else if(value instanceof ObjectValueMirror)
+		{
+			writeByte(SignatureConstants.ELEMENT_TYPE_CLASS);
+			writeId((ObjectValueMirror) value);
+		}
+		else if(value instanceof NoObjectValue)
+		{
+			writeByte(NULL_VALUE);
+		}
+		else
+		{
+			throw new IllegalArgumentException(value.getClass().getName());
+		}
 	}
 
 	@Deprecated
 	void writeObjectRef(long data)
 	{
-		writeID(4, data);
+		writeInt((int) data);
 	}
 
+	@Deprecated
 	void writeClassRef(long data)
 	{
-		writeID(4, data);
-	}
-
-	void writeMethodRef(long data)
-	{
-		writeID(4, data);
-	}
-
-	void writeFieldRef(long data)
-	{
-		writeID(4, data);
-	}
-
-	void writeFrameRef(long data)
-	{
-		writeID(4, data);
+		writeInt((int) data);
 	}
 
 	void writeByteArray(byte[] data)
@@ -441,7 +428,7 @@ public class PacketStream
 				return readObjectMirror();
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, tag, readObjectMirror());
-			case (byte) 0xf0:
+			case NULL_VALUE:
 				return new NoObjectValue(vm);
 			default:
 				throw new IllegalArgumentException("Unsupported tag: " + tag);
