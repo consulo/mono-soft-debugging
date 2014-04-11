@@ -38,6 +38,7 @@ public class Type_GetInfo implements Type
 	public final String name;
 	public final String fullName;
 	public final AssemblyMirror assemblyMirror;
+	public final TypeMirror baseType;
 
 	private Type_GetInfo(VirtualMachineImpl vm, PacketStream ps)
 	{
@@ -45,5 +46,7 @@ public class Type_GetInfo implements Type
 		name = ps.readString();
 		fullName = ps.readString();
 		assemblyMirror = ps.readAssemblyMirror();
+		ps.readId(); //TODO [VISTALL] ModuleMirror
+		baseType = ps.readTypeMirror();
 	}
 }

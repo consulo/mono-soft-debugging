@@ -401,10 +401,14 @@ public class PacketStream
 		return new MethodMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
-	@NotNull
+	@Nullable
 	public TypeMirror readTypeMirror()
 	{
 		int ref = readId();
+		if(ref == 0)
+		{
+			return null;
+		}
 		return new TypeMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
@@ -429,6 +433,8 @@ public class PacketStream
 				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_STRING:
 				return new StringValueMirror(vm, readObjectMirror());
+			case SignatureConstants.ELEMENT_TYPE_CLASS:
+				return readObjectMirror();
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, tag, readObjectMirror());
 			case (byte) 0xf0:

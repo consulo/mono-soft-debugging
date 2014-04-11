@@ -1,11 +1,15 @@
 package test;
 
+import java.util.List;
 import java.util.Map;
 
+import mono.debugger.FieldMirror;
 import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
 import mono.debugger.SocketListeningConnector;
+import mono.debugger.StackFrameMirror;
 import mono.debugger.TypeMirror;
+import mono.debugger.Value;
 import mono.debugger.VirtualMachine;
 import mono.debugger.VirtualMachineImpl;
 import mono.debugger.connect.Connector;
@@ -32,24 +36,22 @@ public class Main
 		VirtualMachine accept = socketListeningConnector.accept(argumentMap);
 
 		accept.resume();
-
-		Thread.sleep(1000L);
-
 		accept.suspend();
 
-		TypeMirror typeMirror = accept.findTypes("Program", true)[0];
+		TypeMirror typeMirror = accept.findTypes("MyClass", true)[0];
 
+		FieldMirror[] fields = typeMirror.fields();
 		System.out.println(typeMirror.name());
 		int index = 0;
 		MethodMirror m  = null;
 		l:for(MethodMirror methodMirror : typeMirror.methods())
 		{
-			if("call4".equals(methodMirror.name()))
+			if("call".equals(methodMirror.name()))
 			{
 				Method_GetDebugInfo debugInfo = Method_GetDebugInfo.process((VirtualMachineImpl) accept, methodMirror);
 				for(Method_GetDebugInfo.Entry entry : debugInfo.entries)
 				{
-					if(entry.line == 44)
+					if(entry.line == 20)
 					{
 						m = methodMirror;
 						index = entry.offset;
@@ -68,7 +70,17 @@ public class Main
 
 		while(true)
 		{
-			EventSet remove = accept.eventQueue().remove();
+			EventSet eventSet = accept.eventQueue().remove();
+			if(eventSet.suspendPolicy() == BreakpointRequest.SUSPEND_ALL)
+			{
+				List<StackFrameMirror> frames = eventSet.eventThread().frames();
+
+				for(StackFrameMirror frame : frames)
+				{
+					System.out.println("frame: " + frame.location().method());
+					Value value = frame.thisObject();
+				}
+			}
 
 			Thread.sleep(100L);
 		}

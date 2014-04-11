@@ -1,6 +1,8 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import mono.debugger.protocol.Type_GetFields;
 import mono.debugger.protocol.Type_GetInfo;
 import mono.debugger.protocol.Type_GetMethods;
 
@@ -12,6 +14,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 {
 	private Type_GetInfo myInfo;
 	private MethodMirror[] myMethodMirrors;
+	private FieldMirror[] myFieldMirrors;
 
 	public TypeMirror(@NotNull VirtualMachine aVm, long id)
 	{
@@ -32,6 +35,12 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 			}
 		}
 		return myInfo;
+	}
+
+	@Nullable
+	public TypeMirror baseType()
+	{
+		return info().baseType;
 	}
 
 	@NotNull
@@ -63,6 +72,23 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 		try
 		{
 			return myMethodMirrors = Type_GetMethods.process(vm, this).methods;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	@NotNull
+	public FieldMirror[] fields()
+	{
+		if(myFieldMirrors != null)
+		{
+			return myFieldMirrors;
+		}
+		try
+		{
+			return myFieldMirrors = Type_GetFields.process(vm, this).fields;
 		}
 		catch(JDWPException e)
 		{
