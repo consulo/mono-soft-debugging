@@ -83,10 +83,11 @@ public class Main
 					{
 						continue;
 					}
-					for(FieldMirror fieldMirror : type.fields())
-					{
-						System.out.println("field value: " + fieldMirror + " value: " + fieldMirror.value((ObjectValueMirror) value));
-					}
+					FieldMirror[] fields1 = type.fields();
+					PropertyMirror[] properties = type.properties();
+
+					List<FieldOrPropertyMirror> mirrors = type.fieldAndProperties(true);
+					System.out.println("b");
 				}
 			}
 

@@ -1,7 +1,7 @@
 package mono.debugger.protocol;
 
-import mono.debugger.FieldMirror;
 import mono.debugger.JDWPException;
+import mono.debugger.MirrorWithId;
 import mono.debugger.PacketStream;
 import mono.debugger.TypeMirror;
 import mono.debugger.Value;
@@ -15,18 +15,18 @@ public class Type_GetValues implements Type
 {
 	static final int COMMAND = 4;
 
-	public static Type_GetValues process(VirtualMachineImpl vm, TypeMirror typeMirror, FieldMirror... fieldMirrors) throws JDWPException
+	public static Type_GetValues process(VirtualMachineImpl vm, TypeMirror typeMirror, MirrorWithId... mirrorWithIds) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, typeMirror, fieldMirrors);
-		return waitForReply(vm, ps, fieldMirrors.length);
+		PacketStream ps = enqueueCommand(vm, typeMirror, mirrorWithIds);
+		return waitForReply(vm, ps, mirrorWithIds.length);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, TypeMirror typeMirror, FieldMirror[] fieldMirrors)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, TypeMirror typeMirror, MirrorWithId[] mirrorWithIds)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(typeMirror);
-		ps.writeInt(fieldMirrors.length);
-		for(FieldMirror fieldMirror : fieldMirrors)
+		ps.writeInt(mirrorWithIds.length);
+		for(MirrorWithId fieldMirror : mirrorWithIds)
 		{
 			ps.writeId(fieldMirror);
 		}

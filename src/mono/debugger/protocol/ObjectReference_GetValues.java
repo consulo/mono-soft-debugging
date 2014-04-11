@@ -1,7 +1,7 @@
 package mono.debugger.protocol;
 
-import mono.debugger.FieldMirror;
 import mono.debugger.JDWPException;
+import mono.debugger.MirrorWithId;
 import mono.debugger.ObjectValueMirror;
 import mono.debugger.PacketStream;
 import mono.debugger.Value;
@@ -18,18 +18,18 @@ public class ObjectReference_GetValues implements ObjectReference
 	public static ObjectReference_GetValues process(
 			VirtualMachineImpl vm,
 			ObjectValueMirror objectValueMirror,
-			FieldMirror... fieldMirrors) throws JDWPException
+			MirrorWithId... mirrorWithIds) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, objectValueMirror, fieldMirrors);
-		return waitForReply(vm, ps, fieldMirrors.length);
+		PacketStream ps = enqueueCommand(vm, objectValueMirror, mirrorWithIds);
+		return waitForReply(vm, ps, mirrorWithIds.length);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, ObjectValueMirror objectValueMirror, FieldMirror[] fieldMirrors)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, ObjectValueMirror objectValueMirror, MirrorWithId... mirrorWithIds)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(objectValueMirror);
-		ps.writeInt(fieldMirrors.length);
-		for(FieldMirror fieldMirror : fieldMirrors)
+		ps.writeInt(mirrorWithIds.length);
+		for(MirrorWithId fieldMirror : mirrorWithIds)
 		{
 			ps.writeId(fieldMirror);
 		}
