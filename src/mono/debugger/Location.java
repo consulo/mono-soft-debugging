@@ -25,22 +25,25 @@
 
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * A point within the executing code of the target VM.
  * Locations are used to identify the current position of
  * a suspended thread (analogous to an instruction pointer or
  * program counter register in native programs). They are also used
  * to identify the position at which to set a breakpoint.
- * <p>
+ * <p/>
  * The availability of a line number for a location will
  * depend on the level of debugging information available from the
  * target VM.
- * <p>
+ * <p/>
  * Several mirror interfaces have locations. Each such mirror
  * extends a {@link Locatable} interface.
- * <p>
+ * <p/>
  * <a name="strata"><b>Strata</b></a>
- * <p>
+ * <p/>
  * The source information for a Location is dependent on the
  * <i>stratum</i> which is used. A stratum is a source code
  * level within a sequence of translations.  For example,
@@ -73,136 +76,30 @@ package mono.debugger;
  * returned as the default.  To determine the available strata
  * use {@link ReferenceType#availableStrata()}.
  *
+ * @author Robert Field
+ * @author Gordon Hirsch
+ * @author James McIlree
  * @see mono.debugger.request.EventRequestManager
  * @see StackFrameMirror
  * @see mono.debugger.event.BreakpointEvent
  * @see mono.debugger.event.ExceptionEvent
  * @see Locatable
- *
- * @author Robert Field
- * @author Gordon Hirsch
- * @author James McIlree
  * @since 1.3
  */
-public interface Location extends Mirror {
-
-    /**
-     * Gets the type to which this Location belongs. Normally
-     * the declaring type is a {@link TypeMirror}, but executable
-     * locations also may exist within the static initializer of an
-     * {@link InterfaceType}.
-     *
-     * @return the {@link ReferenceType} containing this Location.
-     */
+public interface Location extends Mirror
+{
+	@NotNull
 	TypeMirror declaringType();
 
-    /**
-     * Gets the method containing this Location.
-     *
-     * @return the location's {@link MethodMirror}.
-     */
-    MethodMirror method();
+	@NotNull
+	MethodMirror method();
 
-    /**
-     * Gets the code position within this location's method.
-     *
-     * @return the long representing the position within the method
-     * or -1 if location is within a native method.
-     */
-    long codeIndex();
+	long codeIndex();
 
-    /**
-     * Gets an identifing name for the source corresponding to
-     * this location. Interpretation of this string is the
-     * responsibility of the source repository mechanism.
-     * <P>
-     * Returned name is for the specified <i>stratum</i>
-     * (see the {@link Location class comment} for a
-     * description of strata).
-     * <P>
-     * The returned string is the unqualified name of the source
-     * file for this Location.  For example,
-     * <CODE>java.lang.Thread</CODE> would return
-     * <CODE>"Thread.java"</CODE>.
-     *
-     * @param stratum The stratum to retrieve information from
-     * or <code>null</code> for the declaring type's
-     * default stratum.
-     *
-     * @return a string specifying the source
-     *
-     * @throws AbsentInformationException if the source name is not
-     * known
-     *
-     * @since 1.4
-     */
-    String sourceName()
-                        throws AbsentInformationException;
+	@Nullable
+	String sourcePath();
 
+	int lineNumber();
 
-    /**
-     * Gets the path to the source corresponding to this
-     * location. Interpretation of this string is the
-     * responsibility of the source repository mechanism.
-     * <P>
-     * Returned path is for the specified <i>stratum</i>
-     * (see the {@link Location class comment} for a
-     * description of strata).
-     * <P>
-     * In the reference implementation, for strata which
-     * do not explicitly specify source path (the Java
-     * programming language stratum never does), the returned
-     * string is the package name of {@link #declaringType()}
-     * converted to a platform dependent path followed by the
-     * unqualified name of the source file for this Location
-     * ({@link #sourceName sourceName(stratum)}).
-     * For example, on a
-     * Windows platform, <CODE>java.lang.Thread</CODE>
-     * would return
-     * <CODE>"java\lang\Thread.java"</CODE>.
-     *
-     * @param stratum The stratum to retrieve information from
-     * or <code>null</code> for the declaring type's
-     * default stratum.
-     *
-     * @return a string specifying the source
-     *
-     * @throws AbsentInformationException if the source name is not
-     * known
-     *
-     * @since 1.4
-     */
-    String sourcePath()
-                         throws AbsentInformationException;
-
-    /**
-     * Gets the line number of this Location.
-     * <P>
-     * This method is equivalent to
-     * <code>lineNumber(vm.getDefaultStratum())</code> -
-     * see {@link #lineNumber(String)}
-     * for more information.
-     *
-     * @return an int specifying the line in the source, returns
-     * -1 if the information is not available; specifically, always
-     * returns -1 for native methods.
-     */
-    int lineNumber();
-
-    /**
-     * Compares the specified Object with this Location for equality.
-     *
-     * @return true if the Object is a Location and if it refers to
-     * the same point in the same VM as this Location.
-     */
-	@Override
-	boolean equals(Object obj);
-
-    /**
-     * Returns the hash code value for this Location.
-     *
-     * @return the integer hash code
-     */
-	@Override
-	int hashCode();
+	int columnNumber();
 }

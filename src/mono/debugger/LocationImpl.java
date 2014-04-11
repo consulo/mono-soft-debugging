@@ -25,10 +25,16 @@
 
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+import mono.debugger.protocol.Method_GetDebugInfo;
+
 public class LocationImpl extends MirrorImpl implements Location
 {
 	private MethodMirror method;
 	private long codeIndex;
+
+	private boolean myEntryResolved;
+	private Method_GetDebugInfo.Entry myEntry;
 
 	public LocationImpl(VirtualMachine vm, MethodMirror method, long codeIndex)
 	{
@@ -60,13 +66,14 @@ public class LocationImpl extends MirrorImpl implements Location
 		return method().hashCode() + (int) codeIndex();
 	}
 
-
+	@NotNull
 	@Override
 	public TypeMirror declaringType()
 	{
 		return method.declaringType();
 	}
 
+	@NotNull
 	@Override
 	public MethodMirror method()
 	{
@@ -80,21 +87,42 @@ public class LocationImpl extends MirrorImpl implements Location
 	}
 
 	@Override
-	public String sourceName() throws AbsentInformationException
+	public String sourcePath()
 	{
-		return "";
-	}
-
-	@Override
-	public String sourcePath() throws AbsentInformationException
-	{
-		return "";
+		Method_GetDebugInfo.Entry entry = debugEntry();
+		return entry == null ? null : entry.sourceFile.name;
 	}
 
 	@Override
 	public int lineNumber()
 	{
-		return 0;
+		Method_GetDebugInfo.Entry entry = debugEntry();
+		return entry == null ? -1 : entry.line;
+	}
+
+	@Override
+	public int columnNumber()
+	{
+		Method_GetDebugInfo.Entry entry = debugEntry();
+		return entry == null ? -1 : entry.column;
+	}
+
+	private Method_GetDebugInfo.Entry debugEntry()
+	{
+		if(myEntryResolved)
+		{
+			return myEntry;
+		}
+
+		myEntryResolved = true;
+		for(Method_GetDebugInfo.Entry entry : method.debugInfo())
+		{
+			if(entry.offset == codeIndex)
+			{
+				return myEntry = entry;
+			}
+		}
+		return myEntry;
 	}
 
 	@Override

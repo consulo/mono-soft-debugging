@@ -12,8 +12,13 @@ import mono.debugger.protocol.Method_GetParamInfo;
  */
 public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
 {
+	private static final Method_GetDebugInfo.Entry[] EMPTY_ENTRIES = new Method_GetDebugInfo.Entry[0];
+
 	private TypeMirror myDeclarationType;
 	private Method_GetParamInfo myParamInfo;
+
+	private int myMaxCodeIndex = Integer.MIN_VALUE;
+	private Method_GetDebugInfo.Entry[] myDebugEntries;
 
 	public MethodMirror(@NotNull VirtualMachine aVm, long id)
 	{
@@ -44,6 +49,32 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
 	public int genericParameterCount()
 	{
 		return paramInfo().genericParameterCount;
+	}
+
+	public int maxCodeIndex()
+	{
+		debugInfo();
+		return myMaxCodeIndex;
+	}
+
+	@NotNull
+	public Method_GetDebugInfo.Entry[] debugInfo()
+	{
+		if(myMaxCodeIndex == Integer.MIN_VALUE)
+		{
+			try
+			{
+				Method_GetDebugInfo process = Method_GetDebugInfo.process(vm, this);
+				myDebugEntries = process.entries;
+				myMaxCodeIndex = process.maxIndex;
+			}
+			catch(JDWPException e)
+			{
+				myMaxCodeIndex = -1;
+				myDebugEntries = EMPTY_ENTRIES;
+			}
+		}
+		return myDebugEntries;
 	}
 
 	@NotNull
