@@ -1,7 +1,9 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.FieldAttributes;
+import mono.debugger.protocol.Type_GetValues;
 
 /**
  * @author VISTALL
@@ -13,14 +15,47 @@ public class FieldMirror extends MirrorWithIdAndName
 	private final String myName;
 	@NotNull
 	private final TypeMirror myTypeMirror;
+	private final TypeMirror myParent;
 	private final int myAttributes;
 
-	public FieldMirror(@NotNull VirtualMachine aVm, long id, @NotNull String name, @NotNull TypeMirror typeMirror, int attributes)
+	public FieldMirror(@NotNull VirtualMachine aVm, long id, @NotNull String name, @NotNull TypeMirror typeMirror, TypeMirror parent, int attributes)
 	{
 		super(aVm, id);
 		myName = name;
 		myTypeMirror = typeMirror;
+		myParent = parent;
 		myAttributes = attributes;
+	}
+
+	public Value<?> value(@Nullable ObjectValueMirror objectValueMirror)
+	{
+		if(isStatic() && objectValueMirror != null || !isStatic() && objectValueMirror == null)
+		{
+			throw new IllegalArgumentException();
+		}
+
+		if(objectValueMirror == null)
+		{
+			try
+			{
+				Type_GetValues process = Type_GetValues.process(vm, parent(), this);
+				return process.values[0];
+			}
+			catch(JDWPException e)
+			{
+				throw e.toJDIException();
+			}
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@NotNull
+	public TypeMirror parent()
+	{
+		return myParent;
 	}
 
 	@NotNull

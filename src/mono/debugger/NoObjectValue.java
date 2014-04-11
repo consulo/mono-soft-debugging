@@ -16,7 +16,7 @@ public class NoObjectValue extends ValueImpl<Object>
 	@Override
 	public Object value()
 	{
-		return "<static>";
+		return "<no object>";
 	}
 
 	@Override

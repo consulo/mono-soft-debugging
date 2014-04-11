@@ -17,7 +17,7 @@ public class Type_GetFields implements Type
 	public static Type_GetFields process(VirtualMachineImpl vm, TypeMirror typeMirror) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, typeMirror);
-		return waitForReply(vm, ps);
+		return waitForReply(vm, ps, typeMirror);
 	}
 
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, TypeMirror typeMirror)
@@ -28,15 +28,15 @@ public class Type_GetFields implements Type
 		return ps;
 	}
 
-	static Type_GetFields waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
+	static Type_GetFields waitForReply(VirtualMachineImpl vm, PacketStream ps, TypeMirror typeMirror) throws JDWPException
 	{
 		ps.waitForReply();
-		return new Type_GetFields(vm, ps);
+		return new Type_GetFields(vm, ps, typeMirror);
 	}
 
 	public final FieldMirror[] fields;
 
-	private Type_GetFields(VirtualMachineImpl vm, PacketStream ps)
+	private Type_GetFields(VirtualMachineImpl vm, PacketStream ps, TypeMirror parent)
 	{
 		int size = ps.readInt();
 		fields = new FieldMirror[size];
@@ -46,7 +46,7 @@ public class Type_GetFields implements Type
 			String name = ps.readString();
 			TypeMirror typeMirror = ps.readTypeMirror();
 			int attributes = ps.readInt();
-			fields[i] = new FieldMirror(vm, id, name, typeMirror, attributes);
+			fields[i] = new FieldMirror(vm, id, name, typeMirror, parent, attributes);
 		}
 	}
 }

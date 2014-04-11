@@ -46,13 +46,6 @@ public class Main
 			System.out.println("field: " + field + " is static " + field.isStatic());
 		}
 
-		TypeMirror typeMirror2 = accept.findTypes("Program", true)[0];
-
-		FieldMirror[] fields1 = typeMirror2.fields();
-		for(FieldMirror field : fields1)
-		{
-			System.out.println("field: " + field + " is static " + field.isStatic());
-		}
 
 		int index = 0;
 		MethodMirror m  = null;
@@ -91,6 +84,19 @@ public class Main
 				{
 					System.out.println("frame: " + frame.location().method());
 					Value value = frame.thisObject();
+				}
+			}
+
+
+			TypeMirror typeMirror2 = accept.findTypes("Program", true)[0];
+
+			FieldMirror[] fields1 = typeMirror2.fields();
+			for(FieldMirror field : fields1)
+			{
+				System.out.println("field: " + field + " is static " + field.isStatic());
+				if(field.isStatic())
+				{
+					System.out.println("field value: " + field.value(null));
 				}
 			}
 
