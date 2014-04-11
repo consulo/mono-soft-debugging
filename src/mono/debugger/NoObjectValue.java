@@ -1,15 +1,24 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author VISTALL
  * @since 10.04.14
  */
-public class NoObjectValue extends ValueImpl
+public class NoObjectValue extends ValueImpl<Object>
 {
 	public NoObjectValue(VirtualMachine aVm)
 	{
 		super(aVm);
 	}
+
+	@Override
+	public Object value()
+	{
+		return "<static>";
+	}
+
 	@Override
 	public TypeMirror type()
 	{
@@ -17,8 +26,8 @@ public class NoObjectValue extends ValueImpl
 	}
 
 	@Override
-	public String toString()
+	public void accept(@NotNull ValueVisitor valueVisitor)
 	{
-		return "<static>";
+		valueVisitor.visitNoObjectValue(this);
 	}
 }

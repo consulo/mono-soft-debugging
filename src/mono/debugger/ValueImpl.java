@@ -25,10 +25,16 @@
 
 package mono.debugger;
 
-abstract class ValueImpl extends MirrorImpl implements Value
+abstract class ValueImpl<T> extends MirrorImpl implements Value<T>
 {
 	ValueImpl(VirtualMachine aVm)
 	{
 		super(aVm);
+	}
+
+	@Override
+	public String toString()
+	{
+		return getClass().getSimpleName() + ", value: " + value() + ", type: " + type();
 	}
 }

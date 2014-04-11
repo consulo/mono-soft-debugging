@@ -1,12 +1,13 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.ArrayReference_GetLength;
 
 /**
  * @author VISTALL
  * @since 10.04.14
  */
-public class ArrayValueMirror extends ValueImpl implements MirrorWithId
+public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 {
 	private final byte myTag;
 	private final ObjectValueMirror myObjectValueMirror;
@@ -33,6 +34,18 @@ public class ArrayValueMirror extends ValueImpl implements MirrorWithId
 
 	@Override
 	public TypeMirror type()
+	{
+		return null;
+	}
+
+	@Override
+	public void accept(@NotNull ValueVisitor valueVisitor)
+	{
+		valueVisitor.visitArrayValue(this);
+	}
+
+	@Override
+	public Object value()
 	{
 		return null;
 	}

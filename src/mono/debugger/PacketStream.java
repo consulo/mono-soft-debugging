@@ -421,8 +421,14 @@ public class PacketStream
 		byte tag = readByte();
 		switch(tag)
 		{
+			case SignatureConstants.ELEMENT_TYPE_I1:
+				return new NumberValueMirror(vm, tag, readByte());
+			case SignatureConstants.ELEMENT_TYPE_I2:
+				return new NumberValueMirror(vm, tag, readShort());
 			case SignatureConstants.ELEMENT_TYPE_I4:
-				return new PrimitiveValueMirror(vm, tag, readInt());
+				return new NumberValueMirror(vm, tag, readInt());
+			case SignatureConstants.ELEMENT_TYPE_STRING:
+				return new StringValueMirror(vm, readObjectMirror());
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, tag, readObjectMirror());
 			case (byte) 0xf0:

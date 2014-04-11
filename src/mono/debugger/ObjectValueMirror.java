@@ -1,10 +1,13 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author VISTALL
  * @since 10.04.14
  */
-public class ObjectValueMirror extends ValueImpl implements MirrorWithId
+public class ObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 {
 	private final long myId;
 
@@ -24,5 +27,18 @@ public class ObjectValueMirror extends ValueImpl implements MirrorWithId
 	public TypeMirror type()
 	{
 		return null;
+	}
+
+	@Nullable
+	@Override
+	public Object value()
+	{
+		return "object";
+	}
+
+	@Override
+	public void accept(@NotNull ValueVisitor valueVisitor)
+	{
+		valueVisitor.visitObjectValue(this);
 	}
 }

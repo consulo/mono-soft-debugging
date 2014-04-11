@@ -7,13 +7,13 @@ import mono.debugger.VirtualMachineImpl;
 
 /**
  * @author VISTALL
- * @since 10.04.14
+ * @since 11.04.14
  */
-public class ArrayReference_GetLength implements ArrayReference
+public class StringReference_GetValue implements StringReference
 {
 	static final int COMMAND = 1;
 
-	public static ArrayReference_GetLength process(VirtualMachineImpl vm, ObjectValueMirror objectValueMirror) throws JDWPException
+	public static StringReference_GetValue process(VirtualMachineImpl vm, ObjectValueMirror objectValueMirror) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, objectValueMirror);
 		return waitForReply(vm, ps);
@@ -27,20 +27,16 @@ public class ArrayReference_GetLength implements ArrayReference
 		return ps;
 	}
 
-	static ArrayReference_GetLength waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
+	static StringReference_GetValue waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
 	{
 		ps.waitForReply();
-		return new ArrayReference_GetLength(vm, ps);
+		return new StringReference_GetValue(vm, ps);
 	}
 
+	public final String value;
 
-	private ArrayReference_GetLength(VirtualMachineImpl vm, PacketStream ps)
+	private StringReference_GetValue(VirtualMachineImpl vm, PacketStream ps)
 	{
-		int rank = ps.readInt();
-		for(int i = 0; i < rank; i++)
-		{
-			int size = ps.readInt();
-			int lower = ps.readInt();
-		}
+		value = ps.readString();
 	}
 }
