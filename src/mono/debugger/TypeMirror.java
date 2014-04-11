@@ -168,10 +168,10 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 
 		for(FieldMirror field : fields)
 		{
-			if(data.contains(field.id()))
+			/*if(data.contains(field.id()))
 			{
 				continue;
-			}
+			}    */
 			fieldOrPropertyMirrors.add(field);
 		}
 

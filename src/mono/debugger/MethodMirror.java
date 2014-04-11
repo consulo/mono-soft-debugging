@@ -1,8 +1,11 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import edu.arizona.cs.mbel.signature.MethodAttributes;
 import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.protocol.Method_GetDeclarationType;
+import mono.debugger.protocol.Method_GetInfo;
 import mono.debugger.protocol.Method_GetName;
 import mono.debugger.protocol.Method_GetParamInfo;
 
@@ -10,12 +13,13 @@ import mono.debugger.protocol.Method_GetParamInfo;
  * @author VISTALL
  * @since 10.04.14
  */
-public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
+public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, ModifierOwner
 {
 	private static final Method_GetDebugInfo.Entry[] EMPTY_ENTRIES = new Method_GetDebugInfo.Entry[0];
 
 	private TypeMirror myDeclarationType;
 	private Method_GetParamInfo myParamInfo;
+	private Method_GetInfo myInfo;
 
 	private int myMaxCodeIndex = Integer.MIN_VALUE;
 	private Method_GetDebugInfo.Entry[] myDebugEntries;
@@ -41,6 +45,22 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
 		}
 	}
 
+	private Method_GetInfo info()
+	{
+		if(myInfo != null)
+		{
+			return myInfo;
+		}
+		try
+		{
+			return myInfo = Method_GetInfo.process(vm, this);
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
 	public MethodParameterMirror[] parameters()
 	{
 		return paramInfo().parameters;
@@ -55,6 +75,12 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
 	{
 		debugInfo();
 		return myMaxCodeIndex;
+	}
+
+	@Nullable
+	public TypeMirror returnType()
+	{
+		return paramInfo().returnType;
 	}
 
 	@NotNull
@@ -100,5 +126,11 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId
 		{
 			throw e.toJDIException();
 		}
+	}
+
+	@Override
+	public boolean isStatic()
+	{
+		return (info().attributes & MethodAttributes.Static) == MethodAttributes.Static;
 	}
 }

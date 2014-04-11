@@ -9,7 +9,7 @@ import mono.debugger.protocol.Type_GetValues;
  * @author VISTALL
  * @since 11.04.14
  */
-public abstract class FieldOrPropertyMirror extends MirrorWithIdAndName
+public abstract class FieldOrPropertyMirror extends MirrorWithIdAndName implements ModifierOwner
 {
 	private final TypeMirror myParent;
 	protected final int myAttributes;
@@ -36,8 +36,6 @@ public abstract class FieldOrPropertyMirror extends MirrorWithIdAndName
 	{
 		return myParent;
 	}
-
-	public abstract boolean isStatic();
 
 	@NotNull
 	public abstract TypeMirror type();

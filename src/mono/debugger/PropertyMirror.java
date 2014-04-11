@@ -1,6 +1,7 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author VISTALL
@@ -15,8 +16,8 @@ public class PropertyMirror extends FieldOrPropertyMirror
 			@NotNull VirtualMachine aVm,
 			long id,
 			@NotNull String name,
-			MethodMirror getMethod,
-			MethodMirror setMethod,
+			@Nullable MethodMirror getMethod,
+			@Nullable MethodMirror setMethod,
 			@NotNull TypeMirror parent,
 			int attributes)
 	{
@@ -35,30 +36,34 @@ public class PropertyMirror extends FieldOrPropertyMirror
 		return mySetMethod;
 	}
 
+	@Override
 	@NotNull
-	public FieldMirror field()
+	public TypeMirror type()
 	{
-		TypeMirror parent = parent();
-		for(FieldMirror fieldMirror : parent.fields())
+		if(myGetMethod != null)
 		{
-			if(fieldMirror.id() == id())
-			{
-				return fieldMirror;
-			}
+			TypeMirror typeMirror = myGetMethod.returnType();
+			assert typeMirror != null;
+			return typeMirror;
+		}
+		else if(mySetMethod != null)
+		{
+			return mySetMethod.parameters()[0].type();
 		}
 		throw new IllegalArgumentException();
 	}
 
 	@Override
-	@NotNull
-	public TypeMirror type()
-	{
-		return field().type();
-	}
-
-	@Override
 	public boolean isStatic()
 	{
-		return field().isStatic();
+		if(myGetMethod != null)
+		{
+			return myGetMethod.isStatic();
+		}
+		else if(mySetMethod != null)
+		{
+			return mySetMethod.isStatic();
+		}
+		throw new IllegalArgumentException();
 	}
 }

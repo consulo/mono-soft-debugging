@@ -394,10 +394,14 @@ public class PacketStream
 		return new AppDomainMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
-	@NotNull
+	@Nullable
 	public MethodMirror readMethodMirror()
 	{
 		int ref = readId();
+		if(ref == 0)
+		{
+			return null;
+		}
 		return new MethodMirror(vm, ref); //FIXME [VISTALL] caching?
 	}
 
