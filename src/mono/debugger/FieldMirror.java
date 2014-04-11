@@ -1,6 +1,7 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import edu.arizona.cs.mbel.signature.FieldAttributes;
 
 /**
  * @author VISTALL
@@ -12,7 +13,7 @@ public class FieldMirror extends MirrorWithIdAndName
 	private final String myName;
 	@NotNull
 	private final TypeMirror myTypeMirror;
-	private final int myAttributes;   //?
+	private final int myAttributes;
 
 	public FieldMirror(@NotNull VirtualMachine aVm, long id, @NotNull String name, @NotNull TypeMirror typeMirror, int attributes)
 	{
@@ -33,5 +34,10 @@ public class FieldMirror extends MirrorWithIdAndName
 	protected String nameImpl() throws JDWPException
 	{
 		return myName;
+	}
+
+	public boolean isStatic()
+	{
+		return (myAttributes & FieldAttributes.Static) == FieldAttributes.Static;
 	}
 }
