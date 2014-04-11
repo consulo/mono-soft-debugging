@@ -2,6 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import mono.debugger.protocol.ObjectReference_GetType;
 
 /**
  * @author VISTALL
@@ -26,7 +27,14 @@ public class ObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 	@Override
 	public TypeMirror type()
 	{
-		return null;
+		try
+		{
+			return ObjectReference_GetType.process(vm, this).type;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
 	}
 
 	@Nullable

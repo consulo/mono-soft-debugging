@@ -3,6 +3,7 @@ package mono.debugger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.FieldAttributes;
+import mono.debugger.protocol.ObjectReference_GetValues;
 import mono.debugger.protocol.Type_GetValues;
 
 /**
@@ -34,21 +35,22 @@ public class FieldMirror extends MirrorWithIdAndName
 			throw new IllegalArgumentException();
 		}
 
-		if(objectValueMirror == null)
+		try
 		{
-			try
+			if(objectValueMirror == null)
 			{
 				Type_GetValues process = Type_GetValues.process(vm, parent(), this);
 				return process.values[0];
 			}
-			catch(JDWPException e)
+			else
 			{
-				throw e.toJDIException();
+				ObjectReference_GetValues process = ObjectReference_GetValues.process(vm, objectValueMirror, this);
+				return process.values[0];
 			}
 		}
-		else
+		catch(JDWPException e)
 		{
-			return null;
+			throw e.toJDIException();
 		}
 	}
 

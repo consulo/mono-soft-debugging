@@ -3,15 +3,7 @@ package test;
 import java.util.List;
 import java.util.Map;
 
-import mono.debugger.FieldMirror;
-import mono.debugger.LocationImpl;
-import mono.debugger.MethodMirror;
-import mono.debugger.SocketListeningConnector;
-import mono.debugger.StackFrameMirror;
-import mono.debugger.TypeMirror;
-import mono.debugger.Value;
-import mono.debugger.VirtualMachine;
-import mono.debugger.VirtualMachineImpl;
+import mono.debugger.*;
 import mono.debugger.connect.Connector;
 import mono.debugger.event.EventSet;
 import mono.debugger.protocol.Method_GetDebugInfo;
@@ -84,21 +76,20 @@ public class Main
 				{
 					System.out.println("frame: " + frame.location().method());
 					Value value = frame.thisObject();
+
+					TypeMirror type = value.type();
+
+					if(type == null)
+					{
+						continue;
+					}
+					for(FieldMirror fieldMirror : type.fields())
+					{
+						System.out.println("field value: " + fieldMirror + " value: " + fieldMirror.value((ObjectValueMirror) value));
+					}
 				}
 			}
 
-
-			TypeMirror typeMirror2 = accept.findTypes("Program", true)[0];
-
-			FieldMirror[] fields1 = typeMirror2.fields();
-			for(FieldMirror field : fields1)
-			{
-				System.out.println("field: " + field + " is static " + field.isStatic());
-				if(field.isStatic())
-				{
-					System.out.println("field value: " + field.value(null));
-				}
-			}
 
 			Thread.sleep(100L);
 		}
