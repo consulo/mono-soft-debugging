@@ -46,9 +46,6 @@ import mono.debugger.*;
  * {@link #remove() remove()} every EventSet from the
  * event queue until an EventSet containing a
  * {@link VMDisconnectEvent} is read.
- * Unless {@link mono.debugger.VirtualMachine#resume() resume} is
- * being handled in another way, each EventSet should invoke
- * {@link EventSet#resume()}.
  *
  * @see EventSet
  * @see VirtualMachine

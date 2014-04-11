@@ -25,9 +25,12 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
-
 import java.util.Set;
+
+import mono.debugger.Location;
+import mono.debugger.Mirror;
+import mono.debugger.ThreadMirror;
+import mono.debugger.VirtualMachine;
 
 /**
  * Several {@link Event} objects may be created at a given time by
@@ -156,16 +159,5 @@ public interface EventSet extends Mirror, Set<Event> {
      */
     EventIterator eventIterator();
 
-    /**
-     * Resumes threads suspended by this event set. If the {@link #suspendPolicy}
-     * is {@link mono.debugger.request.EventRequest#SUSPEND_ALL}, a call
-     * to this method is equivalent to
-     * {@link mono.debugger.VirtualMachine#resume}. If the
-     * suspend policy is
-     * {@link mono.debugger.request.EventRequest#SUSPEND_EVENT_THREAD},
-     * a call to this method is equivalent to
-     * {@link mono.debugger.ThreadMirror#resume} for the event thread.
-     * Otherwise, a call to this method is a no-op.
-     */
-    void resume();
+	ThreadMirror eventThread();
 }

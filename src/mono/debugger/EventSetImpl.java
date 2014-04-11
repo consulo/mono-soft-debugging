@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.event.*;
 import mono.debugger.request.EventRequest;
 
@@ -567,7 +568,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		return EventRequestManagerImpl.JDWPtoJDISuspendPolicy(suspendPolicy);
 	}
 
-	private ThreadMirror eventThread()
+	@Override
+	public ThreadMirror eventThread()
 	{
 		for(Event event : this)
 		{
@@ -579,30 +581,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		return null;
 	}
 
-	@Override
-	public void resume()
-	{
-		switch(suspendPolicy())
-		{
-			case EventRequest.SUSPEND_ALL:
-				vm.resume();
-				break;
-			case EventRequest.SUSPEND_EVENT_THREAD:
-				ThreadMirror thread = eventThread();
-				if(thread == null)
-				{
-					throw new InternalException("Inconsistent suspend policy");
-				}
-				//thread.resume();
-				break;
-			case EventRequest.SUSPEND_NONE:
-				// Do nothing
-				break;
-			default:
-				throw new InternalException("Invalid suspend policy");
-		}
-	}
-
+	@NotNull
 	@Override
 	public Iterator<Event> iterator()
 	{
