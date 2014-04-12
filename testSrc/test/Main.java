@@ -3,11 +3,16 @@ package test;
 import java.util.List;
 import java.util.Map;
 
-import mono.debugger.*;
+import mono.debugger.LocationImpl;
+import mono.debugger.MethodMirror;
+import mono.debugger.SocketListeningConnector;
+import mono.debugger.StackFrameMirror;
+import mono.debugger.TypeMirror;
+import mono.debugger.Value;
+import mono.debugger.VirtualMachineImpl;
 import mono.debugger.connect.Connector;
 import mono.debugger.event.EventSet;
 import mono.debugger.protocol.Method_GetDebugInfo;
-import mono.debugger.protocol.VirtualMachine_InvokeMethod;
 import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequestManager;
 
@@ -42,7 +47,7 @@ public class Main
 				Method_GetDebugInfo debugInfo = Method_GetDebugInfo.process(accept, methodMirror);
 				for(Method_GetDebugInfo.Entry entry : debugInfo.entries)
 				{
-					if(entry.line == 20)
+					if(entry.line == 21)
 					{
 						m = methodMirror;
 						index = entry.offset;
@@ -78,12 +83,11 @@ public class Main
 						continue;
 					}
 
-					TypeMirror object = accept.findTypes("System.Object", true)[0];
+					MethodMirror method = frame.location().method();
 
-					MethodMirror toString = object.findMethodByName("ToString");
+					Value[] parameters = frame.localOrParameterValues(method.parameters());
+					Value[] locals = frame.localOrParameterValues(method.locals());
 
-					VirtualMachine_InvokeMethod process = VirtualMachine_InvokeMethod.process(accept, frame.thread(), InvokeFlags.DISABLE_BREAKPOINTS, toString,
-							(ObjectValueMirror) value);
 					System.out.println("b");
 				}
 			}

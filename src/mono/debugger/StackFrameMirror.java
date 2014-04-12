@@ -1,6 +1,7 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import mono.debugger.protocol.StackFrame_GetThis;
 import mono.debugger.protocol.StackFrame_GetValues;
 
@@ -68,7 +69,8 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		return myFrameID;
 	}
 
-	public Value parameterValue(MethodParameterMirror parameter)
+	@Nullable
+	public Value localOrParameterValue(LocalVariableOrParameterMirror mirror)
 	{
 		// native methods ill throw absent information
 		if(flags() == StackFrameFlags.NATIVE_TRANSITION)
@@ -77,8 +79,31 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		}
 		try
 		{
-			StackFrame_GetValues process = StackFrame_GetValues.process(vm, myThreadMirror, this, new int[]{-(int) (parameter.id() + 1)});
+			StackFrame_GetValues process = StackFrame_GetValues.process(vm, myThreadMirror, this, mirror);
 			return process.values[0];
+		}
+		catch(JDWPException e)
+		{
+			if(e.errorCode == JDWP.Error.ABSENT_INFORMATION)
+			{
+				return null;
+			}
+			throw e.toJDIException();
+		}
+	}
+
+	@Nullable
+	public Value[] localOrParameterValues(LocalVariableOrParameterMirror... mirror)
+	{
+		// native methods ill throw absent information
+		if(flags() == StackFrameFlags.NATIVE_TRANSITION)
+		{
+			return null;
+		}
+		try
+		{
+			StackFrame_GetValues process = StackFrame_GetValues.process(vm, myThreadMirror, this, mirror);
+			return process.values;
 		}
 		catch(JDWPException e)
 		{

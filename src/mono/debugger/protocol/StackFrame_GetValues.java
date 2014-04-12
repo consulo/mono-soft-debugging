@@ -1,6 +1,7 @@
 package mono.debugger.protocol;
 
 import mono.debugger.JDWPException;
+import mono.debugger.LocalVariableOrParameterMirror;
 import mono.debugger.PacketStream;
 import mono.debugger.StackFrameMirror;
 import mono.debugger.ThreadMirror;
@@ -15,23 +16,30 @@ public class StackFrame_GetValues implements StackFrame
 {
 	static final int COMMAND = 1;
 
-	public static StackFrame_GetValues process(VirtualMachineImpl vm, ThreadMirror threadMirror, StackFrameMirror stackFrameMirror, int[] pos
-			) throws JDWPException
+	public static StackFrame_GetValues process(
+			VirtualMachineImpl vm,
+			ThreadMirror threadMirror,
+			StackFrameMirror stackFrameMirror,
+			LocalVariableOrParameterMirror... pos) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, threadMirror, stackFrameMirror, pos);
 		return waitForReply(vm, ps, pos.length);
 	}
 
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror threadMirror, StackFrameMirror stackFrameMirror, int[] pos)
+	static PacketStream enqueueCommand(
+			VirtualMachineImpl vm,
+			ThreadMirror threadMirror,
+			StackFrameMirror stackFrameMirror,
+			LocalVariableOrParameterMirror[] pos)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(threadMirror);
 		ps.writeId(stackFrameMirror);
 		ps.writeInt(pos.length);
-		for(int po : pos)
+		for(LocalVariableOrParameterMirror po : pos)
 		{
-			ps.writeInt(po);
+			ps.writeInt(po.idForStackFrame());
 		}
 		ps.send();
 		return ps;

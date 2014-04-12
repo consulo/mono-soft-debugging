@@ -1,11 +1,15 @@
 package mono.debugger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.MethodAttributes;
 import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.protocol.Method_GetDeclarationType;
 import mono.debugger.protocol.Method_GetInfo;
+import mono.debugger.protocol.Method_GetLocalsInfo;
 import mono.debugger.protocol.Method_GetName;
 import mono.debugger.protocol.Method_GetParamInfo;
 
@@ -20,6 +24,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 	private TypeMirror myDeclarationType;
 	private Method_GetParamInfo myParamInfo;
 	private Method_GetInfo myInfo;
+	private Method_GetLocalsInfo myLocalsInfo;
 
 	private int myMaxCodeIndex = Integer.MIN_VALUE;
 	private Method_GetDebugInfo.Entry[] myDebugEntries;
@@ -54,6 +59,22 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		try
 		{
 			return myInfo = Method_GetInfo.process(vm, this);
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	private Method_GetLocalsInfo localsInfo()
+	{
+		if(myLocalsInfo != null)
+		{
+			return myLocalsInfo;
+		}
+		try
+		{
+			return myLocalsInfo = Method_GetLocalsInfo.process(vm, this);
 		}
 		catch(JDWPException e)
 		{
@@ -101,6 +122,27 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 			}
 		}
 		return myDebugEntries;
+	}
+
+	@NotNull
+	public LocalVariableMirror[] locals()
+	{
+		return localsInfo().localVariables;
+	}
+
+	@NotNull
+	public LocalVariableMirror[] locals(long index)
+	{
+		LocalVariableMirror[] locals = locals();
+		List<LocalVariableMirror> localVariableMirrors = new ArrayList<LocalVariableMirror>(locals.length);
+		for(LocalVariableMirror local : locals)
+		{
+			if(index >= local.liveRangeStart() && index <= local.liveRangeEnd())
+			{
+				localVariableMirrors.add(local);
+			}
+		}
+		return localVariableMirrors.toArray(new LocalVariableMirror[localVariableMirrors.size()]);
 	}
 
 	@NotNull
