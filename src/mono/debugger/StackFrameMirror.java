@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import mono.debugger.protocol.StackFrame_GetThis;
 import mono.debugger.protocol.StackFrame_GetValues;
+import mono.debugger.protocol.StackFrame_SetValues;
+import mono.debugger.util.ImmutablePair;
 
 /**
  * @author VISTALL
@@ -111,6 +113,18 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 			{
 				return null;
 			}
+			throw e.toJDIException();
+		}
+	}
+
+	public void setLocalOrParameterValues(@NotNull ImmutablePair<LocalVariableOrParameterMirror, Value<?>>... pairs)
+	{
+		try
+		{
+			StackFrame_SetValues.process(vm, myThreadMirror, this, pairs);
+		}
+		catch(JDWPException e)
+		{
 			throw e.toJDIException();
 		}
 	}
