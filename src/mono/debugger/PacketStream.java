@@ -183,7 +183,7 @@ public class PacketStream
 		dataStream.write(data, 0, data.length);
 	}
 
-	void writeString(String string)
+	public void writeString(String string)
 	{
 		try
 		{

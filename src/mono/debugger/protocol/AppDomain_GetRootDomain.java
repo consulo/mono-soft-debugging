@@ -22,10 +22,6 @@ public class AppDomain_GetRootDomain implements AppDomain
 	static PacketStream enqueueCommand(VirtualMachineImpl vm)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") AppDomain_GetRootDomain" + (ps.pkt.flags != 0 ? ", " +"" + "FLAGS=" + ps.pkt.flags : ""));
-		}
 		ps.send();
 		return ps;
 	}
@@ -40,15 +36,6 @@ public class AppDomain_GetRootDomain implements AppDomain
 
 	private AppDomain_GetRootDomain(VirtualMachineImpl vm, PacketStream ps)
 	{
-		if(vm.traceReceives)
-		{
-			vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") AppDomain_GetRootDomain" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
-		}
 		myAppDomainMirror = ps.readAppDomainMirror();
-		if(vm.traceReceives)
-		{
-			vm.printReceiveTrace(4, "appDomainReference: " + myAppDomainMirror);
-		}
 	}
 }

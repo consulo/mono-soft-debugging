@@ -7,6 +7,7 @@ import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrameMirror;
+import mono.debugger.StringValueMirror;
 import mono.debugger.TypeMirror;
 import mono.debugger.Value;
 import mono.debugger.VirtualMachineImpl;
@@ -83,12 +84,9 @@ public class Main
 						continue;
 					}
 
-					MethodMirror method = frame.location().method();
+					StringValueMirror test = accept.rootAppDomain().createString("TEST");
 
-					Value[] parameters = frame.localOrParameterValues(method.parameters());
-					Value[] locals = frame.localOrParameterValues(method.locals());
-
-					System.out.println("b");
+					System.out.println("b: " + test.value());
 				}
 			}
 

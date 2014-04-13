@@ -2,6 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import mono.debugger.protocol.AppDomain_CreateString;
 import mono.debugger.protocol.AppDomain_GetAssemblies;
 import mono.debugger.protocol.AppDomain_GetEntryAssembly;
 import mono.debugger.protocol.AppDomain_GetFriendlyName;
@@ -18,6 +19,19 @@ public class AppDomainMirror extends MirrorWithIdAndName
 	public AppDomainMirror(@NotNull VirtualMachine aVm, long aRef)
 	{
 		super(aVm, aRef);
+	}
+
+	@NotNull
+	public StringValueMirror createString(@NotNull String str)
+	{
+		try
+		{
+			return AppDomain_CreateString.process(vm, this, str).value;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
 	}
 
 	@Nullable
