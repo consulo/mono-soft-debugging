@@ -322,29 +322,6 @@ public class PacketStream
 		return ret;
 	}
 
-	private long readID(int size)
-	{
-		switch(size)
-		{
-			case 8:
-				return readLong();
-			case 4:
-				return (long) readInt();
-			case 2:
-				return (long) readShort();
-			default:
-				throw new UnsupportedOperationException("JDWP: ID size not supported: " + size);
-		}
-	}
-
-	/**
-	 * Read object represented as vm specific byte sequence.
-	 */
-	long readObjectRef()
-	{
-		return readID(4);
-	}
-
 	public int readId()
 	{
 		return readInt();
@@ -353,32 +330,36 @@ public class PacketStream
 	@Deprecated
 	int readClassRef()
 	{
-		return (int) readID(4);
+		return readInt();
 	}
 
 	@NotNull
 	public ThreadMirror readThreadMirror()
 	{
-		long ref = readObjectRef();
-		return new ThreadMirror(vm, ref); //FIXME [VISTALL] caching?
+		long ref = readId();
+		return new ThreadMirror(vm, ref);
 	}
 
 	@Nullable
 	public AssemblyMirror readAssemblyMirror()
 	{
-		long ref = readId();
+		int ref = readId();
 		if(ref == 0)
 		{
 			return null;
 		}
-		return new AssemblyMirror(vm, ref);  //FIXME [VISTALL] caching?
+		return vm.getOrCreateAssemblyMirror(ref);
 	}
 
-	@NotNull
+	@Nullable
 	public AppDomainMirror readAppDomainMirror()
 	{
 		int ref = readId();
-		return new AppDomainMirror(vm, ref); //FIXME [VISTALL] caching?
+		if(ref == 0)
+		{
+			return null;
+		}
+		return new AppDomainMirror(vm, ref);
 	}
 
 	@Nullable
@@ -389,7 +370,7 @@ public class PacketStream
 		{
 			return null;
 		}
-		return new MethodMirror(vm, ref); //FIXME [VISTALL] caching?
+		return vm.getOrCreateMethodMirror(ref);
 	}
 
 	@Nullable
@@ -400,14 +381,14 @@ public class PacketStream
 		{
 			return null;
 		}
-		return new TypeMirror(vm, ref); //FIXME [VISTALL] caching?
+		return vm.getOrCreateTypeMirror(ref);
 	}
 
 	@NotNull
 	public ObjectValueMirror readObjectMirror()
 	{
 		int ref = readId();
-		return new ObjectValueMirror(vm, ref); //FIXME [VISTALL] caching?
+		return new ObjectValueMirror(vm, ref);
 	}
 
 	@NotNull
@@ -433,31 +414,6 @@ public class PacketStream
 			default:
 				throw new IllegalArgumentException("Unsupported tag: " + tag);
 		}
-	}
-
-	/**
-	 * Read method reference represented as vm specific byte sequence.
-	 */
-	long readMethodRef()
-	{
-		return readID(4);
-	}
-
-	/**
-	 * Read field reference represented as vm specific byte sequence.
-	 */
-	long readFieldRef()
-	{
-		return readID(4);
-	}
-
-
-	/**
-	 * Read frame represented as vm specific byte sequence.
-	 */
-	long readFrameRef()
-	{
-		return readID(4);
 	}
 
 	/**

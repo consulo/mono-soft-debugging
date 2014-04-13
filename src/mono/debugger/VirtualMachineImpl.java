@@ -25,7 +25,9 @@
 
 package mono.debugger;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.connect.spi.Connection;
@@ -67,7 +69,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 	private final Object initMonitor = new Object();
 	private boolean initComplete = false;
-	private boolean shutdown = false;
+
+	private Map<Integer, TypeMirror> myTypeMirrorCache = new HashMap<Integer, TypeMirror>();
+	private Map<Integer, MethodMirror> myMethodMirrorCache = new HashMap<Integer, MethodMirror>();
+	private Map<Integer, AssemblyMirror> myAssemblyMirrorCache = new HashMap<Integer, AssemblyMirror>();
+
 
 	VirtualMachineImpl(VirtualMachineManager manager, Connection connection, Process process, int sequenceNumber)
 	{
@@ -149,24 +155,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 	void validateVM()
 	{
-        /*
-         * We no longer need to do this.  The spec now says
-         * that a VMDisconnected _may_ be thrown in these
-         * cases, not that it _will_ be thrown.
-         * So, to simplify things we will just let the
-         * caller's of this method proceed with their business.
-         * If the debuggee is disconnected, either because it
-         * crashed or finished or something, or because the
-         * debugger called exit() or dispose(), then if
-         * we end up trying to communicate with the debuggee,
-         * code in TargetVM will throw a VMDisconnectedException.
-         * This means that if we can satisfy a request without
-         * talking to the debuggee, (eg, with cached data) then
-         * VMDisconnectedException will _not_ be thrown.
-         * if (shutdown) {
-         *    throw new VMDisconnectedException();
-         * }
-         */
 	}
 
 	@Override
@@ -334,7 +322,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	public void dispose()
 	{
 		validateVM();
-		shutdown = true;
 		try
 		{
 			JDWP.VirtualMachine.Dispose.process(vm);
@@ -350,7 +337,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	public void exit(int exitCode)
 	{
 		validateVM();
-		shutdown = true;
 		try
 		{
 			JDWP.VirtualMachine.Exit.process(vm, exitCode);
@@ -397,6 +383,39 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		validateVM();
 		this.traceFlags = traceFlags;
 		this.traceReceives = (traceFlags & TRACE_RECEIVES) != 0;
+	}
+
+	@NotNull
+	public TypeMirror getOrCreateTypeMirror(int id)
+	{
+		TypeMirror typeMirror = myTypeMirrorCache.get(id);
+		if(typeMirror == null)
+		{
+			myTypeMirrorCache.put(id, typeMirror = new TypeMirror(vm, id));
+		}
+		return typeMirror;
+	}
+
+	@NotNull
+	public MethodMirror getOrCreateMethodMirror(int id)
+	{
+		MethodMirror methodMirror = myMethodMirrorCache.get(id);
+		if(methodMirror == null)
+		{
+			myMethodMirrorCache.put(id, methodMirror = new MethodMirror(vm, id));
+		}
+		return methodMirror;
+	}
+
+	@NotNull
+	public AssemblyMirror getOrCreateAssemblyMirror(int id)
+	{
+		AssemblyMirror assemblyMirror = myAssemblyMirrorCache.get(id);
+		if(assemblyMirror == null)
+		{
+			myAssemblyMirrorCache.put(id, assemblyMirror = new AssemblyMirror(vm, id));
+		}
+		return assemblyMirror;
 	}
 
 	public void printTrace(String string)
