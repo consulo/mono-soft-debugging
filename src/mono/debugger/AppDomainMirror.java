@@ -2,6 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import mono.debugger.protocol.AppDomain_CreateBoxValue;
 import mono.debugger.protocol.AppDomain_CreateString;
 import mono.debugger.protocol.AppDomain_GetAssemblies;
 import mono.debugger.protocol.AppDomain_GetCorlib;
@@ -29,6 +30,19 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		try
 		{
 			return AppDomain_CreateString.process(vm, this, str).value;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	@NotNull
+	public ObjectValueMirror createBoxValue(int tag, @NotNull Object value)
+	{
+		try
+		{
+			return AppDomain_CreateBoxValue.process(vm, this, tag, value).value;
 		}
 		catch(JDWPException e)
 		{

@@ -91,7 +91,7 @@ public class PacketStream
 		writeInt(data ? 1 : 0);
 	}
 
-	void writeByte(byte data)
+	public void writeByte(byte data)
 	{
 		dataStream.write(data);
 	}
@@ -102,7 +102,7 @@ public class PacketStream
 		dataStream.write((byte) ((data >>> 0) & 0xFF));
 	}
 
-	void writeShort(short data)
+	public void writeShort(short data)
 	{
 		dataStream.write((byte) ((data >>> 8) & 0xFF));
 		dataStream.write((byte) ((data >>> 0) & 0xFF));

@@ -3,7 +3,7 @@ package test;
 import java.util.List;
 import java.util.Map;
 
-import mono.debugger.AssemblyMirror;
+import edu.arizona.cs.mbel.signature.SignatureConstants;
 import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
 import mono.debugger.SocketListeningConnector;
@@ -84,9 +84,9 @@ public class Main
 						continue;
 					}
 
-					AssemblyMirror assemblyMirror = accept.rootAppDomain().corlibAssembly();
+					Value<?> value1 = accept.rootAppDomain().createBoxValue(SignatureConstants.ELEMENT_TYPE_I4, 1);
 
-					System.out.println("b: " + assemblyMirror.name());
+					System.out.println("b: " + value1.type());
 				}
 			}
 
