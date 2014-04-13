@@ -53,7 +53,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		return myEntryAssemblyMirror;
 	}
 
-	@Nullable
+	@NotNull
 	public AssemblyMirror corlibAssembly()
 	{
 		if(myCorlibAssemblyMirror == null)
