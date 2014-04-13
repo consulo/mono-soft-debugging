@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import mono.debugger.protocol.AppDomain_CreateString;
 import mono.debugger.protocol.AppDomain_GetAssemblies;
+import mono.debugger.protocol.AppDomain_GetCorlib;
 import mono.debugger.protocol.AppDomain_GetEntryAssembly;
 import mono.debugger.protocol.AppDomain_GetFriendlyName;
 
@@ -14,6 +15,7 @@ import mono.debugger.protocol.AppDomain_GetFriendlyName;
 public class AppDomainMirror extends MirrorWithIdAndName
 {
 	private AssemblyMirror myEntryAssemblyMirror;
+	private AssemblyMirror myCorlibAssemblyMirror;
 	private AssemblyMirror[] myAssemblyMirrors;
 
 	public AppDomainMirror(@NotNull VirtualMachine aVm, long aRef)
@@ -49,6 +51,23 @@ public class AppDomainMirror extends MirrorWithIdAndName
 			}
 		}
 		return myEntryAssemblyMirror;
+	}
+
+	@Nullable
+	public AssemblyMirror corlibAssembly()
+	{
+		if(myCorlibAssemblyMirror == null)
+		{
+			try
+			{
+				myCorlibAssemblyMirror = AppDomain_GetCorlib.process(vm, this).assembly;
+			}
+			catch(JDWPException e)
+			{
+				throw e.toJDIException();
+			}
+		}
+		return myCorlibAssemblyMirror;
 	}
 
 	@NotNull
