@@ -1769,19 +1769,6 @@ EVENT_KIND_VM_START = 0,
 		static final int METHOD_EXIT = 41;
 	}
 
-	static class StepDepth
-	{
-		static final int INTO = 0;
-		static final int OVER = 1;
-		static final int OUT = 2;
-	}
-
-	static class StepSize
-	{
-		static final int MIN = 0;
-		static final int LINE = 1;
-	}
-
 	static class SuspendPolicy
 	{
 		static final int NONE = 0;
