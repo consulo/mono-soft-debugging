@@ -56,10 +56,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 	public boolean traceReceives = false;   // pre-compute because of frequency
 
-	private AppDomainMirror myRootAppDomain;
+	private final AppDomainMirror myRootAppDomain;
 
 	// These are cached once for the life of the VM
-	private VirtualMachine_GetVersion versionInfo;
+	private final VirtualMachine_GetVersion myVersionInfo;
 
 	// Launched debuggee process
 	private Process process;
@@ -111,9 +111,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 		try
 		{
-			versionInfo = VirtualMachine_GetVersion.process(vm);
+			myVersionInfo = VirtualMachine_GetVersion.process(vm);
+
+			if(myVersionInfo.jdwpMajor != MAJOR_VERSION)
+			{
+				throw new IllegalArgumentException("Virtual Machine major version is not equal client: " + myVersionInfo.jdwpMajor);
+			}
 
 			VirtualMachine_SetProtocolVersion.process(vm, MAJOR_VERSION, MINOR_VERSION);
+
+			myRootAppDomain = AppDomain_GetRootDomain.process(vm).myAppDomainMirror;
 		}
 		catch(JDWPException e)
 		{
@@ -173,17 +180,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public AppDomainMirror rootAppDomain()
 	{
-		if(myRootAppDomain == null)
-		{
-			try
-			{
-				myRootAppDomain = AppDomain_GetRootDomain.process(vm).myAppDomainMirror;
-			}
-			catch(JDWPException e)
-			{
-				throw e.toJDIException();
-			}
-		}
 		return myRootAppDomain;
 	}
 
@@ -358,7 +354,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 	public boolean isAtLeastVersion(int major, int minor)
 	{
-		return (versionInfo.jdwpMajor > major) || ((versionInfo.jdwpMajor == major && versionInfo.jdwpMinor >= minor));
+		return (myVersionInfo.jdwpMajor > major) || ((myVersionInfo.jdwpMajor == major && myVersionInfo.jdwpMinor >= minor));
 	}
 
 	@NotNull
@@ -366,7 +362,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	public String version()
 	{
 		validateVM();
-		return versionInfo.jdwpMajor + "." + versionInfo.jdwpMinor;
+		return myVersionInfo.jdwpMajor + "." + myVersionInfo.jdwpMinor;
 	}
 
 	@NotNull
@@ -374,7 +370,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	public String name()
 	{
 		validateVM();
-		return versionInfo.description;
+		return myVersionInfo.description;
 	}
 
 	@Override
