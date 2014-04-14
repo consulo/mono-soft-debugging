@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.request.*;
 
 /**
@@ -46,7 +47,6 @@ import mono.debugger.request.*;
 class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 {
 	List<? extends EventRequest>[] requestLists;
-	private static int methodExitEventCmd = 0;
 
 	static int JDWPtoJDISuspendPolicy(byte jdwpPolicy)
 	{
@@ -456,27 +456,13 @@ class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 	{
 		MethodExitRequestImpl()
 		{
-			if(methodExitEventCmd == 0)
-			{
-                /*
-                 * If we can get return values, then we always get them.
-                 * Thus, for JDI MethodExitRequests, we always use the
-                 * same JDWP EventKind.  Here we decide which to use and
-                 * save it so that it will be used for all future
-                 * MethodExitRequests.
-                 *
-                 * This call to canGetMethodReturnValues can't
-                 * be done in the EventRequestManager ctor because that is too early.
-                 */
-				methodExitEventCmd = JDWP.EventKind.METHOD_EXIT;
-			}
 			requestList().add(this);
 		}
 
 		@Override
 		int eventCmd()
 		{
-			return EventRequestManagerImpl.methodExitEventCmd;
+			return JDWP.EventKind.METHOD_EXIT;
 		}
 
 		@Override
@@ -663,6 +649,40 @@ class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 		return new ThreadDeathRequestImpl();
 	}
 
+	@NotNull
+	@Override
+	public EventRequest createAppDomainCreate()
+	{
+		return new EventRequestImpl()
+		{
+			{
+				requestList().add(this);
+			}
+			@Override
+			int eventCmd()
+			{
+				return JDWP.EventKind.APPDOMAIN_CREATE;
+			}
+		};
+	}
+
+	@NotNull
+	@Override
+	public EventRequest createAppDomainUnload()
+	{
+		return new EventRequestImpl()
+		{
+			{
+				requestList().add(this);
+			}
+			@Override
+			int eventCmd()
+			{
+				return JDWP.EventKind.APPDOMAIN_UNLOAD;
+			}
+		};
+	}
+
 	@Override
 	public ThreadStartRequest createThreadStartRequest()
 	{
@@ -772,9 +792,22 @@ class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 	@Override
 	public List<MethodExitRequest> methodExitRequests()
 	{
-		return (List<MethodExitRequest>) unmodifiableRequestList(EventRequestManagerImpl.methodExitEventCmd);
+		return (List<MethodExitRequest>) unmodifiableRequestList(JDWP.EventKind.METHOD_EXIT);
 	}
 
+	@NotNull
+	@Override
+	public List<EventRequest> appDomainCreateEventRequests()
+	{
+		return (List<EventRequest>) unmodifiableRequestList(JDWP.EventKind.APPDOMAIN_CREATE);
+	}
+
+	@NotNull
+	@Override
+	public List<EventRequest> appDomainUnloadEventRequests()
+	{
+		return (List<EventRequest>) unmodifiableRequestList(JDWP.EventKind.APPDOMAIN_UNLOAD);
+	}
 
 	@Override
 	public List<VMDeathRequest> vmDeathRequests()

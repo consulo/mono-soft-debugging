@@ -27,6 +27,7 @@ package mono.debugger.request;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.NativeMethodException;
@@ -50,6 +51,12 @@ import mono.debugger.VirtualMachine;
 
 public interface EventRequestManager extends Mirror
 {
+	@NotNull
+	EventRequest createAppDomainCreate();
+
+	@NotNull
+	EventRequest createAppDomainUnload();
+
 	/**
 	 * Creates a new disabled {@link ThreadStartRequest}.
 	 * The new event request is added to the list managed by this
@@ -335,4 +342,10 @@ public interface EventRequestManager extends Mirror
 	 * @since 1.4
 	 */
 	List<VMDeathRequest> vmDeathRequests();
+
+	@NotNull
+	List<EventRequest> appDomainCreateEventRequests();
+
+	@NotNull
+	List<EventRequest> appDomainUnloadEventRequests();
 }

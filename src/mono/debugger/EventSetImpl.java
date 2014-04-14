@@ -153,7 +153,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			if(requestID == 0)
 			{
 				/* An unsolicited event.  These have traditionally
-                 * been treated as client events.
+				 * been treated as client events.
                  */
 				return EventDestination.CLIENT_EVENT;
 			}
@@ -209,8 +209,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		private Location location;
 
 		LocatableEventImpl(
-				VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread,
-				Location location)
+				VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread, Location location)
 		{
 			super(virtualMachine, evt, requestID, thread);
 			this.location = location;
@@ -495,60 +494,32 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		JDWP.Event.Composite.Events.EventsCommon comm = evt.aEventsCommon;
 		switch(evt.eventKind)
 		{
-			/*case JDWP.EventKind.THREAD_START:
+			case JDWP.EventKind.APPDOMAIN_CREATE:
+				return new AppDomainCreateEvent(vm, (JDWP.Event.Composite.Events.AppDomainCreate) comm);
+			case JDWP.EventKind.APPDOMAIN_UNLOAD:
+				return new AppDomainUnloadEvent(vm, (JDWP.Event.Composite.Events.AppDomainUnload) comm);
+			case JDWP.EventKind.THREAD_START:
 				return new ThreadStartEventImpl(vm, (JDWP.Event.Composite.Events.ThreadStart) comm);
-
-			case JDWP.EventKind.THREAD_END:
+			case JDWP.EventKind.THREAD_DEATH:
 				return new ThreadDeathEventImpl(vm, (JDWP.Event.Composite.Events.ThreadDeath) comm);
-
 			case JDWP.EventKind.EXCEPTION:
 				return new ExceptionEventImpl(vm, (JDWP.Event.Composite.Events.Exception) comm);
-                                                 */
 			case JDWP.EventKind.BREAKPOINT:
 				return new BreakpointEventImpl(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
-			             /*
 			case JDWP.EventKind.METHOD_ENTRY:
 				return new MethodEntryEventImpl(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
-
 			case JDWP.EventKind.METHOD_EXIT:
 				return new MethodExitEventImpl(vm, (JDWP.Event.Composite.Events.MethodExit) comm);
-
-			case JDWP.EventKind.METHOD_EXIT_WITH_RETURN_VALUE:
-				return new MethodExitEventImpl(vm, (JDWP.Event.Composite.Events.MethodExitWithReturnValue) comm);
-
-			case JDWP.EventKind.FIELD_ACCESS:
-				return new AccessWatchpointEventImpl(vm, (JDWP.Event.Composite.Events.FieldAccess) comm);
-
-			case JDWP.EventKind.FIELD_MODIFICATION:
-				return new ModificationWatchpointEventImpl(vm, (JDWP.Event.Composite.Events.FieldModification) comm);
-                      */
 			case JDWP.EventKind.SINGLE_STEP:
 				return new StepEventImpl(vm, (JDWP.Event.Composite.Events.SingleStep) comm);
-
 			case JDWP.EventKind.ASSEMBLY_LOAD:
 				return new AssemblyLoadEvent(vm, (JDWP.Event.Composite.Events.AssemblyLoad) comm);
-
 			case JDWP.EventKind.ASSEMBLY_UNLOAD:
 				return new AssemblyUnloadEvent(vm, (JDWP.Event.Composite.Events.AssemblyUnLoad) comm);
-
-		/*	case JDWP.EventKind.MONITOR_CONTENDED_ENTER:
-				return new MonitorContendedEnterEventImpl(vm, (JDWP.Event.Composite.Events.MonitorContendedEnter) comm);
-
-			case JDWP.EventKind.MONITOR_CONTENDED_ENTERED:
-				return new MonitorContendedEnteredEventImpl(vm, (JDWP.Event.Composite.Events.MonitorContendedEntered) comm);
-
-			case JDWP.EventKind.MONITOR_WAIT:
-				return new MonitorWaitEventImpl(vm, (JDWP.Event.Composite.Events.MonitorWait) comm);
-
-			case JDWP.EventKind.MONITOR_WAITED:
-				return new MonitorWaitedEventImpl(vm, (JDWP.Event.Composite.Events.MonitorWaited) comm);
-                */
 			case JDWP.EventKind.VM_START:
 				return new VMStartEvent(vm, (JDWP.Event.Composite.Events.VMStart) comm);
-
 			case JDWP.EventKind.VM_DEATH:
 				return new VMDeathEvent(vm, (JDWP.Event.Composite.Events.VMDeath) comm);
-
 			default:
 				// Ignore unknown event types
 				System.err.println("Ignoring event cmd " + evt.eventKind + " from the VM");

@@ -968,6 +968,12 @@ public class JDWP
 						case JDWP.EventKind.THREAD_DEATH:
 							aEventsCommon = new ThreadDeath(vm, ps);
 							break;
+						case EventKind.APPDOMAIN_CREATE:
+							aEventsCommon = new AppDomainCreate(vm, ps);
+							break;
+						case EventKind.APPDOMAIN_UNLOAD:
+							aEventsCommon = new AppDomainUnload(vm, ps);
+							break;
 						case JDWP.EventKind.ASSEMBLY_LOAD:
 							aEventsCommon = new AssemblyLoad(vm, ps);
 							break;
@@ -1414,6 +1420,54 @@ public class JDWP
 					}
 				}
 
+				public static class AppDomainCreate extends EventsCommon
+				{
+					static final byte ALT_ID = EventKind.APPDOMAIN_CREATE;
+
+					@Override
+					byte eventKind()
+					{
+						return ALT_ID;
+					}
+
+					public final int requestID;
+
+					public final ThreadMirror thread;
+
+					public final AppDomainMirror appDomainMirror;
+
+					public AppDomainCreate(VirtualMachineImpl vm, PacketStream ps)
+					{
+						requestID = ps.readInt();
+						thread = ps.readThreadMirror();
+						appDomainMirror = ps.readAppDomainMirror();
+					}
+				}
+
+				public static class AppDomainUnload extends EventsCommon
+				{
+					static final byte ALT_ID = EventKind.APPDOMAIN_UNLOAD;
+
+					@Override
+					byte eventKind()
+					{
+						return ALT_ID;
+					}
+
+					public final int requestID;
+
+					public final ThreadMirror thread;
+
+					public final AppDomainMirror appDomainMirror;
+
+					public AppDomainUnload(VirtualMachineImpl vm, PacketStream ps)
+					{
+						requestID = ps.readInt();
+						thread = ps.readThreadMirror();
+						appDomainMirror = ps.readAppDomainMirror();
+					}
+				}
+
 				public static class AssemblyLoad extends EventsCommon
 				{
 					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_LOAD;
@@ -1752,21 +1806,20 @@ EVENT_KIND_VM_START = 0,
 		 */
 		static final int VM_START = 0;
 		static final int VM_DEATH = 1;
-
+		static final int THREAD_START = 2;
+		static final int THREAD_DEATH = 3;
+		static final int APPDOMAIN_CREATE = 4;
+		static final int APPDOMAIN_UNLOAD = 5;
+		static final int METHOD_ENTRY = 6;
+		static final int METHOD_EXIT = 7;
 		static final int ASSEMBLY_LOAD = 8;
 		static final int ASSEMBLY_UNLOAD = 9;
 		static final int BREAKPOINT = 10;
 		static final int SINGLE_STEP = 11;
 		static final int TYPE_LOAD = 12;
+		static final int EXCEPTION = 13;
 
-		static final int EXCEPTION = 4;
 		static final int USER_DEFINED = 5;
-		static final int THREAD_START = 6;
-		static final int THREAD_DEATH = 7;
-
-		static final int EXCEPTION_CATCH = 30;
-		static final int METHOD_ENTRY = 40;
-		static final int METHOD_EXIT = 41;
 	}
 
 	static class SuspendPolicy
