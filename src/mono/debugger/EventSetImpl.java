@@ -521,10 +521,10 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 			case JDWP.EventKind.FIELD_MODIFICATION:
 				return new ModificationWatchpointEventImpl(vm, (JDWP.Event.Composite.Events.FieldModification) comm);
-
+                      */
 			case JDWP.EventKind.SINGLE_STEP:
 				return new StepEventImpl(vm, (JDWP.Event.Composite.Events.SingleStep) comm);
-                                                */
+
 			case JDWP.EventKind.ASSEMBLY_LOAD:
 				return new AssemblyLoadEvent(vm, (JDWP.Event.Composite.Events.AssemblyLoad) comm);
 

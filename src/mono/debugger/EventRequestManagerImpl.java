@@ -489,46 +489,14 @@ class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 	class StepRequestImpl extends ClassVisibleEventRequestImpl implements StepRequest
 	{
 		ThreadMirror thread;
-		int size;
-		int depth;
+		StepSize size;
+		StepDepth depth;
 
-		StepRequestImpl(ThreadMirror thread, int size, int depth)
+		StepRequestImpl(ThreadMirror thread, StepSize size, StepDepth depth)
 		{
-			this.thread = (ThreadMirror) thread;
+			this.thread = thread;
 			this.size = size;
 			this.depth = depth;
-
-            /*
-             * Translate size and depth to corresponding JDWP values.
-             */
-			int jdwpSize;
-			switch(size)
-			{
-				case STEP_MIN:
-					jdwpSize = JDWP.StepSize.MIN;
-					break;
-				case STEP_LINE:
-					jdwpSize = JDWP.StepSize.LINE;
-					break;
-				default:
-					throw new IllegalArgumentException("Invalid step size");
-			}
-
-			int jdwpDepth;
-			switch(depth)
-			{
-				case STEP_INTO:
-					jdwpDepth = JDWP.StepDepth.INTO;
-					break;
-				case STEP_OVER:
-					jdwpDepth = JDWP.StepDepth.OVER;
-					break;
-				case STEP_OUT:
-					jdwpDepth = JDWP.StepDepth.OUT;
-					break;
-				default:
-					throw new IllegalArgumentException("Invalid step depth");
-			}
 
             /*
              * Make sure this isn't a duplicate
@@ -546,20 +514,19 @@ class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 				}
 			}
 
-			filters.add(JDWP.EventRequest.Set.Modifier.Step.
-					create(this.thread, jdwpSize, jdwpDepth));
+			filters.add(JDWP.EventRequest.Set.Modifier.Step.create(this.thread, size, depth));
 			requestList().add(this);
 
 		}
 
 		@Override
-		public int depth()
+		public StepDepth depth()
 		{
 			return depth;
 		}
 
 		@Override
-		public int size()
+		public StepSize size()
 		{
 			return size;
 		}
@@ -684,8 +651,7 @@ class EventRequestManagerImpl extends MirrorImpl implements EventRequestManager
 	}
 
 	@Override
-	public StepRequest createStepRequest(
-			ThreadMirror thread, int size, int depth)
+	public StepRequest createStepRequest(ThreadMirror thread, StepRequest.StepSize size, StepRequest.StepDepth depth)
 	{
 		validateMirror(thread);
 		return new StepRequestImpl(thread, size, depth);

@@ -1,5 +1,7 @@
 package mono.debugger;
 
+import mono.debugger.request.StepRequest;
+
 public class JDWP
 {
 
@@ -320,7 +322,7 @@ public class JDWP
 			{
 				abstract static class ModifierCommon
 				{
-					abstract void write(PacketStream ps);
+					abstract void write(PacketStream ps, VirtualMachineImpl vm);
 				}
 
 				/**
@@ -335,14 +337,10 @@ public class JDWP
 					this.aModifierCommon = aModifierCommon;
 				}
 
-				private void write(PacketStream ps)
+				private void write(VirtualMachineImpl vm, PacketStream ps)
 				{
-					if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-					{
-						ps.vm.printTrace("Sending:                     modKind(byte): " + modKind);
-					}
 					ps.writeByte(modKind);
-					aModifierCommon.write(ps);
+					aModifierCommon.write(ps, vm);
 				}
 
 				/**
@@ -378,7 +376,7 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
@@ -414,7 +412,7 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
@@ -452,7 +450,7 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
 						ps.writeLocation(loc);
 					}
@@ -506,7 +504,7 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
@@ -538,7 +536,7 @@ public class JDWP
 				{
 					static final byte ALT_ID = 10;
 
-					static Modifier create(ThreadMirror thread, int size, int depth)
+					static Modifier create(ThreadMirror thread, StepRequest.StepSize size, StepRequest.StepDepth depth)
 					{
 						return new Modifier(ALT_ID, new Step(thread, size, depth));
 					}
@@ -552,15 +550,15 @@ public class JDWP
 					 * size of each step.
 					 * See <a href="#JDWP_StepSize">JDWP.StepSize</a>
 					 */
-					final int size;
+					final StepRequest.StepSize size;
 
 					/**
 					 * relative call stack limit.
 					 * See <a href="#JDWP_StepDepth">JDWP.StepDepth</a>
 					 */
-					final int depth;
+					final StepRequest.StepDepth depth;
 
-					Step(ThreadMirror thread, int size, int depth)
+					Step(ThreadMirror thread, StepRequest.StepSize size, StepRequest.StepDepth depth)
 					{
 						this.thread = thread;
 						this.size = size;
@@ -568,24 +566,15 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
+						ps.writeId(thread);
+						ps.writeInt(size.ordinal());
+						ps.writeInt(depth.ordinal());
+						if(vm.isAtLeastVersion(2, 16))
 						{
-							ps.vm.printTrace("Sending:                         thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" +
-									thread.ref()));
+							ps.writeInt(0); //TODO [VISTALL] filter
 						}
-						ps.writeObjectRef(thread.ref());
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         size(int): " + size);
-						}
-						ps.writeInt(size);
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         depth(int): " + depth);
-						}
-						ps.writeInt(depth);
 					}
 				}
 
@@ -626,7 +615,7 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
@@ -671,7 +660,7 @@ public class JDWP
 					}
 
 					@Override
-					void write(PacketStream ps)
+					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
 						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
 						{
@@ -699,7 +688,7 @@ public class JDWP
 				ps.writeByte((byte) modifiers.length);
 				for(int i = 0; i < modifiers.length; i++)
 				{
-					modifiers[i].write(ps);
+					modifiers[i].write(vm, ps);
 				}
 				ps.send();
 				return ps;
@@ -1071,20 +1060,8 @@ public class JDWP
 					SingleStep(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
 					}
 				}
 
@@ -1120,20 +1097,8 @@ public class JDWP
 					Breakpoint(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
 					}
 				}
 
