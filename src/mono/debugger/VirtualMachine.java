@@ -141,7 +141,10 @@ public interface VirtualMachine extends Mirror
 	 *         mirroring a type in the target VM with the given name.
 	 */
 	@NotNull
-	TypeMirror[] findTypes(String typeName, boolean ignoreCase);
+	TypeMirror[] findTypesByQualifiedName(String typeName, boolean ignoreCase);
+
+	@NotNull
+	TypeMirror[] findTypesBySourcePath(String sourcePath, boolean ignoreCase);
 
 	/**
 	 * Returns a list of the currently running threads. For each

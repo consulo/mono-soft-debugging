@@ -37,7 +37,7 @@ public class Main
 		accept.resume();
 		accept.suspend();
 
-		TypeMirror typeMirror = accept.findTypes("MyClass", true)[0];
+		TypeMirror typeMirror = accept.findTypesByQualifiedName("MyClass", true)[0];
 
 		int index = 0;
 		MethodMirror m  = null;

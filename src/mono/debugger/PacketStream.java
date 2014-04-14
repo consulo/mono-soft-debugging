@@ -86,7 +86,7 @@ public class PacketStream
 		}
 	}
 
-	void writeBoolean(boolean data)
+	public void writeBoolean(boolean data)
 	{
 		writeInt(data ? 1 : 0);
 	}

@@ -12,51 +12,6 @@ public class JDWP
 		}  // hide constructor
 
 
-		/**
-		 * Returns reference types for all the classes loaded by the target VM
-		 * which match the given signature.
-		 * Multple reference types will be returned if two or more class
-		 * loaders have loaded a class of the same name.
-		 * The search is confined to loaded classes only; no attempt is made
-		 * to load a class of the given signature.
-		 */
-		public static class GetTypes
-		{
-			static final int COMMAND = 12;
-
-			public static GetTypes process(VirtualMachineImpl vm, String signature, boolean ignoreCase) throws JDWPException
-			{
-				PacketStream ps = enqueueCommand(vm, signature, ignoreCase);
-				return waitForReply(vm, ps);
-			}
-
-			static PacketStream enqueueCommand(VirtualMachineImpl vm, String signature, boolean ignoreCase)
-			{
-				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				ps.writeString(signature);
-				ps.writeBoolean(ignoreCase);
-				ps.send();
-				return ps;
-			}
-
-			static GetTypes waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
-			{
-				ps.waitForReply();
-				return new GetTypes(vm, ps);
-			}
-
-			final TypeMirror[] classes;
-
-			private GetTypes(VirtualMachineImpl vm, PacketStream ps)
-			{
-				int classesCount = ps.readInt();
-				classes = new TypeMirror[classesCount];
-				for(int i = 0; i < classesCount; i++)
-				{
-					classes[i] = ps.readTypeMirror();
-				}
-			}
-		}
 
 		/**
 		 * Returns all threads currently running in the target VM .

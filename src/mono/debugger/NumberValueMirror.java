@@ -33,13 +33,13 @@ public class NumberValueMirror extends ValueImpl<Number>
 		switch(myTag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_I1:
-				types = vm.findTypes("System.SByte", false);
+				types = vm.findTypesByQualifiedName("System.SByte", false);
 				return types[0];
 			case SignatureConstants.ELEMENT_TYPE_I2:
-				types = vm.findTypes("System.Short", false);
+				types = vm.findTypesByQualifiedName("System.Short", false);
 				return types[0];
 			case SignatureConstants.ELEMENT_TYPE_I4:
-				types = vm.findTypes("System.Int32", false);
+				types = vm.findTypesByQualifiedName("System.Int32", false);
 				return types[0];
 		}
 		return null;

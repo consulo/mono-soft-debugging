@@ -30,13 +30,13 @@ public class AppDomain_CreateBoxValue implements AppDomain
 		switch(tag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_I1:
-				t = vm.findTypes("System.SByte", false)[0];
+				t = vm.findTypesByQualifiedName("System.SByte", false)[0];
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I2:
-				t = vm.findTypes("System.Short", false)[0];
+				t = vm.findTypesByQualifiedName("System.Short", false)[0];
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I4:
-				t = vm.findTypes("System.Int32", false)[0];
+				t = vm.findTypesByQualifiedName("System.Int32", false)[0];
 				break;
 			default:
 				throw new IllegalArgumentException("Wrong type tag: 0x" + Integer.toHexString(tag));

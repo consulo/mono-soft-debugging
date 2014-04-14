@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
 import mono.debugger.protocol.AppDomain_GetRootDomain;
+import mono.debugger.protocol.VirtualMachine_GetTypes;
+import mono.debugger.protocol.VirtualMachine_GetTypesForSourceFile;
 import mono.debugger.protocol.VirtualMachine_GetVersion;
 import mono.debugger.protocol.VirtualMachine_SetProtocolVersion;
 import mono.debugger.request.EventRequestManager;
@@ -185,12 +187,27 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 	@NotNull
 	@Override
-	public TypeMirror[] findTypes(String typeName, boolean ignoreCase)
+	public TypeMirror[] findTypesByQualifiedName(String typeName, boolean ignoreCase)
 	{
 		validateVM();
 		try
 		{
-			return JDWP.VirtualMachine.GetTypes.process(vm, typeName, ignoreCase).classes;
+			return VirtualMachine_GetTypes.process(vm, typeName, ignoreCase).types;
+		}
+		catch(JDWPException exc)
+		{
+			throw exc.toJDIException();
+		}
+	}
+
+	@NotNull
+	@Override
+	public TypeMirror[] findTypesBySourcePath(String sourcePath, boolean ignoreCase)
+	{
+		validateVM();
+		try
+		{
+			return VirtualMachine_GetTypesForSourceFile.process(vm, sourcePath, ignoreCase).types;
 		}
 		catch(JDWPException exc)
 		{
