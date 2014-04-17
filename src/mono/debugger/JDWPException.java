@@ -69,6 +69,8 @@ public class JDWPException extends Exception
 				return new AbsentInformationException();
 			case JDWP.Error.INVALID_THREAD:
 				return new IllegalThreadStateException();
+			case JDWP.Error.INVALID_ARGUMENT:
+				return new IllegalArgumentException();
 			default:
 				return new InternalException("Unexpected JDWP Error: " + errorCode, errorCode);
 		}
