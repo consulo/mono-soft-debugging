@@ -42,19 +42,7 @@ public class AppDomain_CreateBoxValue implements AppDomain
 				throw new IllegalArgumentException("Wrong type tag: 0x" + Integer.toHexString(tag));
 		}
 		ps.writeId(t);
-		ps.writeByte((byte) tag);
-		switch(tag)
-		{
-			case SignatureConstants.ELEMENT_TYPE_I1:
-				ps.writeByte(boxed.byteValue());
-				break;
-			case SignatureConstants.ELEMENT_TYPE_I2:
-				ps.writeShort(boxed.shortValue());
-				break;
-			case SignatureConstants.ELEMENT_TYPE_I4:
-				ps.writeInt(boxed.intValue());
-				break;
-		}
+		ps.writeNumberValue((byte) tag, boxed);
 		ps.send();
 		return ps;
 	}

@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import edu.arizona.cs.mbel.signature.SignatureConstants;
+import mono.debugger.LocalVariableOrParameterMirror;
 import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
+import mono.debugger.MethodParameterMirror;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrameMirror;
 import mono.debugger.TypeMirror;
@@ -16,6 +18,7 @@ import mono.debugger.event.EventSet;
 import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequestManager;
+import mono.debugger.util.ImmutablePair;
 
 /**
  * @author VISTALL
@@ -86,6 +89,13 @@ public class Main
 
 					Value<?> value1 = accept.rootAppDomain().createBoxValue(SignatureConstants.ELEMENT_TYPE_I4, 1);
 
+					for(MethodParameterMirror methodParameterMirror : frame.location().method().parameters())
+					{
+						Value oldValue = frame.localOrParameterValue(methodParameterMirror);
+
+						frame.setLocalOrParameterValues(new ImmutablePair<LocalVariableOrParameterMirror, Value<?>>(methodParameterMirror, oldValue));
+
+					}
 					System.out.println("b: " + value1.type());
 				}
 			}

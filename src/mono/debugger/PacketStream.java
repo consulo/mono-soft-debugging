@@ -151,6 +151,10 @@ public class PacketStream
 			writeByte(SignatureConstants.ELEMENT_TYPE_STRING);
 			writeId(((StringValueMirror) value).object());
 		}
+		else if(value instanceof NumberValueMirror)
+		{
+			writeNumberValue(((NumberValueMirror) value).getTag(), ((NumberValueMirror) value).value());
+		}
 		else if(value instanceof ObjectValueMirror)
 		{
 			writeByte(SignatureConstants.ELEMENT_TYPE_CLASS);
@@ -163,6 +167,23 @@ public class PacketStream
 		else
 		{
 			throw new IllegalArgumentException(value.getClass().getName());
+		}
+	}
+
+	public void writeNumberValue(byte tag, Number boxed)
+	{
+		writeByte(tag);
+		switch(tag)
+		{
+			case SignatureConstants.ELEMENT_TYPE_I1:
+				writeByte(boxed.byteValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_I2:
+				writeShort(boxed.shortValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_I4:
+				writeInt(boxed.intValue());
+				break;
 		}
 	}
 

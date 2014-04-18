@@ -50,4 +50,9 @@ public class NumberValueMirror extends ValueImpl<Number>
 	{
 		valueVisitor.visitNumberValue(this, value());
 	}
+
+	public byte getTag()
+	{
+		return myTag;
+	}
 }
