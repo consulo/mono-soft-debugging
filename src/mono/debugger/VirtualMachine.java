@@ -75,30 +75,37 @@ public interface VirtualMachine extends Mirror
 	/**
 	 * All tracing is disabled.
 	 */
+	@Deprecated
 	int TRACE_NONE = 0x00000000;
 	/**
 	 * Tracing enabled for JDWP packets sent to target VM.
 	 */
+	@Deprecated
 	int TRACE_SENDS = 0x00000001;
 	/**
 	 * Tracing enabled for JDWP packets received from target VM.
 	 */
+	@Deprecated
 	int TRACE_RECEIVES = 0x00000002;
 	/**
 	 * Tracing enabled for internal event handling.
 	 */
+	@Deprecated
 	int TRACE_EVENTS = 0x00000004;
 	/**
 	 * Tracing enabled for internal managment of reference types.
 	 */
+	@Deprecated
 	int TRACE_REFTYPES = 0x00000008;
 	/**
 	 * Tracing enabled for internal management of object references.
 	 */
+	@Deprecated
 	int TRACE_OBJREFS = 0x00000010;
 	/**
 	 * All tracing is enabled.
 	 */
+	@Deprecated
 	int TRACE_ALL = 0x00ffffff;
 
 	int MAJOR_VERSION = 2;
@@ -116,33 +123,21 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @param traceFlags identifies which kinds of tracing to enable.
 	 */
+	@Deprecated
 	void setDebugTraceMode(int traceFlags);
 
 	@NotNull
 	AppDomainMirror rootAppDomain();
 
 	/**
-	 * Returns the loaded reference types that
-	 * match a given name. The name must be fully qualified
-	 * (for example, java.lang.String). The returned list
-	 * will contain a {@link ReferenceType} for each class
-	 * or interface found with the given name. The search
-	 * is confined to loaded classes only; no attempt is made
-	 * to load a class of the given name.
-	 * <p/>
-	 * The returned list will include reference types
-	 * loaded at least to the point of preparation and
-	 * types (like array) for which preparation is
-	 * not defined.
-	 *
-	 * @param className  the class/interface name to search for
-	 * @param ignoreCase
-	 * @return a list of {@link ReferenceType} objects, each
-	 *         mirroring a type in the target VM with the given name.
+	 * @since 2.9
 	 */
 	@NotNull
 	TypeMirror[] findTypesByQualifiedName(String typeName, boolean ignoreCase);
 
+	/**
+	 * @since 2.7
+	 */
 	@NotNull
 	TypeMirror[] findTypesBySourcePath(String sourcePath, boolean ignoreCase);
 
@@ -283,6 +278,8 @@ public interface VirtualMachine extends Mirror
 	 */
 	@NotNull
 	String version();
+
+	boolean isAtLeastVersion(int major, int minor);
 
 	/**
 	 * Returns the name of the target VM as reported by the

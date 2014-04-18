@@ -369,6 +369,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return process;
 	}
 
+	@Override
 	public boolean isAtLeastVersion(int major, int minor)
 	{
 		return (myVersionInfo.jdwpMajor > major) || ((myVersionInfo.jdwpMajor == major && myVersionInfo.jdwpMinor >= minor));

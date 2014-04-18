@@ -13,16 +13,16 @@ public class VirtualMachine_GetTypes implements VirtualMachine
 {
 	static final int COMMAND = 12;
 
-	public static VirtualMachine_GetTypes process(VirtualMachineImpl vm, String signature, boolean ignoreCase) throws JDWPException
+	public static VirtualMachine_GetTypes process(VirtualMachineImpl vm, String name, boolean ignoreCase) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, signature, ignoreCase);
+		PacketStream ps = enqueueCommand(vm, name, ignoreCase);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, String signature, boolean ignoreCase)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, String name, boolean ignoreCase)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		ps.writeString(signature);
+		ps.writeString(name);
 		ps.writeBoolean(ignoreCase);
 		ps.send();
 		return ps;
