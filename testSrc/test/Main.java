@@ -3,11 +3,8 @@ package test;
 import java.util.List;
 import java.util.Map;
 
-import edu.arizona.cs.mbel.signature.SignatureConstants;
-import mono.debugger.LocalVariableOrParameterMirror;
 import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
-import mono.debugger.MethodParameterMirror;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrameMirror;
 import mono.debugger.TypeMirror;
@@ -18,7 +15,6 @@ import mono.debugger.event.EventSet;
 import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.request.BreakpointRequest;
 import mono.debugger.request.EventRequestManager;
-import mono.debugger.util.ImmutablePair;
 
 /**
  * @author VISTALL
@@ -43,8 +39,9 @@ public class Main
 		TypeMirror typeMirror = accept.findTypesByQualifiedName("MyClass", true)[0];
 
 		int index = 0;
-		MethodMirror m  = null;
-		l:for(MethodMirror methodMirror : typeMirror.methods())
+		MethodMirror m = null;
+		l:
+		for(MethodMirror methodMirror : typeMirror.methods())
 		{
 			if("call".equals(methodMirror.name()))
 			{
@@ -87,16 +84,13 @@ public class Main
 						continue;
 					}
 
-					Value<?> value1 = accept.rootAppDomain().createBoxValue(SignatureConstants.ELEMENT_TYPE_I4, 1);
+					MethodMirror toString = typeMirror.findMethodByName("ToString", true);
 
-					for(MethodParameterMirror methodParameterMirror : frame.location().method().parameters())
-					{
-						Value oldValue = frame.localOrParameterValue(methodParameterMirror);
+					assert toString != null;
 
-						frame.setLocalOrParameterValues(new ImmutablePair<LocalVariableOrParameterMirror, Value<?>>(methodParameterMirror, oldValue));
+					Value<?> invoke = toString.invoke(frame.thread(), value);
 
-					}
-					System.out.println("b: " + value1.type());
+					System.out.println("tst: " + invoke.value());
 				}
 			}
 

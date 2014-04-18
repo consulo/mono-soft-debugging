@@ -18,6 +18,8 @@ import mono.debugger.protocol.Type_GetProperties;
  */
 public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 {
+	public static final TypeMirror[] EMPTY_ARRAY = new TypeMirror[0];
+
 	private Type_GetInfo myInfo;
 	private MethodMirror[] myMethodMirrors;
 	private FieldMirror[] myFieldMirrors;
@@ -86,13 +88,43 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 		}
 	}
 
-	public MethodMirror findMethodByName(@NotNull String name)
+	@Nullable
+	public MethodMirror findMethodByName(@NotNull String name, boolean deep)
 	{
-		for(MethodMirror methodMirror : methods())
+		return findMethodByName(name, deep, EMPTY_ARRAY);
+	}
+
+	@Nullable
+	public MethodMirror findMethodByName(@NotNull String name, boolean deep, TypeMirror[] expectedParameters)
+	{
+		loop:for(MethodMirror methodMirror : methods())
 		{
 			if(methodMirror.name().equals(name))
 			{
-				return methodMirror;
+				MethodParameterMirror[] parameters = methodMirror.parameters();
+				if(parameters.length == expectedParameters.length)
+				{
+					for(int i = 0; i < parameters.length; i++)
+					{
+						MethodParameterMirror parameter = parameters[i];
+						TypeMirror expectedType = expectedParameters[i];
+						if(!expectedType.qualifiedName().equals(parameter.type().qualifiedName()))
+						{
+							continue loop;
+						}
+					}
+
+					return methodMirror;
+				}
+			}
+		}
+
+		if(deep)
+		{
+			TypeMirror baseType = baseType();
+			if(baseType != null)
+			{
+				return baseType.findMethodByName(name, true, expectedParameters);
 			}
 		}
 		return null;

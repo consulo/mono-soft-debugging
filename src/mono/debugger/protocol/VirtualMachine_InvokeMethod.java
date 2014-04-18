@@ -3,7 +3,6 @@ package mono.debugger.protocol;
 import mono.debugger.InvokeFlags;
 import mono.debugger.JDWPException;
 import mono.debugger.MethodMirror;
-import mono.debugger.ObjectValueMirror;
 import mono.debugger.PacketStream;
 import mono.debugger.ThreadMirror;
 import mono.debugger.Value;
@@ -22,7 +21,7 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 			ThreadMirror threadMirror,
 			InvokeFlags invokeFlags,
 			MethodMirror methodMirror,
-			ObjectValueMirror thisObjectMirror,
+			Value<?> thisObjectMirror,
 			Value<?>... arguments) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, threadMirror, invokeFlags, methodMirror, thisObjectMirror, arguments);
@@ -34,7 +33,7 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 			ThreadMirror threadMirror,
 			InvokeFlags invokeFlags,
 			MethodMirror methodMirror,
-			ObjectValueMirror thisObjectMirror,
+			Value<?> thisObjectMirror,
 			Value<?>[] arguments)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);

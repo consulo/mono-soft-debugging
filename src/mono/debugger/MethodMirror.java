@@ -12,6 +12,7 @@ import mono.debugger.protocol.Method_GetInfo;
 import mono.debugger.protocol.Method_GetLocalsInfo;
 import mono.debugger.protocol.Method_GetName;
 import mono.debugger.protocol.Method_GetParamInfo;
+import mono.debugger.protocol.VirtualMachine_InvokeMethod;
 
 /**
  * @author VISTALL
@@ -102,6 +103,30 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 	public TypeMirror returnType()
 	{
 		return paramInfo().returnType;
+	}
+
+	@Nullable
+	public Value<?> invoke(@NotNull ThreadMirror threadMirror, @Nullable Value<?> thisObject, Value<?>... arguments)
+	{
+		return invoke(threadMirror, InvokeFlags.NONE, thisObject, arguments);
+	}
+
+	@Nullable
+	public Value<?> invoke(@NotNull ThreadMirror threadMirror, @NotNull InvokeFlags invokeFlags, @Nullable Value<?> thisObject, Value<?>... arguments)
+	{
+		if(arguments.length != parameters().length)
+		{
+			throw new IllegalArgumentException("Wrong count of arguments");
+		}
+		try
+		{
+			thisObject = thisObject == null ? new NoObjectValue(vm) : thisObject;
+			return VirtualMachine_InvokeMethod.process(vm, threadMirror, invokeFlags, this, thisObject, arguments).value;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
 	}
 
 	@NotNull
