@@ -29,18 +29,14 @@ public class NumberValueMirror extends ValueImpl<Number>
 	@Override
 	public TypeMirror type()
 	{
-		TypeMirror[] types = null;
 		switch(myTag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_I1:
-				types = vm.findTypesByQualifiedName("System.SByte", false);
-				return types[0];
+				return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.SByte", false);
 			case SignatureConstants.ELEMENT_TYPE_I2:
-				types = vm.findTypesByQualifiedName("System.Short", false);
-				return types[0];
+				return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.Short", false);
 			case SignatureConstants.ELEMENT_TYPE_I4:
-				types = vm.findTypesByQualifiedName("System.Int32", false);
-				return types[0];
+				return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.Int32", false);
 		}
 		return null;
 	}

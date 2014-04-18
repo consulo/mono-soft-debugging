@@ -39,6 +39,12 @@ public interface ValueVisitor
 		{
 
 		}
+
+		@Override
+		public void visitBooleanValue(@NotNull BooleanValueMirror value, @NotNull Boolean mainValue)
+		{
+
+		}
 	}
 
 	void visitObjectValue(@NotNull ObjectValueMirror value);
@@ -50,4 +56,6 @@ public interface ValueVisitor
 	void visitNoObjectValue(@NotNull NoObjectValue value);
 
 	void visitArrayValue(@NotNull ArrayValueMirror value);
+
+	void visitBooleanValue(@NotNull BooleanValueMirror value, @NotNull Boolean mainValue);
 }

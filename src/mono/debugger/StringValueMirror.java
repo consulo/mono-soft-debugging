@@ -40,7 +40,7 @@ public class StringValueMirror extends ValueImpl<String>
 	@Override
 	public TypeMirror type()
 	{
-		return vm.findTypesByQualifiedName("System.String", false)[0];
+		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.String", false);
 	}
 
 	@Override
