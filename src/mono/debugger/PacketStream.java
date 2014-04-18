@@ -291,7 +291,7 @@ public class PacketStream
 	/**
 	 * Read long represented as eight bytes.
 	 */
-	long readLong()
+	public long readLong()
 	{
 		long b1, b2, b3, b4;
 		long b5, b6, b7, b8;
