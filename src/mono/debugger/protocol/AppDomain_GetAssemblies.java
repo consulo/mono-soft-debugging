@@ -23,10 +23,6 @@ public class AppDomain_GetAssemblies implements AppDomain
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, AppDomainMirror appDomainMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") AppDomain_GetAssemblies" + (ps.pkt.flags != 0 ? ", " +"" + "FLAGS=" + ps.pkt.flags : ""));
-		}
 		ps.writeId(appDomainMirror);
 		ps.send();
 		return ps;

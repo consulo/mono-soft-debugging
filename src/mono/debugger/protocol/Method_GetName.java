@@ -22,15 +22,6 @@ public class Method_GetName implements Method
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, MethodMirror methodMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") Method_GetName" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : ""));
-		}
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 method(MethodMirror): " + "ref=" + methodMirror.id());
-		}
 		ps.writeId(methodMirror);
 		ps.send();
 		return ps;

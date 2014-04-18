@@ -114,12 +114,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			return this == obj;
 		}
 
-		@Override
-		public int hashCode()
-		{
-			return System.identityHashCode(this);
-		}
-
 
 		@Override
 		public EventRequest request()
@@ -419,39 +413,10 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		PacketStream ps = new PacketStream(vm, pkt);
 		JDWP.Event.Composite compEvt = new JDWP.Event.Composite(vm, ps);
 		suspendPolicy = compEvt.suspendPolicy;
-		if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
-		{
-			switch(suspendPolicy)
-			{
-				case JDWP.SuspendPolicy.ALL:
-					vm.printTrace("EventSet: SUSPEND_ALL");
-					break;
-
-				case JDWP.SuspendPolicy.EVENT_THREAD:
-					vm.printTrace("EventSet: SUSPEND_EVENT_THREAD");
-					break;
-
-				case JDWP.SuspendPolicy.NONE:
-					vm.printTrace("EventSet: SUSPEND_NONE");
-					break;
-			}
-		}
 
 		for(int i = 0; i < compEvt.events.length; i++)
 		{
 			EventImpl evt = createEvent(compEvt.events[i]);
-
-			if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
-			{
-				try
-				{
-					vm.printTrace("Event: " + evt);
-				}
-				catch(VMDisconnectedException ee)
-				{
-					// ignore - see bug 6502716
-				}
-			}
 
 			switch(evt.destination())
 			{

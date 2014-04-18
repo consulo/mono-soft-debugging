@@ -120,10 +120,6 @@ public class TargetVM implements Runnable
 	@Override
 	public void run()
 	{
-		if((vm.traceFlags & VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Target VM interface thread running");
-		}
 		Packet p = null, p2;
 		String idString;
 
@@ -235,11 +231,6 @@ public class TargetVM implements Runnable
 				}
 			}
 			waitingQueue.clear();
-		}
-
-		if((vm.traceFlags & VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Target VM interface thread exiting");
 		}
 	}
 
@@ -373,19 +364,11 @@ public class TargetVM implements Runnable
 
 	void addEventQueue(EventQueueImpl queue)
 	{
-		if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
-		{
-			vm.printTrace("New event queue added");
-		}
 		eventQueues.add(queue);
 	}
 
 	void stopListening()
 	{
-		if((vm.traceFlags & VirtualMachine.TRACE_EVENTS) != 0)
-		{
-			vm.printTrace("Target VM i/f closing event queues");
-		}
 		shouldListen = false;
 		try
 		{

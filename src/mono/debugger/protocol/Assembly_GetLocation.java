@@ -22,15 +22,6 @@ public class Assembly_GetLocation implements Assembly
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, AssemblyMirror assemblyMirror)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") Assembly_GetLocation" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : ""));
-		}
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 assembly(AssemblyReference): " + "ref=" + assemblyMirror.id());
-		}
 		ps.writeId(assemblyMirror);
 		ps.send();
 		return ps;

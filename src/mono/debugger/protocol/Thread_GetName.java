@@ -23,15 +23,6 @@ public class Thread_GetName implements Thread
 			VirtualMachineImpl vm, ThreadMirror thread)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") Thread_GetName" + (ps.pkt.flags != 0 ? ", " +
-					"FLAGS=" + ps.pkt.flags : ""));
-		}
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 thread(ThreadMirror): " + thread.ref());
-		}
 		ps.writeId(thread);
 		ps.send();
 		return ps;

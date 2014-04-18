@@ -37,11 +37,6 @@ public class JDWP
 			static PacketStream enqueueCommand(VirtualMachineImpl vm)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.AllThreads" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
 				ps.send();
 				return ps;
 			}
@@ -120,11 +115,6 @@ public class JDWP
 			static PacketStream enqueueCommand(VirtualMachineImpl vm)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Dispose" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
 				ps.send();
 				return ps;
 			}
@@ -170,11 +160,6 @@ public class JDWP
 			static PacketStream enqueueCommand(VirtualMachineImpl vm)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Suspend" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
 				ps.send();
 				return ps;
 			}
@@ -216,11 +201,6 @@ public class JDWP
 			static PacketStream enqueueCommand(VirtualMachineImpl vm)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Resume" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
 				ps.send();
 				return ps;
 			}
@@ -266,15 +246,6 @@ public class JDWP
 					VirtualMachineImpl vm, int exitCode)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.VirtualMachine.Exit" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 exitCode(int): " + exitCode);
-				}
 				ps.writeInt(exitCode);
 				ps.send();
 				return ps;
@@ -378,10 +349,6 @@ public class JDWP
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         count(int): " + count);
-						}
 						ps.writeInt(count);
 					}
 				}
@@ -414,11 +381,6 @@ public class JDWP
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" +
-									thread.ref()));
-						}
 						ps.writeObjectRef(thread.ref());
 					}
 				}
@@ -506,21 +468,8 @@ public class JDWP
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         exceptionOrNull(ReferenceTypeImpl): " + (exceptionOrNull == null ?
-									"NULL" : "ref=" + exceptionOrNull.id()));
-						}
 						ps.writeClassRef(exceptionOrNull.id());
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         caught(boolean): " + caught);
-						}
 						ps.writeBoolean(caught);
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         uncaught(boolean): " + uncaught);
-						}
 						ps.writeBoolean(uncaught);
 					}
 				}
@@ -617,10 +566,6 @@ public class JDWP
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         sourceNamePattern(String): " + sourceNamePattern);
-						}
 						ps.writeString(sourceNamePattern);
 					}
 				}
@@ -662,11 +607,6 @@ public class JDWP
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-						{
-							ps.vm.printTrace("Sending:                         clazz(ReferenceTypeImpl): " + (clazz == null ? "NULL" : "ref=" +
-									clazz.id()));
-						}
 						ps.writeClassRef(clazz.id());
 					}
 				}
@@ -744,20 +684,7 @@ public class JDWP
 					VirtualMachineImpl vm, byte eventKind, int requestID)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.EventRequest.Clear" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 eventKind(byte): " + eventKind);
-				}
 				ps.writeByte(eventKind);
-				if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-				{
-					ps.vm.printTrace("Sending:                 requestID(int): " + requestID);
-				}
 				ps.writeInt(requestID);
 				ps.send();
 				return ps;
@@ -796,11 +723,6 @@ public class JDWP
 			static PacketStream enqueueCommand(VirtualMachineImpl vm)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-				{
-					vm.printTrace("Sending Command(id=" + ps.pkt.id + ") JDWP.EventRequest.ClearAllBreakpoints" + (ps.pkt.flags != 0 ? ", " +
-							"FLAGS=" + ps.pkt.flags : ""));
-				}
 				ps.send();
 				return ps;
 			}

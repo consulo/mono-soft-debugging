@@ -131,9 +131,6 @@ class VMState {
      */
     synchronized void thaw(ThreadMirror resumingThread) {
         if (cache != null) {
-            if ((vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0) {
-                vm.printTrace("Clearing VM suspended cache");
-            }
             disableCache();
         }
         processVMAction(new VMAction(vm, resumingThread, VMAction.VM_NOT_SUSPENDED));
@@ -205,10 +202,6 @@ class VMState {
                                         process(vm).threads);
                 if (local != null) {
                     local.threads = threads;
-                    if ((vm.traceFlags & VirtualMachine.TRACE_OBJREFS) != 0) {
-                        vm.printTrace("Caching all threads (count = " +
-                                      threads.size() + ") while VM suspended");
-                    }
                 }
             }
         } catch (JDWPException exc) {

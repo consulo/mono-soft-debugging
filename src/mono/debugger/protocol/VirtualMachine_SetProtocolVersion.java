@@ -21,20 +21,7 @@ public class VirtualMachine_SetProtocolVersion implements VirtualMachine
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, int major, int minor)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-		if((vm.traceFlags & mono.debugger.VirtualMachine.TRACE_SENDS) != 0)
-		{
-			vm.printTrace("Sending Command(id=" + ps.pkt.id + ") VirtualMachine_SetProtocolVersion" + (ps.pkt.flags != 0 ? ", " +
-					"" + "FLAGS=" + ps.pkt.flags : ""));
-		}
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 major: " + major);
-		}
 		ps.writeInt(major);
-		if((ps.vm.traceFlags & VirtualMachineImpl.TRACE_SENDS) != 0)
-		{
-			ps.vm.printTrace("Sending:                 minor: " + minor);
-		}
 		ps.writeInt(minor);
 		ps.send();
 		return ps;
