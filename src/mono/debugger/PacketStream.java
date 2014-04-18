@@ -151,6 +151,11 @@ public class PacketStream
 			writeByte(SignatureConstants.ELEMENT_TYPE_STRING);
 			writeId(((StringValueMirror) value).object());
 		}
+		else if(value instanceof BooleanValueMirror)
+		{
+			writeByte(SignatureConstants.ELEMENT_TYPE_BOOLEAN);
+			writeBoolean(((BooleanValueMirror) value).value());
+		}
 		else if(value instanceof NumberValueMirror)
 		{
 			writeNumberValue(((NumberValueMirror) value).getTag(), ((NumberValueMirror) value).value());
@@ -418,6 +423,8 @@ public class PacketStream
 		byte tag = readByte();
 		switch(tag)
 		{
+			case SignatureConstants.ELEMENT_TYPE_BOOLEAN:
+				return new BooleanValueMirror(vm, readBoolean());
 			case SignatureConstants.ELEMENT_TYPE_I1:
 				return new NumberValueMirror(vm, tag, readByte());
 			case SignatureConstants.ELEMENT_TYPE_I2:
