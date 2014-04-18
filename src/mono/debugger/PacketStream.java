@@ -148,8 +148,7 @@ public class PacketStream
 	{
 		if(value instanceof StringValueMirror)
 		{
-			writeByte(SignatureConstants.ELEMENT_TYPE_STRING);
-			writeId(((StringValueMirror) value).object());
+			writeValue(((StringValueMirror) value).object());
 		}
 		else if(value instanceof BooleanValueMirror)
 		{
@@ -162,7 +161,7 @@ public class PacketStream
 		}
 		else if(value instanceof ObjectValueMirror)
 		{
-			writeByte(SignatureConstants.ELEMENT_TYPE_CLASS);
+			writeByte(SignatureConstants.ELEMENT_TYPE_OBJECT);
 			writeId((ObjectValueMirror) value);
 		}
 		else if(value instanceof NoObjectValue)
