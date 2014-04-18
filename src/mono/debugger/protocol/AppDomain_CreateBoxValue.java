@@ -16,13 +16,13 @@ public class AppDomain_CreateBoxValue implements AppDomain
 {
 	static final int COMMAND = 7;
 
-	public static AppDomain_CreateBoxValue process(VirtualMachineImpl vm, AppDomainMirror domainMirror, int tag, Object unboxed) throws JDWPException
+	public static AppDomain_CreateBoxValue process(VirtualMachineImpl vm, AppDomainMirror domainMirror, int tag, Number boxed) throws JDWPException
 	{
-		PacketStream ps = enqueueCommand(vm, domainMirror, tag, unboxed);
+		PacketStream ps = enqueueCommand(vm, domainMirror, tag, boxed);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, AppDomainMirror domainMirror, int tag, Object unboxed)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, AppDomainMirror domainMirror, int tag, Number boxed)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(domainMirror);
@@ -46,13 +46,13 @@ public class AppDomain_CreateBoxValue implements AppDomain
 		switch(tag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_I1:
-				ps.writeByte((Byte) unboxed);
+				ps.writeByte(boxed.byteValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I2:
-				ps.writeShort((Short) unboxed);
+				ps.writeShort(boxed.shortValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I4:
-				ps.writeInt((Integer) unboxed);
+				ps.writeInt(boxed.intValue());
 				break;
 		}
 		ps.send();

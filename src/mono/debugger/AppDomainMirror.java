@@ -38,7 +38,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 	}
 
 	@NotNull
-	public ObjectValueMirror createBoxValue(int tag, @NotNull Object value)
+	public ObjectValueMirror createBoxValue(int tag, @NotNull Number value)
 	{
 		try
 		{
