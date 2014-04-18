@@ -164,7 +164,7 @@ public class PacketStream
 			writeByte(SignatureConstants.ELEMENT_TYPE_OBJECT);
 			writeId((ObjectValueMirror) value);
 		}
-		else if(value instanceof NoObjectValue)
+		else if(value instanceof NoObjectValueMirror)
 		{
 			writeByte(NULL_VALUE);
 		}
@@ -422,6 +422,8 @@ public class PacketStream
 		byte tag = readByte();
 		switch(tag)
 		{
+			case SignatureConstants.ELEMENT_TYPE_VOID:
+				return new VoidValueMirror(vm);
 			case SignatureConstants.ELEMENT_TYPE_BOOLEAN:
 				return new BooleanValueMirror(vm, readBoolean());
 			case SignatureConstants.ELEMENT_TYPE_I1:
@@ -437,7 +439,7 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, tag, readObjectMirror());
 			case NULL_VALUE:
-				return new NoObjectValue(vm);
+				return new NoObjectValueMirror(vm);
 			default:
 				throw new IllegalArgumentException("Unsupported tag: " + tag);
 		}

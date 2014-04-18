@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
  * @author VISTALL
  * @since 10.04.14
  */
-public class NoObjectValue extends ValueImpl<Object> implements MirrorWithId
+public class NoObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 {
-	public NoObjectValue(VirtualMachine aVm)
+	public NoObjectValueMirror(VirtualMachine aVm)
 	{
 		super(aVm);
 	}

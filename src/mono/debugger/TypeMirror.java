@@ -180,9 +180,8 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 	@NotNull
 	public List<FieldOrPropertyMirror> fieldAndProperties(boolean deep)
 	{
-		List<Long> data = new ArrayList<Long>();
 		List<FieldOrPropertyMirror> mirrors = new ArrayList<FieldOrPropertyMirror>();
-		collectFieldAndProperties(this, data, mirrors, deep);
+		collectFieldAndProperties(this, mirrors, deep);
 		Collections.sort(mirrors, new Comparator<FieldOrPropertyMirror>()
 		{
 			@Override
@@ -198,8 +197,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 		return mirrors;
 	}
 
-	private static void collectFieldAndProperties(
-			TypeMirror typeMirror, List<Long> data, List<FieldOrPropertyMirror> fieldOrPropertyMirrors, boolean deep)
+	private static void collectFieldAndProperties(TypeMirror typeMirror, List<FieldOrPropertyMirror> fieldOrPropertyMirrors, boolean deep)
 	{
 		FieldMirror[] fields = typeMirror.fields();
 		PropertyMirror[] properties = typeMirror.properties();
@@ -207,15 +205,14 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 		for(PropertyMirror property : properties)
 		{
 			fieldOrPropertyMirrors.add(property);
-			data.add(property.id());
 		}
 
 		for(FieldMirror field : fields)
 		{
-			/*if(data.contains(field.id()))
+			if(field.name().startsWith("<"))
 			{
 				continue;
-			}    */
+			}
 			fieldOrPropertyMirrors.add(field);
 		}
 
@@ -224,7 +221,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 			TypeMirror b = typeMirror.baseType();
 			if(b != null)
 			{
-				collectFieldAndProperties(b, data, fieldOrPropertyMirrors, true);
+				collectFieldAndProperties(b, fieldOrPropertyMirrors, true);
 			}
 		}
 	}

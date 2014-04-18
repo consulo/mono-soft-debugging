@@ -29,7 +29,7 @@ public interface ValueVisitor
 		}
 
 		@Override
-		public void visitNoObjectValue(@NotNull NoObjectValue value)
+		public void visitNoObjectValue(@NotNull NoObjectValueMirror value)
 		{
 
 		}
@@ -53,7 +53,7 @@ public interface ValueVisitor
 
 	void visitNumberValue(@NotNull NumberValueMirror value, @NotNull Number mainValue);
 
-	void visitNoObjectValue(@NotNull NoObjectValue value);
+	void visitNoObjectValue(@NotNull NoObjectValueMirror value);
 
 	void visitArrayValue(@NotNull ArrayValueMirror value);
 
