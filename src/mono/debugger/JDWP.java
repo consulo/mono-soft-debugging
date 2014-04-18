@@ -1732,7 +1732,7 @@ public class JDWP
 		static final int THREAD_NOT_ALIVE = 15;
 		static final int INVALID_OBJECT = 20;
 		static final int INVALID_CLASS = 21;
-		static final int CLASS_NOT_PREPARED = 22;
+
 		static final int INVALID_METHODID = 23;
 		static final int INVALID_LOCATION = 24;
 		static final int INVALID_FIELDID = 25;

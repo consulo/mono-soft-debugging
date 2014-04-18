@@ -53,8 +53,6 @@ public class JDWPException extends Exception
 				return new VMDisconnectedException();
 			case JDWP.Error.OUT_OF_MEMORY:
 				return new VMOutOfMemoryException();
-			case JDWP.Error.CLASS_NOT_PREPARED:
-				return new ClassNotPreparedException();
 			case JDWP.Error.INVALID_FRAMEID:
 			case JDWP.Error.NOT_CURRENT_FRAME:
 				return new InvalidStackFrameException();
