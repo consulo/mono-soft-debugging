@@ -72,59 +72,8 @@ import mono.debugger.request.EventRequestManager;
  */
 public interface VirtualMachine extends Mirror
 {
-	/**
-	 * All tracing is disabled.
-	 */
-	@Deprecated
-	int TRACE_NONE = 0x00000000;
-	/**
-	 * Tracing enabled for JDWP packets sent to target VM.
-	 */
-	@Deprecated
-	int TRACE_SENDS = 0x00000001;
-	/**
-	 * Tracing enabled for JDWP packets received from target VM.
-	 */
-	@Deprecated
-	int TRACE_RECEIVES = 0x00000002;
-	/**
-	 * Tracing enabled for internal event handling.
-	 */
-	@Deprecated
-	int TRACE_EVENTS = 0x00000004;
-	/**
-	 * Tracing enabled for internal managment of reference types.
-	 */
-	@Deprecated
-	int TRACE_REFTYPES = 0x00000008;
-	/**
-	 * Tracing enabled for internal management of object references.
-	 */
-	@Deprecated
-	int TRACE_OBJREFS = 0x00000010;
-	/**
-	 * All tracing is enabled.
-	 */
-	@Deprecated
-	int TRACE_ALL = 0x00ffffff;
-
 	int MAJOR_VERSION = 2;
 	int MINOR_VERSION = 29;
-
-	/**
-	 * Traces the activities performed by the mono.debugger implementation.
-	 * All trace information is output to System.err. The given trace
-	 * flags are used to limit the output to only the information
-	 * desired. The given flags are in effect and the corresponding
-	 * trace will continue until the next call to
-	 * this method.
-	 * <p/>
-	 * Output is implementation dependent and trace mode may be ignored.
-	 *
-	 * @param traceFlags identifies which kinds of tracing to enable.
-	 */
-	@Deprecated
-	void setDebugTraceMode(int traceFlags);
 
 	@NotNull
 	AppDomainMirror rootAppDomain();

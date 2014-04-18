@@ -51,7 +51,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 
 	// Allow direct access to this field so that that tracing code slows down
 	// JDI as little as possible when not enabled.
-	public int traceFlags = TRACE_NONE;
+	public int traceFlags = 0;
 
 	static int TRACE_RAW_SENDS = 0x01000000;
 	static int TRACE_RAW_RECEIVES = 0x02000000;
@@ -162,22 +162,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return state;
 	}
 
-	void validateVM()
-	{
-	}
-
-	@Override
-	public boolean equals(Object obj)
-	{
-		return this == obj;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return System.identityHashCode(this);
-	}
-
 	@NotNull
 	@Override
 	public AppDomainMirror rootAppDomain()
@@ -189,7 +173,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public TypeMirror[] findTypesByQualifiedName(String typeName, boolean ignoreCase)
 	{
-		validateVM();
+		checkVersion(2, 9);
 		try
 		{
 			return VirtualMachine_GetTypes.process(vm, typeName, ignoreCase).types;
@@ -204,7 +188,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public TypeMirror[] findTypesBySourcePath(String sourcePath, boolean ignoreCase)
 	{
-		validateVM();
+		checkVersion(2, 7);
 		try
 		{
 			return VirtualMachine_GetTypesForSourceFile.process(vm, sourcePath, ignoreCase).types;
@@ -219,7 +203,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public List<ThreadMirror> allThreads()
 	{
-		validateVM();
 		return state.allThreads();
 	}
 
@@ -245,7 +228,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public void suspend()
 	{
-		validateVM();
 		try
 		{
 			JDWP.VirtualMachine.Suspend.process(vm);
@@ -260,7 +242,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public void resume()
 	{
-		validateVM();
 		CommandSender sender = new CommandSender()
 		{
 			@Override
@@ -322,7 +303,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public EventRequestManager eventRequestManager()
 	{
-		validateVM();
 		return eventRequestManager;
 	}
 
@@ -334,7 +314,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public void dispose()
 	{
-		validateVM();
 		try
 		{
 			JDWP.VirtualMachine.Dispose.process(vm);
@@ -349,7 +328,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public void exit(int exitCode)
 	{
-		validateVM();
 		try
 		{
 			JDWP.VirtualMachine.Exit.process(vm, exitCode);
@@ -365,7 +343,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public Process process()
 	{
-		validateVM();
 		return process;
 	}
 
@@ -379,7 +356,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public String version()
 	{
-		validateVM();
 		return myVersionInfo.jdwpMajor + "." + myVersionInfo.jdwpMinor;
 	}
 
@@ -387,16 +363,15 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public String name()
 	{
-		validateVM();
 		return myVersionInfo.description;
 	}
 
-	@Override
-	public void setDebugTraceMode(int traceFlags)
+	public void checkVersion(int major, int minor)
 	{
-		validateVM();
-		this.traceFlags = traceFlags;
-		this.traceReceives = (traceFlags & TRACE_RECEIVES) != 0;
+		if(!isAtLeastVersion(major, minor))
+		{
+			throw new VersionMismatchException();
+		}
 	}
 
 	@NotNull
