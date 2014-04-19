@@ -49,10 +49,6 @@ public class PropertyMirror extends FieldOrPropertyMirror
 	 */
 	public boolean isArrayProperty()
 	{
-		if(!name().equals("Item"))
-		{
-			return false;
-		}
 		if(myGetMethod != null)
 		{
 			return myGetMethod.parameters().length == 1;
