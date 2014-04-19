@@ -36,8 +36,23 @@ public class PropertyMirror extends FieldOrPropertyMirror
 		return mySetMethod;
 	}
 
+	/**
+	 * In .NET bytecode - index method like
+	 *
+	 * T this[int index]
+	 * {
+	 * }
+	 *
+	 * Stored in bytecode as Property with name `Item`.
+	 * And accessors methods have +1 parameter(index)
+	 * For original properties - get have no parameters, set - have one parameter
+	 */
 	public boolean isArrayProperty()
 	{
+		if(!name().equals("Item"))
+		{
+			return false;
+		}
 		if(myGetMethod != null)
 		{
 			return myGetMethod.parameters().length == 1;
