@@ -16,7 +16,7 @@ import mono.debugger.protocol.Type_GetProperties;
  * @author VISTALL
  * @since 10.04.14
  */
-public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
+public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, GenericTarget<TypeMirror>
 {
 	public static final TypeMirror[] EMPTY_ARRAY = new TypeMirror[0];
 
@@ -63,6 +63,43 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId
 	public String qualifiedName()
 	{
 		return info().fullName;
+	}
+
+	@NotNull
+	public String originalQualifiedName()
+	{
+		TypeMirror generalType = info().generalType;
+		if(generalType != null)
+		{
+			return generalType.qualifiedName();
+		}
+		return qualifiedName();
+	}
+
+	@Override
+	@NotNull
+	public String originalName()
+	{
+		TypeMirror generalType = info().generalType;
+		if(generalType != null)
+		{
+			return generalType.name();
+		}
+		return name();
+	}
+
+	@Nullable
+	@Override
+	public TypeMirror original()
+	{
+		return info().generalType;
+	}
+
+	@NotNull
+	@Override
+	public TypeMirror[] genericArguments()
+	{
+		return info().genericArguments;
 	}
 
 	@NotNull
