@@ -73,7 +73,7 @@ public class Method_GetDebugInfo implements Method
 		}
 		else
 		{
-			sourceFiles = new SourceFile[1];
+			sourceFiles = new SourceFile[] {new SourceFile()};
 			sourceFiles[0].name = ps.readString();
 		}
 
