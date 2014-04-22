@@ -36,19 +36,18 @@ public class Main
 		accept.resume();
 		accept.suspend();
 
-		TypeMirror typeMirror = accept.findTypesByQualifiedName("MyClass", true)[0];
+		TypeMirror typeMirror = accept.findTypesByQualifiedName("Program", true)[0];
 
 		int index = 0;
 		MethodMirror m = null;
 		l:
 		for(MethodMirror methodMirror : typeMirror.methods())
 		{
-			if("call".equals(methodMirror.name()))
+			if("Main".equals(methodMirror.name()))
 			{
-				Method_GetDebugInfo debugInfo = Method_GetDebugInfo.process(accept, methodMirror);
-				for(Method_GetDebugInfo.Entry entry : debugInfo.entries)
+				for(Method_GetDebugInfo.Entry entry : methodMirror.debugInfo())
 				{
-					if(entry.line == 21)
+					if(entry.line == 54)
 					{
 						m = methodMirror;
 						index = entry.offset;
