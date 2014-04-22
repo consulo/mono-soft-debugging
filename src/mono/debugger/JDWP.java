@@ -613,18 +613,18 @@ public class JDWP
 			}
 
 			static Set process(
-					VirtualMachineImpl vm, byte eventKind, byte suspendPolicy, Modifier[] modifiers) throws JDWPException
+					VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, eventKind, suspendPolicy, modifiers);
 				return waitForReply(vm, ps);
 			}
 
 			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, byte eventKind, byte suspendPolicy, Modifier[] modifiers)
+					VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				ps.writeByte(eventKind);
-				ps.writeByte(suspendPolicy);
+				ps.writeByte((byte)eventKind);
+				ps.writeByte((byte)suspendPolicy);
 				ps.writeByte((byte) modifiers.length);
 				for(int i = 0; i < modifiers.length; i++)
 				{

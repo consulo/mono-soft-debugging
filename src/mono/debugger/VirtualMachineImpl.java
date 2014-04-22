@@ -352,6 +352,22 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return (myVersionInfo.jdwpMajor > major) || ((myVersionInfo.jdwpMajor == major && myVersionInfo.jdwpMinor >= minor));
 	}
 
+	@Override
+	public void enableEvents(@NotNull EventKind... eventKinds)
+	{
+		for(EventKind eventKind : eventKinds)
+		{
+			try
+			{
+				JDWP.EventRequest.Set.process(vm, eventKind.ordinal(), SuspendPolicy.NONE.ordinal(), new JDWP.EventRequest.Set.Modifier[0]);
+			}
+			catch(JDWPException e)
+			{
+				throw e.toJDIException();
+			}
+		}
+	}
+
 	@NotNull
 	@Override
 	public String version()

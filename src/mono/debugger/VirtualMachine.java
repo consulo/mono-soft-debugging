@@ -230,6 +230,8 @@ public interface VirtualMachine extends Mirror
 
 	boolean isAtLeastVersion(int major, int minor);
 
+	void enableEvents(@NotNull EventKind... eventKinds);
+
 	/**
 	 * Returns the name of the target VM as reported by the
 	 * property <code>java.vm.name</code>.
