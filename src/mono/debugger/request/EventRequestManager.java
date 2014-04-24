@@ -57,6 +57,9 @@ public interface EventRequestManager extends Mirror
 	@NotNull
 	EventRequest createAppDomainUnload();
 
+	@NotNull
+	TypeLoadRequest createTypeLoad();
+
 	/**
 	 * Creates a new disabled {@link ThreadStartRequest}.
 	 * The new event request is added to the list managed by this
@@ -348,4 +351,7 @@ public interface EventRequestManager extends Mirror
 
 	@NotNull
 	List<EventRequest> appDomainUnloadEventRequests();
+
+	@NotNull
+	List<TypeLoadRequest> typeLoadRequests();
 }

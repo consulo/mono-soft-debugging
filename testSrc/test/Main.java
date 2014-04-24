@@ -7,6 +7,7 @@ import mono.debugger.LocationImpl;
 import mono.debugger.MethodMirror;
 import mono.debugger.SocketListeningConnector;
 import mono.debugger.StackFrameMirror;
+import mono.debugger.SuspendPolicy;
 import mono.debugger.TypeMirror;
 import mono.debugger.Value;
 import mono.debugger.VirtualMachineImpl;
@@ -66,7 +67,7 @@ public class Main
 		while(true)
 		{
 			EventSet eventSet = accept.eventQueue().remove();
-			if(eventSet.suspendPolicy() == BreakpointRequest.SUSPEND_ALL)
+			if(eventSet.suspendPolicy() == SuspendPolicy.ALL)
 			{
 				List<StackFrameMirror> frames = eventSet.eventThread().frames();
 

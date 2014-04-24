@@ -53,7 +53,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	private static final long serialVersionUID = -4857338819787924570L;
 	private VirtualMachineImpl vm; // we implement Mirror
 	private Packet pkt;
-	private byte suspendPolicy;
+	private SuspendPolicy suspendPolicy;
 
 	@Override
 	public String toString()
@@ -383,7 +383,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	EventSetImpl(VirtualMachine aVm, byte eventCmd)
 	{
 		this(aVm, null);
-		suspendPolicy = JDWP.SuspendPolicy.NONE;
+		suspendPolicy = SuspendPolicy.NONE;
 		switch(eventCmd)
 		{
 			default:
@@ -412,7 +412,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 		PacketStream ps = new PacketStream(vm, pkt);
 		JDWP.Event.Composite compEvt = new JDWP.Event.Composite(vm, ps);
-		suspendPolicy = compEvt.suspendPolicy;
+		suspendPolicy = SuspendPolicy.values()[compEvt.suspendPolicy];
 
 		for(int i = 0; i < compEvt.events.length; i++)
 		{
@@ -436,11 +436,11 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		{
 			// This set has no client events.  If we don't do
 			// needed resumes, no one else is going to.
-			if(suspendPolicy == JDWP.SuspendPolicy.ALL)
+			if(suspendPolicy == SuspendPolicy.ALL)
 			{
 				vm.resume();
 			}
-			suspendPolicy = JDWP.SuspendPolicy.NONE;
+			suspendPolicy = SuspendPolicy.NONE;
 
 		}
 
@@ -500,10 +500,11 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		return vm;
 	}
 
+	@NotNull
 	@Override
-	public int suspendPolicy()
+	public SuspendPolicy suspendPolicy()
 	{
-		return EventRequestManagerImpl.JDWPtoJDISuspendPolicy(suspendPolicy);
+		return suspendPolicy;
 	}
 
 	@Override

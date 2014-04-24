@@ -112,7 +112,7 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
             }
         }
 
-        if ((eventSet != null) && (eventSet.suspendPolicy() == JDWP.SuspendPolicy.ALL)) {
+        if ((eventSet != null) && (eventSet.suspendPolicy() == SuspendPolicy.ALL)) {
             vm.notifySuspend();
         }
 

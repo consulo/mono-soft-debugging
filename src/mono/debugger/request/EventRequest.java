@@ -25,6 +25,7 @@
 
 package mono.debugger.request;
 
+import org.jetbrains.annotations.NotNull;
 import mono.debugger.*;
 
 /**
@@ -143,13 +144,6 @@ public interface EventRequest extends Mirror {
      */
     void addCountFilter(int count);
 
-    /** Suspend no threads when the event occurs */
-    int SUSPEND_NONE = 0;
-    /** Suspend only the thread which generated the event when the event occurs */
-    int SUSPEND_EVENT_THREAD = 1;
-    /** Suspend all threads when the event occurs */
-    int SUSPEND_ALL = 2;
-
     /**
      * Determines the threads to suspend when the requested event occurs
      * in the target VM. Use {@link #SUSPEND_ALL} to suspend all
@@ -169,7 +163,7 @@ public interface EventRequest extends Mirror {
      * @throws IllegalArgumentException if the policy argument
      * contains an illegal value.
      */
-    void setSuspendPolicy(int policy);
+    void setSuspendPolicy(SuspendPolicy policy);
 
     /**
      * Returns a value which describes the threads to suspend when the
@@ -179,7 +173,8 @@ public interface EventRequest extends Mirror {
      *
      * @return the current suspend mode for this request
      */
-    int suspendPolicy();
+	@NotNull
+	SuspendPolicy suspendPolicy();
 
     /**
      * Add an arbitrary key/value "property" to this request.
