@@ -14,7 +14,6 @@ public class JDWP
 		}  // hide constructor
 
 
-
 		/**
 		 * Returns all threads currently running in the target VM .
 		 * The returned list contains threads created through
@@ -623,8 +622,8 @@ public class JDWP
 					VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				ps.writeByte((byte)eventKind);
-				ps.writeByte((byte)suspendPolicy);
+				ps.writeByte((byte) eventKind);
+				ps.writeByte((byte) suspendPolicy);
 				ps.writeByte((byte) modifiers.length);
 				for(int i = 0; i < modifiers.length; i++)
 				{
@@ -905,6 +904,9 @@ public class JDWP
 						case JDWP.EventKind.VM_DEATH:
 							aEventsCommon = new VMDeath(vm, ps);
 							break;
+						case EventKind.TYPE_LOAD:
+							aEventsCommon = new TypeLoad(vm, ps);
+							break;
 						default:
 							System.out.println("Unknown EventKind: " + eventKind);
 							break;
@@ -1135,6 +1137,39 @@ public class JDWP
 						{
 							vm.printReceiveTrace(6, "location(Location): " + location);
 						}
+					}
+				}
+
+				public static class TypeLoad extends EventsCommon
+				{
+					static final byte ALT_ID = (byte) mono.debugger.EventKind.TYPE_LOAD.ordinal();
+
+					@Override
+					byte eventKind()
+					{
+						return ALT_ID;
+					}
+
+					/**
+					 * Request that generated event
+					 */
+					public final int requestID;
+
+					/**
+					 * Thread which exited method
+					 */
+					public final ThreadMirror thread;
+
+					/**
+					 * Location of exit
+					 */
+					public final TypeMirror typeMirror;
+
+					TypeLoad(VirtualMachineImpl vm, PacketStream ps)
+					{
+						requestID = ps.readInt();
+						thread = ps.readThreadMirror();
+						typeMirror = ps.readTypeMirror();
 					}
 				}
 
@@ -1619,7 +1654,8 @@ public class JDWP
 			{
 				if(vm.traceReceives)
 				{
-					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.Event.Composite" + (ps.pkt.flags != 0 ? ", FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
+					vm.printTrace("Receiving Command(id=" + ps.pkt.id + ") JDWP.Event.Composite" + (ps.pkt.flags != 0 ? ", " +
+							"FLAGS=" + ps.pkt.flags : "") + (ps.pkt.errorCode != 0 ? ", ERROR CODE=" + ps.pkt.errorCode : ""));
 				}
 				suspendPolicy = ps.readByte();
 				if(vm.traceReceives)

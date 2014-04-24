@@ -91,7 +91,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			this.eventCmd = evt.eventKind();
 			this.requestID = requestID;
 			EventRequestManagerImpl ermi = vm.eventRequestManagerImpl();
-			request = ermi.request(eventCmd, requestID);
+			request = ermi.request(EventKind.values()[eventCmd], requestID);
 		}
 
 		/**
@@ -475,6 +475,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				return new MethodEntryEventImpl(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
 			case JDWP.EventKind.METHOD_EXIT:
 				return new MethodExitEventImpl(vm, (JDWP.Event.Composite.Events.MethodExit) comm);
+			case JDWP.EventKind.TYPE_LOAD:
+				return new TypeLoadEvent(vm, (JDWP.Event.Composite.Events.TypeLoad) comm);
 			case JDWP.EventKind.SINGLE_STEP:
 				return new StepEventImpl(vm, (JDWP.Event.Composite.Events.SingleStep) comm);
 			case JDWP.EventKind.ASSEMBLY_LOAD:

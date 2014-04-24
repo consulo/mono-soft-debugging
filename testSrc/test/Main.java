@@ -33,8 +33,7 @@ public class Main
 
 		VirtualMachineImpl accept = (VirtualMachineImpl) socketListeningConnector.accept(argumentMap);
 
-		accept.resume();
-		accept.suspend();
+		Thread.sleep(1000L);
 
 		TypeMirror typeMirror = accept.findTypesByQualifiedName("Program", true)[0];
 
