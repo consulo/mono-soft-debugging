@@ -21,7 +21,7 @@ public class BooleanValueMirror extends ValueImpl<Boolean>
 	@Override
 	public TypeMirror type()
 	{
-		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.Boolean", false);
+		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName(TypeTag.Boolean.getType(), false);
 	}
 
 	@NotNull

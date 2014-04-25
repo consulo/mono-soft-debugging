@@ -45,6 +45,12 @@ public interface ValueVisitor
 		{
 
 		}
+
+		@Override
+		public void visitCharValue(@NotNull CharValueMirror valueMirror, @NotNull Character mainValue)
+		{
+
+		}
 	}
 
 	void visitObjectValue(@NotNull ObjectValueMirror value);
@@ -58,4 +64,6 @@ public interface ValueVisitor
 	void visitArrayValue(@NotNull ArrayValueMirror value);
 
 	void visitBooleanValue(@NotNull BooleanValueMirror value, @NotNull Boolean mainValue);
+
+	void visitCharValue(@NotNull CharValueMirror valueMirror, @NotNull Character mainValue);
 }

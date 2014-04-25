@@ -96,12 +96,6 @@ public class PacketStream
 		dataStream.write(data);
 	}
 
-	void writeChar(char data)
-	{
-		dataStream.write((byte) ((data >>> 8) & 0xFF));
-		dataStream.write((byte) ((data >>> 0) & 0xFF));
-	}
-
 	public void writeShort(short data)
 	{
 		dataStream.write((byte) ((data >>> 8) & 0xFF));
@@ -150,6 +144,11 @@ public class PacketStream
 		{
 			writeValue(((StringValueMirror) value).object());
 		}
+		else if(value instanceof CharValueMirror)
+		{
+			writeByte(SignatureConstants.ELEMENT_TYPE_CHAR);
+			writeInt(((CharValueMirror) value).value());
+		}
 		else if(value instanceof BooleanValueMirror)
 		{
 			writeByte(SignatureConstants.ELEMENT_TYPE_BOOLEAN);
@@ -179,14 +178,35 @@ public class PacketStream
 		writeByte(tag);
 		switch(tag)
 		{
+			case SignatureConstants.ELEMENT_TYPE_U1:
+				writeByte(boxed.byteValue());
+				break;
 			case SignatureConstants.ELEMENT_TYPE_I1:
 				writeByte(boxed.byteValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_U2:
+				writeShort(boxed.shortValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I2:
 				writeShort(boxed.shortValue());
 				break;
+			case SignatureConstants.ELEMENT_TYPE_U4:
+				writeInt(boxed.intValue());
+				break;
 			case SignatureConstants.ELEMENT_TYPE_I4:
 				writeInt(boxed.intValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_U8:
+				writeLong(boxed.longValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_I8:
+				writeLong(boxed.longValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_R4:
+				writeFloat(boxed.floatValue());
+				break;
+			case SignatureConstants.ELEMENT_TYPE_R8:
+				writeDouble(boxed.doubleValue());
 				break;
 		}
 	}
@@ -245,19 +265,6 @@ public class PacketStream
 	{
 		int ret = readInt();
 		return (ret != 0);
-	}
-
-	/**
-	 * Read char represented as two bytes.
-	 */
-	char readChar()
-	{
-		int b1, b2;
-
-		b1 = pkt.data[inCursor++] & 0xff;
-		b2 = pkt.data[inCursor++] & 0xff;
-
-		return (char) ((b1 << 8) + b2);
 	}
 
 	/**
@@ -428,12 +435,28 @@ public class PacketStream
 				return new BooleanValueMirror(vm, readBoolean());
 			case SignatureConstants.ELEMENT_TYPE_I1:
 				return new NumberValueMirror(vm, tag, readByte());
+			case SignatureConstants.ELEMENT_TYPE_U1:
+				return new NumberValueMirror(vm, tag, readByte());
+			case SignatureConstants.ELEMENT_TYPE_U2:
+				return new NumberValueMirror(vm, tag, readShort());
 			case SignatureConstants.ELEMENT_TYPE_I2:
 				return new NumberValueMirror(vm, tag, readShort());
+			case SignatureConstants.ELEMENT_TYPE_U4:
+				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_I4:
 				return new NumberValueMirror(vm, tag, readInt());
+			case SignatureConstants.ELEMENT_TYPE_U8:
+				return new NumberValueMirror(vm, tag, readLong());
+			case SignatureConstants.ELEMENT_TYPE_I8:
+				return new NumberValueMirror(vm, tag, readLong());
+			case SignatureConstants.ELEMENT_TYPE_R4:
+				return new NumberValueMirror(vm, tag, readFloat());
+			case SignatureConstants.ELEMENT_TYPE_R8:
+				return new NumberValueMirror(vm, tag, readDouble());
 			case SignatureConstants.ELEMENT_TYPE_STRING:
 				return new StringValueMirror(vm, readObjectMirror());
+			case SignatureConstants.ELEMENT_TYPE_CHAR:
+				return new CharValueMirror(vm, (char) readInt());
 			case SignatureConstants.ELEMENT_TYPE_CLASS:
 				return readObjectMirror();
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:

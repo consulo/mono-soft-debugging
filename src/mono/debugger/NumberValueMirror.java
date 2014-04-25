@@ -1,7 +1,6 @@
 package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
-import edu.arizona.cs.mbel.signature.SignatureConstants;
 
 /**
  * @author VISTALL
@@ -29,16 +28,8 @@ public class NumberValueMirror extends ValueImpl<Number>
 	@Override
 	public TypeMirror type()
 	{
-		switch(myTag)
-		{
-			case SignatureConstants.ELEMENT_TYPE_I1:
-				return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.SByte", false);
-			case SignatureConstants.ELEMENT_TYPE_I2:
-				return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.Short", false);
-			case SignatureConstants.ELEMENT_TYPE_I4:
-				return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.Int32", false);
-		}
-		return null;
+		String type = TypeTag.typeByTag(myTag);
+		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName(type, false);
 	}
 
 	@Override

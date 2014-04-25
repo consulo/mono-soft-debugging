@@ -18,7 +18,7 @@ public class VoidValueMirror extends ValueImpl<Void>
 	@Override
 	public TypeMirror type()
 	{
-		return null;
+		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName(TypeTag.Void.getType(), false);
 	}
 
 	@Nullable
