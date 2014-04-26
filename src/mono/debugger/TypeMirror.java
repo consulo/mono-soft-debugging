@@ -93,6 +93,11 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		return info().genericArguments;
 	}
 
+	public boolean isArray()
+	{
+		return info().rank > 0;
+	}
+
 	@NotNull
 	public String namespace()
 	{
@@ -230,10 +235,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		FieldMirror[] fields = typeMirror.fields();
 		PropertyMirror[] properties = typeMirror.properties();
 
-		for(PropertyMirror property : properties)
-		{
-			fieldOrPropertyMirrors.add(property);
-		}
+		Collections.addAll(fieldOrPropertyMirrors, properties);
 
 		for(FieldMirror field : fields)
 		{

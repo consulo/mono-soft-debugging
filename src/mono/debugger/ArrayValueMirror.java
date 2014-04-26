@@ -2,6 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.ArrayReference_GetLength;
+import mono.debugger.protocol.ArrayReference_GetValues;
 
 /**
  * @author VISTALL
@@ -10,6 +11,7 @@ import mono.debugger.protocol.ArrayReference_GetLength;
 public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 {
 	private final ObjectValueMirror myObjectValueMirror;
+	private ArrayReference_GetLength.DimensionInfo[] myInfos;
 
 	public ArrayValueMirror(VirtualMachine aVm, ObjectValueMirror objectValueMirror)
 	{
@@ -17,17 +19,50 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		myObjectValueMirror = objectValueMirror;
 	}
 
-	public int length()
+	@NotNull
+	private ArrayReference_GetLength.DimensionInfo[] dimensionInfos()
 	{
+		if(myInfos != null)
+		{
+			return myInfos;
+		}
 		try
 		{
-			ArrayReference_GetLength.process(vm, myObjectValueMirror);
+			myInfos = ArrayReference_GetLength.process(vm, myObjectValueMirror).dimensions;
+			return myInfos;
 		}
 		catch(JDWPException e)
 		{
 			throw e.toJDIException();
 		}
-		return 0;
+	}
+
+	@NotNull
+	public Value<?> get(int index)
+	{
+		try
+		{
+			return ArrayReference_GetValues.process(vm, myObjectValueMirror, index, 1).values[0];
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	public int length()
+	{
+		return length(0);
+	}
+
+	public int length(int dimension)
+	{
+		return dimensionInfos()[dimension].size;
+	}
+
+	public int dimensionSize()
+	{
+		return myInfos.length;
 	}
 
 	@Override
@@ -52,7 +87,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 	public String toString()
 	{
 		StringBuilder builder = new StringBuilder();
-		builder.append("ArrayValue { type = ").append(type()).append(", length = ").append(length()).append(" }");
+		builder.append("ArrayValue { type = ").append(type()).append(", length = ").append(length(0)).append(" }");
 		return builder.toString();
 	}
 

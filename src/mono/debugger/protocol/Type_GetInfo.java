@@ -41,6 +41,7 @@ public class Type_GetInfo implements Type
 	public final TypeMirror baseType;
 	public TypeMirror generalType;
 	public TypeMirror[] genericArguments = TypeMirror.EMPTY_ARRAY;
+	public final byte rank;
 
 	private Type_GetInfo(VirtualMachineImpl vm, PacketStream ps)
 	{
@@ -52,7 +53,7 @@ public class Type_GetInfo implements Type
 		baseType = ps.readTypeMirror();
 		TypeMirror elementType = ps.readTypeMirror();
 		int token = ps.readInt();
-		int rank = ps.readByte();
+		rank = ps.readByte();
 		int attributes = ps.readInt();
 		byte runtimeAttributes = ps.readByte();
 
