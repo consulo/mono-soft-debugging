@@ -3,6 +3,7 @@ package mono.debugger;
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.ArrayReference_GetLength;
 import mono.debugger.protocol.ArrayReference_GetValues;
+import mono.debugger.protocol.ArrayReference_SetValues;
 
 /**
  * @author VISTALL
@@ -43,6 +44,18 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		try
 		{
 			return ArrayReference_GetValues.process(vm, myObjectValueMirror, index, 1).values[0];
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	public void set(int index, @NotNull Value<?> value)
+	{
+		try
+		{
+			ArrayReference_SetValues.process(vm, myObjectValueMirror,index, new Value[] {value});
 		}
 		catch(JDWPException e)
 		{
