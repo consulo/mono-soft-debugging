@@ -460,7 +460,7 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_CLASS:
 				return readObjectMirror();
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
-				return new ArrayValueMirror(vm, tag, readObjectMirror());
+				return new ArrayValueMirror(vm, readObjectMirror());
 			case NULL_VALUE:
 				return new NoObjectValueMirror(vm);
 			default:

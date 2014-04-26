@@ -9,13 +9,11 @@ import mono.debugger.protocol.ArrayReference_GetLength;
  */
 public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 {
-	private final byte myTag;
 	private final ObjectValueMirror myObjectValueMirror;
 
-	public ArrayValueMirror(VirtualMachine aVm, byte tag, ObjectValueMirror objectValueMirror)
+	public ArrayValueMirror(VirtualMachine aVm, ObjectValueMirror objectValueMirror)
 	{
 		super(aVm);
-		myTag = tag;
 		myObjectValueMirror = objectValueMirror;
 	}
 
@@ -35,7 +33,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 	@Override
 	public TypeMirror type()
 	{
-		return null;
+		return myObjectValueMirror.type();
 	}
 
 	@Override
