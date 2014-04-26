@@ -59,33 +59,24 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		return info().name;
 	}
 
+	/**
+	 * In most case it ill return same as {@link #qualifiedName()}. But if it runtime copy - it ill different
+	 */
 	@NotNull
-	public String qualifiedName()
+	public String fullName()
 	{
 		return info().fullName;
 	}
 
 	@NotNull
-	public String originalQualifiedName()
+	public String qualifiedName()
 	{
-		TypeMirror generalType = info().generalType;
-		if(generalType != null)
+		String namespace = namespace();
+		if(namespace.isEmpty())
 		{
-			return generalType.qualifiedName();
+			return name();
 		}
-		return qualifiedName();
-	}
-
-	@Override
-	@NotNull
-	public String originalName()
-	{
-		TypeMirror generalType = info().generalType;
-		if(generalType != null)
-		{
-			return generalType.name();
-		}
-		return name();
+		return namespace + "." + name();
 	}
 
 	@Nullable

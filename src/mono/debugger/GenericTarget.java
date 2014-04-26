@@ -9,11 +9,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface GenericTarget<T extends Mirror>
 {
-	@Nullable("Null is this is original class, if it a runtime copy with generic - ill return not null")
+	@Nullable("Null is this is original mirror, if it a runtime copy with generic - ill return not null")
 	T original();
-
-	@NotNull
-	String originalName();
 
 	@NotNull
 	TypeMirror[] genericArguments();
