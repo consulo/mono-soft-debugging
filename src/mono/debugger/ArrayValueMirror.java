@@ -77,6 +77,12 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		valueVisitor.visitArrayValue(this);
 	}
 
+	@NotNull
+	public ObjectValueMirror object()
+	{
+		return myObjectValueMirror;
+	}
+
 	@Override
 	public Object value()
 	{
