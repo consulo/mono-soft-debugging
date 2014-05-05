@@ -459,6 +459,7 @@ public class PacketStream
 				return new CharValueMirror(vm, (char) readInt());
 			case SignatureConstants.ELEMENT_TYPE_CLASS:
 				return readObjectMirror();
+			case SignatureConstants.ELEMENT_TYPE_ARRAY:
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, readObjectMirror());
 			case NULL_VALUE:
