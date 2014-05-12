@@ -50,7 +50,7 @@ public abstract class MirrorImpl implements Mirror
 	 * Throw NullPointerException on null mirror.
 	 * Throw VMMismatchException on wrong VM.
 	 */
-	void validateMirror(Mirror mirror)
+	public void validateMirror(Mirror mirror)
 	{
 		if(!vm.equals(mirror.virtualMachine()))
 		{

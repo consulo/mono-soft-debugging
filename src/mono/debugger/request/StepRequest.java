@@ -25,7 +25,15 @@
 
 package mono.debugger.request;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import mono.debugger.EventKind;
+import mono.debugger.EventRequestManagerImpl;
+import mono.debugger.JDWP;
 import mono.debugger.ThreadMirror;
+import mono.debugger.VirtualMachineImpl;
 
 /**
  * Request for notification when a step occurs in the target VM.
@@ -36,14 +44,13 @@ import mono.debugger.ThreadMirror;
  * The collection of existing StepRequests is
  * managed by the {@link EventRequestManager}
  *
+ * @author Robert Field
  * @see mono.debugger.event.StepEvent
  * @see mono.debugger.event.EventQueue
  * @see EventRequestManager
- *
- * @author Robert Field
- * @since  1.3
+ * @since 1.3
  */
-public interface StepRequest extends EventRequest
+public class StepRequest extends ClassVisibleEventRequest
 {
 	public static enum StepDepth
 	{
@@ -58,18 +65,66 @@ public interface StepRequest extends EventRequest
 		Line
 	}
 
-	/**
-	 * @return the thread on which the step event is being requested.
-	 */
-	ThreadMirror thread();
+	private ThreadMirror thread;
+	private StepSize size;
+	private StepDepth depth;
 
-	/**
-	 * @return the step size
-	 */
-	StepSize size();
+	public StepRequest(ThreadMirror thread, StepSize size, StepDepth depth, VirtualMachineImpl vm, EventRequestManagerImpl requestManager)
+	{
+		super(vm, requestManager);
+		this.thread = thread;
+		this.size = size;
+		this.depth = depth;
 
-	/**
-	 * @return the step depth
-	 */
-	StepDepth depth();
+            /*
+			 * Make sure this isn't a duplicate
+             */
+		List<StepRequest> requests = requestManager.stepRequests();
+		Iterator<StepRequest> iter = requests.iterator();
+		while(iter.hasNext())
+		{
+			StepRequest request = iter.next();
+			if((request != this) &&
+					request.isEnabled() &&
+					request.thread().equals(thread))
+			{
+				throw new DuplicateRequestException("Only one step request allowed per thread");
+			}
+		}
+
+		filters.add(JDWP.EventRequest.Set.Modifier.Step.create(this.thread, size, depth));
+	}
+
+	public StepDepth depth()
+	{
+		return depth;
+	}
+
+	public StepSize size()
+	{
+		return size;
+	}
+
+	public ThreadMirror thread()
+	{
+		return thread;
+	}
+
+	@Override
+	public EventKind eventCmd()
+	{
+		return EventKind.STEP;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "step request " + thread() + state();
+	}
+
+	@Override
+	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
+	{
+		return visitor.visitStep(this, a);
+	}
 }

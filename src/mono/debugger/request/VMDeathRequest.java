@@ -25,7 +25,10 @@
 
 package mono.debugger.request;
 
-import mono.debugger.*;
+import org.jetbrains.annotations.NotNull;
+import mono.debugger.EventKind;
+import mono.debugger.EventRequestManagerImpl;
+import mono.debugger.VirtualMachine;
 
 /**
  * Request for notification when the target VM terminates.
@@ -56,6 +59,28 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.4
  */
-public interface VMDeathRequest extends EventRequest {
+public class VMDeathRequest extends EventRequestImpl
+{
+	public VMDeathRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
+	{
+		super(virtualMachine, requestManager);
+	}
 
+	@Override
+	public EventKind eventCmd()
+	{
+		return EventKind.VM_DEATH;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "VM death request " + state();
+	}
+
+	@Override
+	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
+	{
+		return visitor.visitVMDeath(this, a);
+	}
 }

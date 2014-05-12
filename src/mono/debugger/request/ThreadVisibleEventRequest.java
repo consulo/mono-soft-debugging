@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2011, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,53 +22,27 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
-import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
+import mono.debugger.JDWP;
+import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachine;
 
-/**
- * Request for notification when a thread starts execution in the target VM.
- * When an enabled ThreadStartRequest is hit, an
- * {@link mono.debugger.event.EventSet event set} containing a
- * {@link mono.debugger.event.ThreadStartEvent ThreadStartEvent}
- * will be placed on the
- * {@link mono.debugger.event.EventQueue EventQueue}.
- * The collection of existing ThreadStartRequests is
- * managed by the {@link EventRequestManager}
- *
- * @see mono.debugger.event.ThreadStartEvent
- * @see mono.debugger.event.EventQueue
- * @see EventRequestManager
- *
- * @author Robert Field
- * @since  1.3
- */
-public class ThreadStartRequest extends ThreadVisibleEventRequest
+public abstract class ThreadVisibleEventRequest extends EventRequestImpl
 {
-	public ThreadStartRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
+	public ThreadVisibleEventRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
 	{
 		super(virtualMachine, requestManager);
 	}
 
-	@Override
-	public EventKind eventCmd()
+	public synchronized void addThreadFilter(ThreadMirror thread)
 	{
-		return EventKind.THREAD_START;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "thread start request " + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitThreadStart(this, a);
+		validateMirror(thread);
+		if(isEnabled() || deleted)
+		{
+			throw invalidState();
+		}
+		filters.add(JDWP.EventRequest.Set.Modifier.ThreadOnly.create(thread));
 	}
 }

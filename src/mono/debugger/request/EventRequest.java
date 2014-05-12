@@ -26,7 +26,8 @@
 package mono.debugger.request;
 
 import org.jetbrains.annotations.NotNull;
-import mono.debugger.*;
+import mono.debugger.Mirror;
+import mono.debugger.SuspendPolicy;
 
 /**
  * Represents a request for notification of an event.  Examples include
@@ -36,7 +37,7 @@ import mono.debugger.*;
  * be placed on the {@link mono.debugger.event.EventQueue EventQueue}.
  * The collection of existing event requests is
  * managed by the {@link EventRequestManager}.
- * <p>
+ * <p/>
  * The number of events generated for an event request can be controlled
  * through filters. Filters provide additional constraints that an event
  * must satisfy before it is placed on the event queue. Multiple filters can
@@ -46,7 +47,7 @@ import mono.debugger.*;
  * disabled. Multiple filters are applied with CUT-OFF AND, in the order
  * it was added to the request. Only events that satisfy all filters are
  * placed in the event queue.
- * <p>
+ * <p/>
  * The set of available filters is dependent on the event request,
  * some examples of filters are:
  * <ul>
@@ -61,145 +62,149 @@ import mono.debugger.*;
  * </ul>
  * Filters can dramatically improve debugger performance by reducing the
  * amount of event traffic sent from the target VM to the debugger VM.
- * <p>
+ * <p/>
  * Any method on <code>EventRequest</code> which
  * takes <code>EventRequest</code> as an parameter may throw
  * {@link mono.debugger.VMDisconnectedException} if the target VM is
  * disconnected and the {@link mono.debugger.event.VMDisconnectEvent} has been or is
  * available to be read from the {@link mono.debugger.event.EventQueue}.
- * <p>
+ * <p/>
  * Any method on <code>EventRequest</code> which
  * takes <code>EventRequest</code> as an parameter may throw
  * {@link mono.debugger.VMOutOfMemoryException} if the target VM has run out of memory.
  *
+ * @author Robert Field
  * @see mono.debugger.event.BreakpointEvent
  * @see mono.debugger.event.EventQueue
  * @see EventRequestManager
- *
- * @author Robert Field
- * @since  1.3
+ * @since 1.3
  */
-public interface EventRequest extends Mirror {
+public interface EventRequest extends Mirror
+{
 
-    /**
-     * Determines if this event request is currently enabled.
-     *
-     * @return <code>true</code> if enabled;
-     * <code>false</code> otherwise.
-     */
-    boolean isEnabled();
+	/**
+	 * Determines if this event request is currently enabled.
+	 *
+	 * @return <code>true</code> if enabled;
+	 *         <code>false</code> otherwise.
+	 */
+	boolean isEnabled();
 
-    /**
-     * Enables or disables this event request. While this event request is
-     * disabled, the event request will be ignored and the target VM
-     * will not be stopped if any of its threads reaches the
-     * event request.  Disabled event requests still exist,
-     * and are included in event request lists such as
-     * {@link EventRequestManager#breakpointRequests()}.
-     *
-     * @param val <code>true</code> if the event request is to be enabled;
-     * <code>false</code> otherwise.
-     * @throws InvalidRequestStateException if this request
-     * has been deleted.
-     * @throws IllegalThreadStateException if this is a StepRequest,
-     * <code>val</code> is <code>true</code>, and the
-     * thread named in the request has died.
-     */
-    void setEnabled(boolean val);
+	/**
+	 * Enables or disables this event request. While this event request is
+	 * disabled, the event request will be ignored and the target VM
+	 * will not be stopped if any of its threads reaches the
+	 * event request.  Disabled event requests still exist,
+	 * and are included in event request lists such as
+	 * {@link EventRequestManager#breakpointRequests()}.
+	 *
+	 * @param val <code>true</code> if the event request is to be enabled;
+	 *            <code>false</code> otherwise.
+	 * @throws InvalidRequestStateException if this request
+	 *                                      has been deleted.
+	 * @throws IllegalThreadStateException  if this is a StepRequest,
+	 *                                      <code>val</code> is <code>true</code>, and the
+	 *                                      thread named in the request has died.
+	 */
+	void setEnabled(boolean val);
 
-    /**
-     * Same as {@link #setEnabled <CODE>setEnabled(true)</CODE>}.
-     * @throws InvalidRequestStateException if this request
-     * has been deleted.
-     * @throws IllegalThreadStateException if this is a StepRequest
-     * and the thread named in the request has died.
-     */
-    void enable();
+	/**
+	 * Same as {@link #setEnabled <CODE>setEnabled(true)</CODE>}.
+	 *
+	 * @throws InvalidRequestStateException if this request
+	 *                                      has been deleted.
+	 * @throws IllegalThreadStateException  if this is a StepRequest
+	 *                                      and the thread named in the request has died.
+	 */
+	void enable();
 
-    /**
-     * Same as {@link #setEnabled <CODE>setEnabled(false)</CODE>}.
-     * @throws InvalidRequestStateException if this request
-     * has been deleted.
-     */
-    void disable();
+	/**
+	 * Same as {@link #setEnabled <CODE>setEnabled(false)</CODE>}.
+	 *
+	 * @throws InvalidRequestStateException if this request
+	 *                                      has been deleted.
+	 */
+	void disable();
 
-    /**
-     * Limit the requested event to be reported at most once after a
-     * given number of occurrences.  The event is not reported
-     * the first <code>count - 1</code> times this filter is reached.
-     * To request a one-off event, call this method with a count of 1.
-     * <p>
-     * Once the count reaches 0, any subsequent filters in this request
-     * are applied. If none of those filters cause the event to be
-     * suppressed, the event is reported. Otherwise, the event is not
-     * reported. In either case subsequent events are never reported for
-     * this request.
-     *
-     * @param count the number of ocurrences before generating an event.
-     * @throws InvalidRequestStateException if this request is currently
-     * enabled or has been deleted.
-     * Filters may be added only to disabled requests.
-     * @throws IllegalArgumentException if <CODE>count</CODE>
-     * is less than one.
-     */
-    void addCountFilter(int count);
+	/**
+	 * Limit the requested event to be reported at most once after a
+	 * given number of occurrences.  The event is not reported
+	 * the first <code>count - 1</code> times this filter is reached.
+	 * To request a one-off event, call this method with a count of 1.
+	 * <p/>
+	 * Once the count reaches 0, any subsequent filters in this request
+	 * are applied. If none of those filters cause the event to be
+	 * suppressed, the event is reported. Otherwise, the event is not
+	 * reported. In either case subsequent events are never reported for
+	 * this request.
+	 *
+	 * @param count the number of ocurrences before generating an event.
+	 * @throws InvalidRequestStateException if this request is currently
+	 *                                      enabled or has been deleted.
+	 *                                      Filters may be added only to disabled requests.
+	 * @throws IllegalArgumentException     if <CODE>count</CODE>
+	 *                                      is less than one.
+	 */
+	void addCountFilter(int count);
 
-    /**
-     * Determines the threads to suspend when the requested event occurs
-     * in the target VM. Use {@link #SUSPEND_ALL} to suspend all
-     * threads in the target VM (the default). Use {@link #SUSPEND_EVENT_THREAD}
-     * to suspend only the thread which generated the event. Use
-     * {@link #SUSPEND_NONE} to suspend no threads.
-     * <p>
-     * Thread suspensions through events have the same functionality
-     * as explicitly requested suspensions. See
-     * {@link mono.debugger.ThreadMirror#suspend} and
-     * {@link mono.debugger.VirtualMachine#suspend} for details.
-     *
-     * @param policy the selected suspend policy.
-     * @throws InvalidRequestStateException if this request is currently
-     * enabled or has been deleted.
-     * Suspend policy may only be set in disabled requests.
-     * @throws IllegalArgumentException if the policy argument
-     * contains an illegal value.
-     */
-    void setSuspendPolicy(SuspendPolicy policy);
+	/**
+	 * Determines the threads to suspend when the requested event occurs
+	 * in the target VM. Use {@link #SUSPEND_ALL} to suspend all
+	 * threads in the target VM (the default). Use {@link #SUSPEND_EVENT_THREAD}
+	 * to suspend only the thread which generated the event. Use
+	 * {@link #SUSPEND_NONE} to suspend no threads.
+	 * <p/>
+	 * Thread suspensions through events have the same functionality
+	 * as explicitly requested suspensions. See
+	 * {@link mono.debugger.ThreadMirror#suspend} and
+	 * {@link mono.debugger.VirtualMachine#suspend} for details.
+	 *
+	 * @param policy the selected suspend policy.
+	 * @throws InvalidRequestStateException if this request is currently
+	 *                                      enabled or has been deleted.
+	 *                                      Suspend policy may only be set in disabled requests.
+	 * @throws IllegalArgumentException     if the policy argument
+	 *                                      contains an illegal value.
+	 */
+	void setSuspendPolicy(SuspendPolicy policy);
 
-    /**
-     * Returns a value which describes the threads to suspend when the
-     * requested event occurs in the target VM.
-     * The returned value is  {@link #SUSPEND_ALL},
-     * {@link #SUSPEND_EVENT_THREAD}, or {@link #SUSPEND_NONE}.
-     *
-     * @return the current suspend mode for this request
-     */
+	/**
+	 * Returns a value which describes the threads to suspend when the
+	 * requested event occurs in the target VM.
+	 * The returned value is  {@link #SUSPEND_ALL},
+	 * {@link #SUSPEND_EVENT_THREAD}, or {@link #SUSPEND_NONE}.
+	 *
+	 * @return the current suspend mode for this request
+	 */
 	@NotNull
 	SuspendPolicy suspendPolicy();
 
-    /**
-     * Add an arbitrary key/value "property" to this request.
-     * The property can be used by a client of the JDI to
-     * associate application information with the request;
-     * These client-set properties are not used internally
-     * by the JDI.
-     * <p>
-     * The <code>get/putProperty</code> methods provide access to
-     * a small per-instance map. This is <b>not</b> to be confused
-     * with {@link java.util.Properties}.
-     * <p>
-     * If value is null this method will remove the property.
-     *
-     * @see #getProperty
-     */
-    void putProperty(Object key, Object value);
+	/**
+	 * Add an arbitrary key/value "property" to this request.
+	 * The property can be used by a client of the JDI to
+	 * associate application information with the request;
+	 * These client-set properties are not used internally
+	 * by the JDI.
+	 * <p/>
+	 * The <code>get/putProperty</code> methods provide access to
+	 * a small per-instance map. This is <b>not</b> to be confused
+	 * with {@link java.util.Properties}.
+	 * <p/>
+	 * If value is null this method will remove the property.
+	 *
+	 * @see #getProperty
+	 */
+	void putProperty(Object key, Object value);
 
-    /**
-     * Returns the value of the property with the specified key.  Only
-     * properties added with {@link #putProperty} will return
-     * a non-null value.
-     *
-     * @return the value of this property or null
-     * @see #putProperty
-     */
-    Object getProperty(Object key);
+	/**
+	 * Returns the value of the property with the specified key.  Only
+	 * properties added with {@link #putProperty} will return
+	 * a non-null value.
+	 *
+	 * @return the value of this property or null
+	 * @see #putProperty
+	 */
+	Object getProperty(Object key);
+
+	<A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a);
 }

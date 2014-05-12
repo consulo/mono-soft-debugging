@@ -330,7 +330,7 @@ public class JDWP
 				{
 					static final byte ALT_ID = 1;
 
-					static Modifier create(int count)
+					public static Modifier create(int count)
 					{
 						return new Modifier(ALT_ID, new Count(count));
 					}
@@ -358,11 +358,11 @@ public class JDWP
 				 * This modifier can be used with any event kind
 				 * except for class unload.
 				 */
-				static class ThreadOnly extends ModifierCommon
+				public static class ThreadOnly extends ModifierCommon
 				{
 					static final byte ALT_ID = 3;
 
-					static Modifier create(ThreadMirror thread)
+					public static Modifier create(ThreadMirror thread)
 					{
 						return new Modifier(ALT_ID, new ThreadOnly(thread));
 					}
@@ -391,11 +391,11 @@ public class JDWP
 				 * breakpoint, field access, field modification,
 				 * step, and exception event kinds.
 				 */
-				static class LocationOnly extends ModifierCommon
+				public static class LocationOnly extends ModifierCommon
 				{
 					static final byte ALT_ID = 7;
 
-					static Modifier create(Location loc)
+					public static Modifier create(Location loc)
 					{
 						return new Modifier(ALT_ID, new LocationOnly(loc));
 					}
@@ -480,11 +480,11 @@ public class JDWP
 				 * This modifier can be used with
 				 * step event kinds only.
 				 */
-				static class Step extends ModifierCommon
+				public static class Step extends ModifierCommon
 				{
 					static final byte ALT_ID = 10;
 
-					static Modifier create(ThreadMirror thread, StepRequest.StepSize size, StepRequest.StepDepth depth)
+					public static Modifier create(ThreadMirror thread, StepRequest.StepSize size, StepRequest.StepDepth depth)
 					{
 						return new Modifier(ALT_ID, new Step(thread, size, depth));
 					}
@@ -597,7 +597,7 @@ public class JDWP
 				}
 			}
 
-			static Set process(
+			public static Set process(
 					VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, eventKind, suspendPolicy, modifiers);
@@ -629,7 +629,7 @@ public class JDWP
 			/**
 			 * ID of created request
 			 */
-			final int requestID;
+			public final int requestID;
 
 			private Set(VirtualMachineImpl vm, PacketStream ps)
 			{
@@ -654,11 +654,11 @@ public class JDWP
 		 * generated events do not have a corresponding event request and may not be cleared
 		 * using this command.
 		 */
-		static class Clear
+		public static class Clear
 		{
 			static final int COMMAND = 2;
 
-			static Clear process(
+			public static Clear process(
 					VirtualMachineImpl vm, byte eventKind, int requestID) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, eventKind, requestID);

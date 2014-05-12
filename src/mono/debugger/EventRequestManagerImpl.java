@@ -48,511 +48,6 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 {
 	private Map<EventKind, List<EventRequest>> myEventRequests = new HashMap<EventKind, List<EventRequest>>();
 
-	public static abstract class EventRequestImpl extends MirrorImpl implements EventRequest
-	{
-		private final EventRequestManagerImpl myRequestManager;
-		int id;
-
-		/*
-		 * This list is not protected by a synchronized wrapper. All
-		 * access/modification should be protected by synchronizing on
-		 * the enclosing instance of EventRequestImpl.
-		 */
-		public List<Object> filters = new ArrayList<Object>();
-
-		boolean isEnabled = false;
-		boolean deleted = false;
-		SuspendPolicy suspendPolicy = SuspendPolicy.ALL;
-		private Map<Object, Object> clientProperties = null;
-
-		EventRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine);
-			myRequestManager = requestManager;
-		}
-
-
-		/*
-		 * Override superclass back to default equality
-		 */
-		@Override
-		public boolean equals(Object obj)
-		{
-			return this == obj;
-		}
-
-		@Override
-		public int hashCode()
-		{
-			return System.identityHashCode(this);
-		}
-
-		protected abstract EventKind eventCmd();
-
-		InvalidRequestStateException invalidState()
-		{
-			return new InvalidRequestStateException(toString());
-		}
-
-		String state()
-		{
-			return deleted ? " (deleted)" : (isEnabled() ? " (enabled)" : " (disabled)");
-		}
-
-		/**
-		 * @return all the event request of this kind
-		 */
-		public List requestList()
-		{
-			return myRequestManager.requestList(eventCmd());
-		}
-
-		/**
-		 * delete the event request
-		 */
-		void delete()
-		{
-			if(!deleted)
-			{
-				requestList().remove(this);
-				disable(); /* must do BEFORE delete */
-				deleted = true;
-			}
-		}
-
-		@Override
-		public boolean isEnabled()
-		{
-			return isEnabled;
-		}
-
-		@Override
-		public void enable()
-		{
-			setEnabled(true);
-		}
-
-		@Override
-		public void disable()
-		{
-			setEnabled(false);
-		}
-
-		@Override
-		public synchronized void setEnabled(boolean val)
-		{
-			if(deleted)
-			{
-				throw invalidState();
-			}
-			else
-			{
-				if(val != isEnabled)
-				{
-					if(isEnabled)
-					{
-						clear();
-					}
-					else
-					{
-						set();
-					}
-				}
-			}
-		}
-
-		@Override
-		public synchronized void addCountFilter(int count)
-		{
-			if(isEnabled() || deleted)
-			{
-				throw invalidState();
-			}
-			if(count < 1)
-			{
-				throw new IllegalArgumentException("count is less than one");
-			}
-			filters.add(JDWP.EventRequest.Set.Modifier.Count.create(count));
-		}
-
-		@Override
-		public void setSuspendPolicy(SuspendPolicy policy)
-		{
-			if(isEnabled() || deleted)
-			{
-				throw invalidState();
-			}
-			suspendPolicy = policy;
-		}
-
-		@NotNull
-		@Override
-		public SuspendPolicy suspendPolicy()
-		{
-			return suspendPolicy;
-		}
-
-		/**
-		 * set (enable) the event request
-		 */
-		synchronized void set()
-		{
-			JDWP.EventRequest.Set.Modifier[] mods = filters.toArray(new JDWP.EventRequest.Set.Modifier[filters.size()]);
-			try
-			{
-				id = JDWP.EventRequest.Set.process(vm, (byte) eventCmd().ordinal(), suspendPolicy.ordinal(), mods).requestID;
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-			isEnabled = true;
-		}
-
-		synchronized void clear()
-		{
-			try
-			{
-				JDWP.EventRequest.Clear.process(vm, (byte) eventCmd().ordinal(), id);
-			}
-			catch(JDWPException exc)
-			{
-				throw exc.toJDIException();
-			}
-			isEnabled = false;
-		}
-
-		/**
-		 * @return a small Map
-		 * @see #putProperty
-		 * @see #getProperty
-		 */
-		private Map<Object, Object> getProperties()
-		{
-			if(clientProperties == null)
-			{
-				clientProperties = new HashMap<Object, Object>(2);
-			}
-			return clientProperties;
-		}
-
-		/**
-		 * Returns the value of the property with the specified key.  Only
-		 * properties added with <code>putProperty</code> will return
-		 * a non-null value.
-		 *
-		 * @return the value of this property or null
-		 * @see #putProperty
-		 */
-		@Override
-		public final Object getProperty(Object key)
-		{
-			if(clientProperties == null)
-			{
-				return null;
-			}
-			else
-			{
-				return getProperties().get(key);
-			}
-		}
-
-		/**
-		 * Add an arbitrary key/value "property" to this component.
-		 *
-		 * @see #getProperty
-		 */
-		@Override
-		public final void putProperty(Object key, Object value)
-		{
-			if(value != null)
-			{
-				getProperties().put(key, value);
-			}
-			else
-			{
-				getProperties().remove(key);
-			}
-		}
-	}
-
-	public static abstract class ThreadVisibleEventRequestImpl extends EventRequestImpl
-	{
-		ThreadVisibleEventRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-
-		public synchronized void addThreadFilter(ThreadMirror thread)
-		{
-			validateMirror(thread);
-			if(isEnabled() || deleted)
-			{
-				throw invalidState();
-			}
-			filters.add(JDWP.EventRequest.Set.Modifier.ThreadOnly.create((ThreadMirror) thread));
-		}
-	}
-
-	public static abstract class ClassVisibleEventRequestImpl extends ThreadVisibleEventRequestImpl
-	{
-		public ClassVisibleEventRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-	}
-
-	public static class BreakpointRequestImpl extends ClassVisibleEventRequestImpl implements BreakpointRequest
-	{
-		private final Location location;
-
-		BreakpointRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager, Location location)
-		{
-			super(virtualMachine, requestManager);
-			this.location = location;
-			filters.add(0, JDWP.EventRequest.Set.Modifier.LocationOnly.create(location));
-		}
-
-		@Override
-		public Location location()
-		{
-			return location;
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.BREAKPOINT;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "breakpoint request " + location() + state();
-		}
-	}
-
-
-	public static class ExceptionRequestImpl extends ClassVisibleEventRequestImpl implements ExceptionRequest
-	{
-		TypeMirror exception = null;
-		boolean caught = true;
-		boolean uncaught = true;
-
-		ExceptionRequestImpl(
-				TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, VirtualMachineImpl vm, EventRequestManagerImpl requestManager)
-		{
-			super(vm, requestManager);
-			exception = refType;
-			caught = notifyCaught;
-			uncaught = notifyUncaught;
-		  /*  {
-				ReferenceTypeImpl exc;
-                if (exception == null) {
-                    exc = new ClassTypeImpl(vm, 0);
-                } else {
-                    exc = (ReferenceTypeImpl)exception;
-                }
-                filters.add(JDWP.EventRequest.Set.Modifier.ExceptionOnly.
-                            create(exc, caught, uncaught));
-            }  */
-		}
-
-		@Override
-		public TypeMirror exception()
-		{
-			return exception;
-		}
-
-		@Override
-		public boolean notifyCaught()
-		{
-			return caught;
-		}
-
-		@Override
-		public boolean notifyUncaught()
-		{
-			return uncaught;
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.EXCEPTION;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "exception request " + exception() + state();
-		}
-	}
-
-	class MethodEntryRequestImpl extends ClassVisibleEventRequestImpl implements MethodEntryRequest
-	{
-		MethodEntryRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.METHOD_ENTRY;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "method entry request " + state();
-		}
-	}
-
-	class MethodExitRequestImpl extends ClassVisibleEventRequestImpl implements MethodExitRequest
-	{
-		MethodExitRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.METHOD_EXIT;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "method exit request " + state();
-		}
-	}
-
-	class StepRequestImpl extends ClassVisibleEventRequestImpl implements StepRequest
-	{
-		ThreadMirror thread;
-		StepSize size;
-		StepDepth depth;
-
-		StepRequestImpl(ThreadMirror thread, StepSize size, StepDepth depth, VirtualMachineImpl vm, EventRequestManagerImpl requestManager)
-		{
-			super(vm, requestManager);
-			this.thread = thread;
-			this.size = size;
-			this.depth = depth;
-
-            /*
-             * Make sure this isn't a duplicate
-             */
-			List<StepRequest> requests = stepRequests();
-			Iterator<StepRequest> iter = requests.iterator();
-			while(iter.hasNext())
-			{
-				StepRequest request = iter.next();
-				if((request != this) &&
-						request.isEnabled() &&
-						request.thread().equals(thread))
-				{
-					throw new DuplicateRequestException("Only one step request allowed per thread");
-				}
-			}
-
-			filters.add(JDWP.EventRequest.Set.Modifier.Step.create(this.thread, size, depth));
-		}
-
-		@Override
-		public StepDepth depth()
-		{
-			return depth;
-		}
-
-		@Override
-		public StepSize size()
-		{
-			return size;
-		}
-
-		@Override
-		public ThreadMirror thread()
-		{
-			return thread;
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.STEP;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "step request " + thread() + state();
-		}
-	}
-
-	class ThreadDeathRequestImpl extends ThreadVisibleEventRequestImpl implements ThreadDeathRequest
-	{
-		ThreadDeathRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.THREAD_DEATH;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "thread death request " + state();
-		}
-	}
-
-	class ThreadStartRequestImpl extends ThreadVisibleEventRequestImpl implements ThreadStartRequest
-	{
-		ThreadStartRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.THREAD_START;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "thread start request " + state();
-		}
-	}
-
-
-	class VMDeathRequestImpl extends EventRequestImpl implements VMDeathRequest
-	{
-		VMDeathRequestImpl(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
-		{
-			super(virtualMachine, requestManager);
-		}
-
-		@Override
-		protected EventKind eventCmd()
-		{
-			return EventKind.VM_DEATH;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "VM death request " + state();
-		}
-	}
-
 	/**
 	 * Constructor.
 	 */
@@ -571,34 +66,27 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 			TypeMirror refType, boolean notifyCaught, boolean notifyUncaught)
 	{
 		validateMirrorOrNull(refType);
-		return add(new ExceptionRequestImpl(refType, notifyCaught, notifyUncaught, vm, this));
+		return add(new ExceptionRequest(refType, notifyCaught, notifyUncaught, vm, this));
 	}
 
 	@Override
 	public StepRequest createStepRequest(ThreadMirror thread, StepRequest.StepSize size, StepRequest.StepDepth depth)
 	{
 		validateMirror(thread);
-		return add(new StepRequestImpl(thread, size, depth, vm, this));
+		return add(new StepRequest(thread, size, depth, vm, this));
 	}
 
 	@Override
 	public ThreadDeathRequest createThreadDeathRequest()
 	{
-		return add(new ThreadDeathRequestImpl(vm, this));
+		return add(new ThreadDeathRequest(vm, this));
 	}
 
 	@NotNull
 	@Override
 	public EventRequest createAppDomainCreate()
 	{
-		return add(new EventRequestImpl(vm, this)
-		{
-			@Override
-			protected EventKind eventCmd()
-			{
-				return EventKind.APPDOMAIN_CREATE;
-			}
-		});
+		return add(new AppDomainCreateRequest(vm, this));
 	}
 
 	@NotNull
@@ -612,32 +100,25 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	@Override
 	public EventRequest createAppDomainUnload()
 	{
-		return add(new EventRequestImpl(vm, this)
-		{
-			@Override
-			protected EventKind eventCmd()
-			{
-				return EventKind.APPDOMAIN_UNLOAD;
-			}
-		});
+		return add(new AppDomainUnloadRequest(vm, this));
 	}
 
 	@Override
 	public ThreadStartRequest createThreadStartRequest()
 	{
-		return add(new ThreadStartRequestImpl(vm, this));
+		return add(new ThreadStartRequest(vm, this));
 	}
 
 	@Override
 	public MethodEntryRequest createMethodEntryRequest()
 	{
-		return add(new MethodEntryRequestImpl(vm, this));
+		return add(new MethodEntryRequest(vm, this));
 	}
 
 	@Override
 	public MethodExitRequest createMethodExitRequest()
 	{
-		return add(new MethodExitRequestImpl(vm, this));
+		return add(new MethodExitRequest(vm, this));
 	}
 
 	@Override
@@ -648,13 +129,13 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		{
 			throw new NativeMethodException("Cannot set breakpoints on native methods");
 		}
-		return add(new BreakpointRequestImpl(vm, this, location));
+		return add(new BreakpointRequest(vm, this, location));
 	}
 
 	@Override
 	public VMDeathRequest createVMDeathRequest()
 	{
-		return add(new VMDeathRequestImpl(vm, this));
+		return add(new VMDeathRequest(vm, this));
 	}
 
 	@Override
@@ -771,7 +252,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		for(int i = rl.size() - 1; i >= 0; i--)
 		{
 			EventRequestImpl er = (EventRequestImpl) rl.get(i);
-			if(er.id == requestId)
+			if(er.id() == requestId)
 			{
 				return er;
 			}
