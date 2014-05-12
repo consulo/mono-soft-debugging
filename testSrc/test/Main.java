@@ -36,6 +36,9 @@ public class Main
 
 		Thread.sleep(1000L);
 
+		accept.resume();
+		accept.suspend();
+
 		TypeMirror typeMirror = accept.findTypesByQualifiedName("Program", true)[0];
 
 		int index = 0;

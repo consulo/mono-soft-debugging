@@ -115,12 +115,12 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		{
 			myVersionInfo = VirtualMachine_GetVersion.process(vm);
 
-			if(myVersionInfo.jdwpMajor != MAJOR_VERSION)
+			if(myVersionInfo.jdwpMajor != vmManager.majorInterfaceVersion())
 			{
 				throw new IllegalArgumentException("Virtual Machine major version is not equal client: " + myVersionInfo.jdwpMajor);
 			}
 
-			VirtualMachine_SetProtocolVersion.process(vm, MAJOR_VERSION, MINOR_VERSION);
+			VirtualMachine_SetProtocolVersion.process(vm, vmManager.majorInterfaceVersion(), vmManager.minorInterfaceVersion());
 
 			myRootAppDomain = AppDomain_GetRootDomain.process(vm).myAppDomainMirror;
 		}

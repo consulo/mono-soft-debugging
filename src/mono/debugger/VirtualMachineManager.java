@@ -25,10 +25,10 @@
 
 package mono.debugger;
 
-import mono.debugger.connect.*;
-import mono.debugger.connect.spi.Connection;
-import java.util.List;
 import java.io.IOException;
+import java.util.List;
+
+import mono.debugger.connect.spi.Connection;
 
 /**
  * A manager of connections to target virtual machines. The
@@ -272,54 +272,6 @@ import java.io.IOException;
  * @since  1.3
  */
 public interface VirtualMachineManager {
-
-    /**
-     * Identifies the default connector. This connector should
-     * be used as the launching connector when selection of a
-     * connector with specific characteristics is unnecessary.
-     *
-     * @return the default {@link mono.debugger.connect.LaunchingConnector}
-     */
-    LaunchingConnector defaultConnector();
-
-    /**
-     * Returns the list of known {@link mono.debugger.connect.LaunchingConnector} objects.
-     * Any of the returned objects can be used to launch a new target
-     * VM and immediately create a {@link VirtualMachine} mirror for it.
-     *
-     * Note that a target VM launched by a launching connector is not
-     * guaranteed to be stable until after the {@link mono.debugger.event.VMStartEvent} has been
-     * received.
-     * @return a list of {@link mono.debugger.connect.LaunchingConnector} objects.
-     */
-    List<LaunchingConnector> launchingConnectors();
-
-    /**
-     * Returns the list of known {@link mono.debugger.connect.AttachingConnector} objects.
-     * Any of the returned objects can be used to attach to an existing target
-     * VM and create a {@link VirtualMachine} mirror for it.
-     *
-     * @return a list of {@link mono.debugger.connect.AttachingConnector} objects.
-     */
-    List<AttachingConnector> attachingConnectors();
-
-    /**
-     * Returns the list of known {@link mono.debugger.connect.ListeningConnector} objects.
-     * Any of the returned objects can be used to listen for a
-     * connection initiated by a target VM
-     * and create a {@link VirtualMachine} mirror for it.
-     *
-     * @return a list of {@link mono.debugger.connect.ListeningConnector} objects.
-     */
-    List<ListeningConnector> listeningConnectors();
-
-    /**
-     * Returns the list of all known {@link mono.debugger.connect.Connector} objects.
-     *
-     * @return a list of {@link mono.debugger.connect.Connector} objects.
-     */
-     List<Connector> allConnectors();
-
     /**
      * Lists all target VMs which are connected to the debugger.
      * The list includes {@link VirtualMachine} instances for

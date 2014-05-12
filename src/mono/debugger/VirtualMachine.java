@@ -72,9 +72,6 @@ import mono.debugger.request.EventRequestManager;
  */
 public interface VirtualMachine extends Mirror
 {
-	int MAJOR_VERSION = 2;
-	int MINOR_VERSION = 29;
-
 	@NotNull
 	AppDomainMirror rootAppDomain();
 
