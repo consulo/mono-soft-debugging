@@ -458,6 +458,7 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_CHAR:
 				return new CharValueMirror(vm, (char) readInt());
 			case SignatureConstants.ELEMENT_TYPE_CLASS:
+			case SignatureConstants.ELEMENT_TYPE_VALUETYPE:
 				return readObjectMirror();
 			case SignatureConstants.ELEMENT_TYPE_ARRAY:
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
@@ -465,7 +466,7 @@ public class PacketStream
 			case NULL_VALUE:
 				return new NoObjectValueMirror(vm);
 			default:
-				throw new IllegalArgumentException("Unsupported tag: " + tag);
+				throw new IllegalArgumentException("Unsupported tag: 0x" + Integer.toHexString(tag));
 		}
 	}
 
