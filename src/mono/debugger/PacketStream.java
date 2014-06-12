@@ -408,12 +408,18 @@ public class PacketStream
 	@Nullable
 	public TypeMirror readTypeMirror()
 	{
+		return readTypeMirror(null);
+	}
+
+	@Nullable
+	public TypeMirror readTypeMirror(@Nullable TypeMirror parent)
+	{
 		int ref = readId();
 		if(ref == 0)
 		{
 			return null;
 		}
-		return vm.getOrCreateTypeMirror(ref);
+		return vm.getOrCreateTypeMirror(ref, parent);
 	}
 
 	@NotNull

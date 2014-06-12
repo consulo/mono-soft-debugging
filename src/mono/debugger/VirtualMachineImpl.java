@@ -25,6 +25,7 @@
 
 package mono.debugger;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -391,14 +392,20 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	}
 
 	@NotNull
-	public TypeMirror getOrCreateTypeMirror(int id)
+	public TypeMirror getOrCreateTypeMirror(int id, TypeMirror parent)
 	{
 		TypeMirror typeMirror = myTypeMirrorCache.get(id);
 		if(typeMirror == null)
 		{
-			myTypeMirrorCache.put(id, typeMirror = new TypeMirror(vm, id));
+			myTypeMirrorCache.put(id, typeMirror = new TypeMirror(vm, parent, id));
 		}
 		return typeMirror;
+	}
+
+	@NotNull
+	public Collection<TypeMirror> getCachedTypeMirrors()
+	{
+		return myTypeMirrorCache.values();
 	}
 
 	@NotNull

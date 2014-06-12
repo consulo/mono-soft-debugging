@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import edu.arizona.cs.mbel.signature.TypeAttributes;
 import mono.debugger.protocol.Type_GetFields;
 import mono.debugger.protocol.Type_GetInfo;
 import mono.debugger.protocol.Type_GetMethods;
 import mono.debugger.protocol.Type_GetProperties;
+import mono.debugger.util.BitUtil;
 
 /**
  * @author VISTALL
@@ -19,17 +21,28 @@ import mono.debugger.protocol.Type_GetProperties;
 public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, GenericTarget<TypeMirror>
 {
 	public static final TypeMirror[] EMPTY_ARRAY = new TypeMirror[0];
+	private static final int[] ourNestedAttributes = new int[]{
+			TypeAttributes.NestedPublic,
+			TypeAttributes.NestedPrivate,
+			TypeAttributes.NestedFamily,
+			TypeAttributes.NestedAssembly,
+			TypeAttributes.NestedFamANDAssem,
+			TypeAttributes.NestedFamORAssem
+	};
 
+	private final TypeMirror myParent;
 	private Type_GetInfo myInfo;
 	private MethodMirror[] myMethodMirrors;
 	private FieldMirror[] myFieldMirrors;
 	private PropertyMirror[] myProperties;
 
-	public TypeMirror(@NotNull VirtualMachine aVm, long id)
+	public TypeMirror(@NotNull VirtualMachine aVm, @Nullable TypeMirror parent, long id)
 	{
 		super(aVm, id);
+		myParent = parent;
 	}
 
+	@NotNull
 	private Type_GetInfo info()
 	{
 		if(myInfo == null)
@@ -44,6 +57,24 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 			}
 		}
 		return myInfo;
+	}
+
+	public boolean isNested()
+	{
+		for(int nestedAttribute : ourNestedAttributes)
+		{
+			if(BitUtil.isSet(info().attributes, TypeAttributes.VisibilityMask, nestedAttribute))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Nullable
+	public TypeMirror parentType()
+	{
+		return myParent;
 	}
 
 	@Nullable
@@ -93,6 +124,12 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		return info().genericArguments;
 	}
 
+	@NotNull
+	public TypeMirror[] nestedTypes()
+	{
+		return info().nestedTypes;
+	}
+
 	public boolean isArray()
 	{
 		return info().rank > 0;
@@ -130,7 +167,8 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 	@Nullable
 	public MethodMirror findMethodByName(@NotNull String name, boolean deep, TypeMirror[] expectedParameters)
 	{
-		loop:for(MethodMirror methodMirror : methods())
+		loop:
+		for(MethodMirror methodMirror : methods())
 		{
 			if(methodMirror.name().equals(name))
 			{

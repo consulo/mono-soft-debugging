@@ -17,7 +17,7 @@ public class Type_GetInfo implements Type
 	public static Type_GetInfo process(VirtualMachineImpl vm, TypeMirror typeMirror) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, typeMirror);
-		return waitForReply(vm, ps);
+		return waitForReply(vm, typeMirror, ps);
 	}
 
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, TypeMirror typeMirror)
@@ -28,10 +28,10 @@ public class Type_GetInfo implements Type
 		return ps;
 	}
 
-	static Type_GetInfo waitForReply(VirtualMachineImpl vm, PacketStream ps) throws JDWPException
+	static Type_GetInfo waitForReply(VirtualMachineImpl vm, TypeMirror typeMirror, PacketStream ps) throws JDWPException
 	{
 		ps.waitForReply();
-		return new Type_GetInfo(vm, ps);
+		return new Type_GetInfo(vm, typeMirror, ps);
 	}
 
 	public final String namespace;
@@ -42,8 +42,10 @@ public class Type_GetInfo implements Type
 	public TypeMirror generalType;
 	public TypeMirror[] genericArguments = TypeMirror.EMPTY_ARRAY;
 	public final byte rank;
+	public final int attributes;
+	public TypeMirror[] nestedTypes;
 
-	private Type_GetInfo(VirtualMachineImpl vm, PacketStream ps)
+	private Type_GetInfo(VirtualMachineImpl vm, TypeMirror parent, PacketStream ps)
 	{
 		namespace = ps.readString();
 		name = ps.readString();
@@ -54,7 +56,7 @@ public class Type_GetInfo implements Type
 		TypeMirror elementType = ps.readTypeMirror();
 		int token = ps.readInt();
 		rank = ps.readByte();
-		int attributes = ps.readInt();
+		attributes = ps.readInt();
 		byte runtimeAttributes = ps.readByte();
 
 		boolean is_byref = (runtimeAttributes & 1) != 0;
@@ -66,10 +68,10 @@ public class Type_GetInfo implements Type
 		boolean is_generic_type = (runtimeAttributes & 64) != 0;
 
 		int nestedTypesSize = ps.readInt();
-		TypeMirror[] nestedTypes = new TypeMirror[nestedTypesSize];
+		nestedTypes = new TypeMirror[nestedTypesSize];
 		for(int i = 0; i < nestedTypesSize; i++)
 		{
-			nestedTypes[i] = ps.readTypeMirror();
+			nestedTypes[i] = ps.readTypeMirror(parent);
 		}
 
 		if(vm.isAtLeastVersion(2, 12))
