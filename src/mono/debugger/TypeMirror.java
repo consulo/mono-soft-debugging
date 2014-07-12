@@ -102,6 +102,12 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 	@NotNull
 	public String qualifiedName()
 	{
+		TypeMirror parentType = parentType();
+		if(parentType != null)
+		{
+			return parentType.qualifiedName() + "/" + name();
+		}
+
 		String namespace = namespace();
 		if(namespace.isEmpty())
 		{
