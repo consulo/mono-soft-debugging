@@ -121,7 +121,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		try
 		{
 			thisObject = thisObject == null ? new NoObjectValueMirror(vm) : thisObject;
-			return VirtualMachine_InvokeMethod.process(vm, threadMirror, invokeFlags, this, thisObject, arguments).value;
+			return VirtualMachine_InvokeMethod.process(vm, threadMirror, invokeFlags, this, thisObject, arguments).getValue();
 		}
 		catch(JDWPException e)
 		{

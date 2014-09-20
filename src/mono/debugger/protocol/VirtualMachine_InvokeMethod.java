@@ -5,6 +5,7 @@ import mono.debugger.JDWPException;
 import mono.debugger.MethodMirror;
 import mono.debugger.PacketStream;
 import mono.debugger.ThreadMirror;
+import mono.debugger.ThrowValueException;
 import mono.debugger.Value;
 import mono.debugger.VirtualMachineImpl;
 
@@ -16,25 +17,15 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 {
 	static final int COMMAND = 7;
 
-	public static VirtualMachine_InvokeMethod process(
-			VirtualMachineImpl vm,
-			ThreadMirror threadMirror,
-			InvokeFlags invokeFlags,
-			MethodMirror methodMirror,
-			Value<?> thisObjectMirror,
-			Value<?>... arguments) throws JDWPException
+	public static VirtualMachine_InvokeMethod process(VirtualMachineImpl vm, ThreadMirror threadMirror, InvokeFlags invokeFlags,
+			MethodMirror methodMirror, Value<?> thisObjectMirror, Value<?>... arguments) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, threadMirror, invokeFlags, methodMirror, thisObjectMirror, arguments);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(
-			VirtualMachineImpl vm,
-			ThreadMirror threadMirror,
-			InvokeFlags invokeFlags,
-			MethodMirror methodMirror,
-			Value<?> thisObjectMirror,
-			Value<?>[] arguments)
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror threadMirror, InvokeFlags invokeFlags, MethodMirror methodMirror,
+			Value<?> thisObjectMirror, Value<?>[] arguments)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(threadMirror);
@@ -56,14 +47,25 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 		return new VirtualMachine_InvokeMethod(vm, ps);
 	}
 
-	public Value value;
+	private boolean myThrowException;
+	private Value myValue;
 
 	private VirtualMachine_InvokeMethod(VirtualMachineImpl vm, PacketStream ps)
 	{
 		byte result = ps.readByte();
-		if(result != 0)
+		myThrowException = result == 0;
+		myValue = ps.readValue();
+	}
+
+	public Value<?> getValue()
+	{
+		if(myThrowException)
 		{
-			value = ps.readValue();
+			throw new ThrowValueException(myValue);
+		}
+		else
+		{
+			return myValue;
 		}
 	}
 }
