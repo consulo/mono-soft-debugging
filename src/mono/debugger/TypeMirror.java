@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.TypeAttributes;
 import mono.debugger.protocol.Type_GetFields;
 import mono.debugger.protocol.Type_GetInfo;
+import mono.debugger.protocol.Type_GetInterfaces;
 import mono.debugger.protocol.Type_GetMethods;
 import mono.debugger.protocol.Type_GetProperties;
 import mono.debugger.util.BitUtil;
@@ -35,6 +36,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 	private MethodMirror[] myMethodMirrors;
 	private FieldMirror[] myFieldMirrors;
 	private PropertyMirror[] myProperties;
+	private TypeMirror[] myInterfaces;
 
 	public TypeMirror(@NotNull VirtualMachine aVm, @Nullable TypeMirror parent, long id)
 	{
@@ -157,6 +159,30 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		try
 		{
 			return myMethodMirrors = Type_GetMethods.process(vm, this).methods;
+		}
+		catch(JDWPException e)
+		{
+			throw e.toJDIException();
+		}
+	}
+
+	@NotNull
+	public TypeMirror[] getInterfaces()
+	{
+		if(myInterfaces != null)
+		{
+			return myInterfaces;
+		}
+		try
+		{
+			if(virtualMachine().isAtLeastVersion(2, 11))
+			{
+				return myInterfaces = Type_GetInterfaces.process(vm, this).interfaces;
+			}
+			else
+			{
+				return myInterfaces = TypeMirror.EMPTY_ARRAY;
+			}
 		}
 		catch(JDWPException e)
 		{
