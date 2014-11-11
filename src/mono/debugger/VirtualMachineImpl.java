@@ -278,13 +278,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			switch(exc.errorCode())
-			{
-				case JDWP.Error.VM_DEAD:
-					return;
-				default:
-					throw exc.toJDIException();
-			}
+			throw exc.toJDIException();
 		}
 	}
 

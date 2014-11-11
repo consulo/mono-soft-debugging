@@ -44,8 +44,6 @@ public class Bootstrap extends Object {
      * the virtual machine manager is unable to locate or create
      * any {@link mono.debugger.connect.Connector Connectors}. </p>
      * <p>
-     * @throws java.lang.SecurityException if a security manager has been
-     * installed and it denies {@link JDIPermission}
      * <tt>("virtualMachineManager")</tt> or other unspecified
      * permissions required by the implementation.
      * </p>

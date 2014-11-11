@@ -1669,63 +1669,17 @@ public class JDWP
 	static class Error
 	{
 		static final int NONE = 0;
-		static final int INVALID_THREAD = 10;
 
-		static final int THREAD_NOT_SUSPENDED = 13;
-		static final int THREAD_SUSPENDED = 14;
-		static final int THREAD_NOT_ALIVE = 15;
 		static final int INVALID_OBJECT = 20;
-		static final int INVALID_CLASS = 21;
-
-		static final int INVALID_METHODID = 23;
-		static final int INVALID_LOCATION = 24;
 		static final int INVALID_FIELDID = 25;
 		static final int INVALID_FRAMEID = 30;
-		static final int NO_MORE_FRAMES = 31;
-		static final int OPAQUE_FRAME = 32;
-		static final int NOT_CURRENT_FRAME = 33;
-		static final int TYPE_MISMATCH = 34;
-		static final int INVALID_SLOT = 35;
-		static final int DUPLICATE = 40;
-		static final int NOT_FOUND = 41;
-		static final int INVALID_MONITOR = 50;
-		static final int NOT_MONITOR_OWNER = 51;
-		static final int INTERRUPT = 52;
-		static final int INVALID_CLASS_FORMAT = 60;
-		static final int CIRCULAR_CLASS_DEFINITION = 61;
-		static final int FAILS_VERIFICATION = 62;
-		static final int ADD_METHOD_NOT_IMPLEMENTED = 63;
-		static final int SCHEMA_CHANGE_NOT_IMPLEMENTED = 64;
-		static final int INVALID_TYPESTATE = 65;
-		static final int HIERARCHY_CHANGE_NOT_IMPLEMENTED = 66;
-		static final int DELETE_METHOD_NOT_IMPLEMENTED = 67;
-		static final int UNSUPPORTED_VERSION = 68;
-		static final int NAMES_DONT_MATCH = 69;
-		static final int CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 70;
-		static final int METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED = 71;
 		static final int NOT_IMPLEMENTED = 100;
-		static final int NULL_POINTER = 100;
-		static final int INVALID_ARGUMENT = 102;
-		static final int ABSENT_INFORMATION = 105;
-		static final int INVALID_EVENT_TYPE = 102;
-		static final int ILLEGAL_ARGUMENT = 103;
-		static final int OUT_OF_MEMORY = 110;
-		static final int ACCESS_DENIED = 111;
-		static final int VM_DEAD = 112;
-		static final int INTERNAL = 113;
-		static final int UNATTACHED_THREAD = 115;
-		static final int INVALID_TAG = 500;
-		static final int ALREADY_INVOKING = 502;
-		static final int INVALID_INDEX = 503;
-		static final int INVALID_LENGTH = 504;
-		static final int INVALID_STRING = 506;
-		static final int INVALID_CLASS_LOADER = 507;
-		static final int INVALID_ARRAY = 508;
-		static final int TRANSPORT_LOAD = 509;
-		static final int TRANSPORT_INIT = 510;
-		static final int NATIVE_METHOD = 511;
-		static final int INVALID_COUNT = 512;
 		static final int NOT_SUSPENDED = 101;
+		static final int INVALID_ARGUMENT = 102;
+		static final int ERR_UNLOADED = 103;
+		static final int ERR_NO_INVOCATION = 104;
+		static final int ABSENT_INFORMATION = 105;
+		static final int NO_SEQ_POINT_AT_IL_OFFSET = 106;
 	}
 
 	static class EventKind

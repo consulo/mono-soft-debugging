@@ -115,8 +115,6 @@ public interface VirtualMachine extends Mirror
 	 * counted. Before a thread will run again, it must be resumed
 	 * (through {@link #resume} or {@link ThreadMirror#resume})
 	 * the same number of times it has been suspended.
-	 *
-	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 */
 	void suspend();
 
@@ -125,7 +123,6 @@ public interface VirtualMachine extends Mirror
 	 * virtual machine. All threads are resumed as documented in
 	 * {@link ThreadMirror#resume}.
 	 *
-	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 * @see #suspend
 	 */
 	void resume();
@@ -137,7 +134,6 @@ public interface VirtualMachine extends Mirror
 	 * is invoked.
 	 *
 	 * @return the {@link EventQueue} for this virtual machine.
-	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 */
 	@NotNull
 	EventQueue eventQueue();
@@ -151,7 +147,6 @@ public interface VirtualMachine extends Mirror
 	 * is invoked.
 	 *
 	 * @return the {@link EventRequestManager} for this virtual machine.
-	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 */
 	@NotNull
 	EventRequestManager eventRequestManager();
@@ -164,8 +159,6 @@ public interface VirtualMachine extends Mirror
 	 * @return the {@link java.lang.Process} object for this virtual
 	 *         machine, or null if it was not launched by a
 	 *         {@link mono.debugger.connect.LaunchingConnector}.
-	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only
-	 *                                     -see {@link VirtualMachine#canBeModified()}.
 	 */
 	@NotNull
 	Process process();
@@ -209,7 +202,6 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @param exitCode the exit code for the target VM.  On some platforms,
 	 *                 the exit code might be truncated, for example, to the lower order 8 bits.
-	 * @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
 	 */
 	void exit(int exitCode);
 

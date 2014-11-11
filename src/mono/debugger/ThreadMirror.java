@@ -292,14 +292,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		}
 		catch(JDWPException exc)
 		{
-			switch(exc.errorCode())
-			{
-				case JDWP.Error.THREAD_NOT_SUSPENDED:
-				case JDWP.Error.INVALID_THREAD:   /* zombie */
-					throw new IncompatibleThreadStateException();
-				default:
-					throw exc.toJDIException();
-			}
+			throw exc.toJDIException();
 		}
 	}
 
