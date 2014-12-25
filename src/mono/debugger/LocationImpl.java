@@ -30,8 +30,8 @@ import mono.debugger.protocol.Method_GetDebugInfo;
 
 public class LocationImpl extends MirrorImpl implements Location
 {
-	private MethodMirror method;
-	private long codeIndex;
+	private MethodMirror myMethodMirror;
+	private long myCodeIndex;
 
 	private boolean myEntryResolved;
 	private Method_GetDebugInfo.Entry myEntry;
@@ -40,8 +40,8 @@ public class LocationImpl extends MirrorImpl implements Location
 	{
 		super(vm);
 
-		this.method = method;
-		this.codeIndex = codeIndex;
+		myMethodMirror = method;
+		myCodeIndex = codeIndex;
 	}
 
 	@Override
@@ -70,20 +70,20 @@ public class LocationImpl extends MirrorImpl implements Location
 	@Override
 	public TypeMirror declaringType()
 	{
-		return method.declaringType();
+		return myMethodMirror.declaringType();
 	}
 
 	@NotNull
 	@Override
 	public MethodMirror method()
 	{
-		return method;
+		return myMethodMirror;
 	}
 
 	@Override
 	public long codeIndex()
 	{
-		return codeIndex;
+		return myCodeIndex;
 	}
 
 	@Override
@@ -115,9 +115,17 @@ public class LocationImpl extends MirrorImpl implements Location
 		}
 
 		myEntryResolved = true;
-		for(Method_GetDebugInfo.Entry entry : method.debugInfo())
+		if(myCodeIndex == -1)
 		{
-			if(entry.offset == codeIndex)
+			return null;
+		}
+
+		Method_GetDebugInfo.Entry[] entries = myMethodMirror.debugInfo();
+
+		for(int i = entries.length - 1; i >= 0; --i)
+		{
+			Method_GetDebugInfo.Entry entry = entries[i];
+			if(entry.offset <= myCodeIndex)
 			{
 				return myEntry = entry;
 			}
@@ -128,6 +136,6 @@ public class LocationImpl extends MirrorImpl implements Location
 	@Override
 	public String toString()
 	{
-		return "method: " + method + ", codeIndex: " + codeIndex;
+		return "method: " + myMethodMirror + ", codeIndex: " + myCodeIndex;
 	}
 }
