@@ -127,7 +127,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -181,7 +181,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 	}
 
@@ -196,7 +196,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 	}
 
@@ -235,7 +235,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 		notifySuspend();
 	}
@@ -278,7 +278,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 	}
 
@@ -315,7 +315,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 		target.stopListening();
 	}
@@ -329,7 +329,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 		target.stopListening();
 	}
@@ -358,7 +358,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 	}

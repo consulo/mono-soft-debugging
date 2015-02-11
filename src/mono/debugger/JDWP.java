@@ -68,10 +68,6 @@ public class JDWP
 				for(int i = 0; i < threadsCount; i++)
 				{
 					threads[i] = ps.readThreadMirror();
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "threads[i](ThreadMirror): " + (threads[i] == null ? "NULL" : "ref=" + threads[i].ref()));
-					}
 				}
 			}
 		}
@@ -380,7 +376,7 @@ public class JDWP
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						ps.writeObjectRef(thread.ref());
+						ps.writeId(thread);
 					}
 				}
 
@@ -937,10 +933,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 					}
 				}
 
@@ -1061,10 +1053,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
 						{
@@ -1114,10 +1102,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
 						{
@@ -1240,10 +1224,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 						location = ps.readLocation();
 						if(vm.traceReceives)
 						{
@@ -1310,10 +1290,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 					}
 				}
 
@@ -1356,10 +1332,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 					}
 				}
 
@@ -1439,10 +1411,7 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
+
 						assembly = ps.readAssemblyMirror();
 						if(vm.traceReceives)
 						{
@@ -1478,10 +1447,7 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
+
 						assembly = ps.readAssemblyMirror();
 						if(vm.traceReceives)
 						{
@@ -1544,10 +1510,7 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
+
 						typeID = ps.readClassRef();
 						if(vm.traceReceives)
 						{
@@ -1590,10 +1553,6 @@ public class JDWP
 							vm.printReceiveTrace(6, "requestID(int): " + requestID);
 						}
 						thread = ps.readThreadMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "thread(ThreadMirror): " + (thread == null ? "NULL" : "ref=" + thread.ref()));
-						}
 						typeID = ps.readClassRef();
 						if(vm.traceReceives)
 						{

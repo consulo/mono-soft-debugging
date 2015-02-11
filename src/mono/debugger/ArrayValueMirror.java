@@ -34,7 +34,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -47,7 +47,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -59,7 +59,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -111,7 +111,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 	}
 
 	@Override
-	public long id()
+	public int id()
 	{
 		return myObjectValueMirror.id();
 	}

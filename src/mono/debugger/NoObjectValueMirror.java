@@ -32,7 +32,7 @@ public class NoObjectValueMirror extends ValueImpl<Object> implements MirrorWith
 	}
 
 	@Override
-	public long id()
+	public int id()
 	{
 		return 0;
 	}

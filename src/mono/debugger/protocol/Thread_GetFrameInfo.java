@@ -38,7 +38,7 @@ public class Thread_GetFrameInfo implements Thread
 
 	public static class Frame
 	{
-		public final long frameID;
+		public final int frameID;
 
 		public final Location location;
 

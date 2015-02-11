@@ -14,7 +14,7 @@ public class AssemblyMirror extends MirrorWithIdAndName
 {
 	private String myLocation;
 
-	public AssemblyMirror(@NotNull VirtualMachine aVm, long aRef)
+	public AssemblyMirror(@NotNull VirtualMachine aVm, int aRef)
 	{
 		super(aVm, aRef);
 	}
@@ -35,7 +35,7 @@ public class AssemblyMirror extends MirrorWithIdAndName
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -50,7 +50,7 @@ public class AssemblyMirror extends MirrorWithIdAndName
 			}
 			catch(JDWPException exc)
 			{
-				throw exc.toJDIException();
+				throw exc.asUncheckedException();
 			}
 		}
 		return myLocation;

@@ -14,7 +14,7 @@ public abstract class FieldOrPropertyMirror extends MirrorWithIdAndName implemen
 	@NotNull
 	private final String myName;
 
-	public FieldOrPropertyMirror(@NotNull VirtualMachine aVm, long id, TypeMirror parent, int attributes, @NotNull String name)
+	public FieldOrPropertyMirror(@NotNull VirtualMachine aVm, int id, TypeMirror parent, int attributes, @NotNull String name)
 	{
 		super(aVm, id);
 		myParent = parent;

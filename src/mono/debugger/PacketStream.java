@@ -135,7 +135,7 @@ public class PacketStream
 
 	public void writeId(MirrorWithId data)
 	{
-		writeInt((int) data.id());
+		writeInt(data.id());
 	}
 
 	public void writeValue(Value<?> value)
@@ -368,7 +368,7 @@ public class PacketStream
 	@NotNull
 	public ThreadMirror readThreadMirror()
 	{
-		long ref = readId();
+		int ref = readId();
 		return new ThreadMirror(vm, ref);
 	}
 

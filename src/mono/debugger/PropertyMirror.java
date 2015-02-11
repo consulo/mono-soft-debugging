@@ -14,7 +14,7 @@ public class PropertyMirror extends FieldOrPropertyMirror
 
 	public PropertyMirror(
 			@NotNull VirtualMachine aVm,
-			long id,
+			int id,
 			@NotNull String name,
 			@Nullable MethodMirror getMethod,
 			@Nullable MethodMirror setMethod,

@@ -11,10 +11,10 @@ import mono.debugger.protocol.ObjectReference_GetType;
  */
 public class ObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 {
-	private final long myId;
+	private final int myId;
 	private long myAddress = -1;
 
-	public ObjectValueMirror(VirtualMachine aVm, long id)
+	public ObjectValueMirror(VirtualMachine aVm, int id)
 	{
 		super(aVm);
 		myId = id;
@@ -30,14 +30,14 @@ public class ObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 		return myAddress;
 	}
 
 	@Override
-	public long id()
+	public int id()
 	{
 		return myId;
 	}
@@ -51,7 +51,7 @@ public class ObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 

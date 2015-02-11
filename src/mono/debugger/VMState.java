@@ -205,7 +205,7 @@ class VMState {
                 }
             }
         } catch (JDWPException exc) {
-            throw exc.toJDIException();
+            throw exc.asUncheckedException();
         }
         return threads;
     }

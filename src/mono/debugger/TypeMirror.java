@@ -38,7 +38,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 	private PropertyMirror[] myProperties;
 	private TypeMirror[] myInterfaces;
 
-	public TypeMirror(@NotNull VirtualMachine aVm, @Nullable TypeMirror parent, long id)
+	public TypeMirror(@NotNull VirtualMachine aVm, @Nullable TypeMirror parent, int id)
 	{
 		super(aVm, id);
 		myParent = parent;
@@ -55,7 +55,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 		return myInfo;
@@ -162,7 +162,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -186,7 +186,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -246,7 +246,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -276,7 +276,7 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 

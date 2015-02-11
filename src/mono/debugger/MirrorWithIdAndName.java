@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWithId
 {
-	private final long myId;
+	private final int myId;
 	private String myName;
 
-	public MirrorWithIdAndName(@NotNull VirtualMachine aVm, long id)
+	public MirrorWithIdAndName(@NotNull VirtualMachine aVm, int id)
 	{
 		super(aVm);
 		myId = id;
@@ -28,7 +28,7 @@ public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWi
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 		return myName;
@@ -38,7 +38,7 @@ public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWi
 	protected abstract String nameImpl() throws JDWPException;
 
 	@Override
-	public long id()
+	public int id()
 	{
 		return myId;
 	}

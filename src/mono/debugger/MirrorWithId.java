@@ -6,5 +6,5 @@ package mono.debugger;
  */
 public interface MirrorWithId
 {
-	long id();
+	int id();
 }

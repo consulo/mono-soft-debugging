@@ -168,7 +168,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 	}
 

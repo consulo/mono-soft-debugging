@@ -33,7 +33,7 @@ public class StringValueMirror extends ValueImpl<String>
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 

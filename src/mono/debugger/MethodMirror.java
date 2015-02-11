@@ -30,7 +30,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 	private int myMaxCodeIndex = Integer.MIN_VALUE;
 	private Method_GetDebugInfo.Entry[] myDebugEntries;
 
-	public MethodMirror(@NotNull VirtualMachine aVm, long id)
+	public MethodMirror(@NotNull VirtualMachine aVm, int id)
 	{
 		super(aVm, id);
 	}
@@ -47,7 +47,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -63,7 +63,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -79,7 +79,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -125,7 +125,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -191,7 +191,7 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 

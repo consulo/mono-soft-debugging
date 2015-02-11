@@ -178,7 +178,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 		isEnabled = true;
 	}
@@ -191,7 +191,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 		isEnabled = false;
 	}

@@ -32,8 +32,10 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.protocol.Thread_GetFrameInfo;
+import mono.debugger.protocol.Thread_GetId;
 import mono.debugger.protocol.Thread_GetName;
 import mono.debugger.protocol.Thread_GetState;
+import mono.debugger.protocol.Thread_GetTId;
 import mono.debugger.request.BreakpointRequest;
 
 /**
@@ -104,34 +106,53 @@ public class ThreadMirror extends MirrorWithIdAndName
 		localCache = new LocalCache();
 	}
 
-
-	ThreadMirror(VirtualMachine aVm, long aRef)
+	ThreadMirror(VirtualMachine aVm, int aRef)
 	{
 		super(aVm, aRef);
 		resetLocalCache();
 	}
 
-	/**
-	 * Note that we only cache the name string while the entire VM is suspended
-	 * because the name can change via Thread.setName arbitrarily while this
-	 * thread is running.
-	 */
 	@NotNull
 	@Override
-	public String nameImpl()
+	public String nameImpl() throws JDWPException
+	{
+		String threadName = Thread_GetName.process(vm, this).threadName;
+		if(threadName.length() == 0)
+		{
+			return "<empty>";
+		}
+		return threadName;
+	}
+
+	/**
+	 * Return a unique identifier for this thread, multiple ThreadMirror objects
+	 * may have the same ThreadId because of appdomains.
+	 */
+	public int threadId()
 	{
 		try
 		{
-			String threadName = Thread_GetName.process(vm, this).threadName;
-			if(threadName.length() == 0)
-			{
-				return "<empty>";
-			}
-			return threadName;
+			return Thread_GetId.process(vm, this).id;
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
+		}
+	}
+
+	/**
+	 * Return the system thread id (TID) for this thread, this id is not unique since
+	 * a newly started thread might reuse a dead thread's id.
+	 */
+	public int systemThreadId()
+	{
+		try
+		{
+			return Thread_GetTId.process(vm, this).id;
+		}
+		catch(JDWPException exc)
+		{
+			throw exc.asUncheckedException();
 		}
 	}
 
@@ -148,7 +169,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
 		return myState;
 	}
@@ -165,8 +186,8 @@ public class ThreadMirror extends MirrorWithIdAndName
 
 	public boolean isAtBreakpoint()
 	{
-        /*
-         * TO DO: This fails to take filters into account.
+		/*
+		 * TO DO: This fails to take filters into account.
          */
 		try
 		{
@@ -211,8 +232,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 	 * local is known to be non-null.  Should only be called from
 	 * a sync method.
 	 */
-	private boolean isSubrange(
-			LocalCache snapshot, int start, int length)
+	private boolean isSubrange(LocalCache snapshot, int start, int length)
 	{
 		if(start < snapshot.framesStart)
 		{
@@ -266,8 +286,8 @@ public class ThreadMirror extends MirrorWithIdAndName
 					{
 						throw new InternalException("Invalid frame location");
 					}
-					StackFrameMirror frame = new StackFrameMirror(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location, StackFrameMirror
-							.StackFrameFlags.values()[jdwpFrames[i].flags]);
+					StackFrameMirror frame = new StackFrameMirror(vm, this, jdwpFrames[i].frameID, jdwpFrames[i].location,
+							StackFrameMirror.StackFrameFlags.values()[jdwpFrames[i].flags]);
 					// Add to the frame list
 					snapshot.frames.add(frame);
 				}
@@ -292,13 +312,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		}
 		catch(JDWPException exc)
 		{
-			throw exc.toJDIException();
+			throw exc.asUncheckedException();
 		}
-	}
-
-	@Deprecated
-	public long ref()
-	{
-		return id();
 	}
 }

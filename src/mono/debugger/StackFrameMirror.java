@@ -21,11 +21,11 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 	}
 
 	private final ThreadMirror myThreadMirror;
-	private final long myFrameID;
+	private final int myFrameID;
 	private final Location myLocation;
 	private final StackFrameFlags myFlags;
 
-	public StackFrameMirror(VirtualMachine aVm, ThreadMirror threadMirror, long frameID, Location location, StackFrameFlags flags)
+	public StackFrameMirror(VirtualMachine aVm, ThreadMirror threadMirror, int frameID, Location location, StackFrameFlags flags)
 	{
 		super(aVm);
 		myThreadMirror = threadMirror;
@@ -61,12 +61,12 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
 	@Override
-	public long id()
+	public int id()
 	{
 		return myFrameID;
 	}
@@ -90,7 +90,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 			{
 				return null;
 			}
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -113,7 +113,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 			{
 				return null;
 			}
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -125,7 +125,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 }

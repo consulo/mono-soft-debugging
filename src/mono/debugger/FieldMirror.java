@@ -19,7 +19,7 @@ public class FieldMirror extends FieldOrPropertyMirror
 	private final TypeMirror myTypeMirror;
 
 	public FieldMirror(
-			@NotNull VirtualMachine aVm, long id, @NotNull String name, @NotNull TypeMirror typeMirror, @NotNull TypeMirror parent, int attributes)
+			@NotNull VirtualMachine aVm, int id, @NotNull String name, @NotNull TypeMirror typeMirror, @NotNull TypeMirror parent, int attributes)
 	{
 		super(aVm, id, parent, attributes, name);
 		myTypeMirror = typeMirror;
@@ -48,7 +48,7 @@ public class FieldMirror extends FieldOrPropertyMirror
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -74,7 +74,7 @@ public class FieldMirror extends FieldOrPropertyMirror
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 

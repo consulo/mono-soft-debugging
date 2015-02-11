@@ -19,7 +19,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 	private AssemblyMirror myCorlibAssemblyMirror;
 	private AssemblyMirror[] myAssemblyMirrors;
 
-	public AppDomainMirror(@NotNull VirtualMachine aVm, long aRef)
+	public AppDomainMirror(@NotNull VirtualMachine aVm, int aRef)
 	{
 		super(aVm, aRef);
 	}
@@ -33,7 +33,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -46,7 +46,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		}
 		catch(JDWPException e)
 		{
-			throw e.toJDIException();
+			throw e.asUncheckedException();
 		}
 	}
 
@@ -61,7 +61,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 		return myEntryAssemblyMirror;
@@ -78,7 +78,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 		return myCorlibAssemblyMirror;
@@ -95,7 +95,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 			}
 			catch(JDWPException e)
 			{
-				throw e.toJDIException();
+				throw e.asUncheckedException();
 			}
 		}
 		return myAssemblyMirrors;

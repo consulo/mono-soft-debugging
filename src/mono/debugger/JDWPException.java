@@ -25,6 +25,8 @@
 
 package mono.debugger;
 
+import org.jetbrains.annotations.NotNull;
+
 public class JDWPException extends Exception
 {
 	private static final long serialVersionUID = -6321344442751299874L;
@@ -41,7 +43,8 @@ public class JDWPException extends Exception
 		return errorCode;
 	}
 
-	public RuntimeException toJDIException()
+	@NotNull
+	public RuntimeException asUncheckedException()
 	{
 		switch(errorCode)
 		{
