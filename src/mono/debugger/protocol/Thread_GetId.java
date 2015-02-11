@@ -33,10 +33,10 @@ public class Thread_GetId implements Thread
 		return new Thread_GetId(vm, ps);
 	}
 
-	public final int id;
+	public final long id;
 
 	private Thread_GetId(VirtualMachineImpl vm, PacketStream ps)
 	{
-		id = ps.readId();
+		id = ps.readLong();
 	}
 }

@@ -128,7 +128,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 	 * Return a unique identifier for this thread, multiple ThreadMirror objects
 	 * may have the same ThreadId because of appdomains.
 	 */
-	public int threadId()
+	public long threadId()
 	{
 		try
 		{
@@ -144,7 +144,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 	 * Return the system thread id (TID) for this thread, this id is not unique since
 	 * a newly started thread might reuse a dead thread's id.
 	 */
-	public int systemThreadId()
+	public long systemThreadId()
 	{
 		try
 		{
