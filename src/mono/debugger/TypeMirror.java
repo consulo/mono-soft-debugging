@@ -44,6 +44,12 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 		myParent = parent;
 	}
 
+	@Nullable
+	public AssemblyMirror assembly()
+	{
+		return info().assemblyMirror;
+	}
+
 	@NotNull
 	private Type_GetInfo info()
 	{
