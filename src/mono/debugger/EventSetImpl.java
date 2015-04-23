@@ -114,7 +114,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			return this == obj;
 		}
 
-
 		@Override
 		public EventRequest request()
 		{
@@ -126,46 +125,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			return requestID;
 		}
 
-		EventDestination destination()
-		{
-			/*
-			 * We need to decide if this event is for
-             * 1. an internal request
-             * 2. a client request that is no longer available, ie
-             *    it has been deleted, or disabled and re-enabled
-             *    which gives it a new ID.
-             * 3. a current client request that is disabled
-             * 4. a current enabled client request.
-             *
-             * We will filter this set into a set
-             * that contains only 1s for our internal queue
-             * and a set that contains only 4s for our client queue.
-             * If we get an EventSet that contains only 2 and 3
-             * then we have to resume it if it is not SUSPEND_NONE
-             * because no one else will.
-             */
-			if(requestID == 0)
-			{
-				/* An unsolicited event.  These have traditionally
-				 * been treated as client events.
-                 */
-				return EventDestination.CLIENT_EVENT;
-			}
-
-			// Is this an event for a current client request?
-			if(request == null)
-			{
-				return EventDestination.UNKNOWN_EVENT;
-			}
-
-			// We found a client request
-			if(request.isEnabled())
-			{
-				return EventDestination.CLIENT_EVENT;
-			}
-			return EventDestination.UNKNOWN_EVENT;
-		}
-
 		public abstract String eventName();
 
 		@Override
@@ -173,7 +132,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		{
 			return eventName();
 		}
-
 	}
 
 	public abstract static class ThreadedEventImpl extends EventImpl
@@ -418,16 +376,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		{
 			EventImpl evt = createEvent(compEvt.events[i]);
 
-			switch(evt.destination())
-			{
-				case UNKNOWN_EVENT:
-					continue;
-				case CLIENT_EVENT:
-					addEvent(evt);
-					break;
-				default:
-					throw new InternalException("Invalid event destination");
-			}
+			addEvent(evt);
 		}
 		pkt = null; // No longer needed - free it up
 
@@ -487,6 +436,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				return new VMStartEvent(vm, (JDWP.Event.Composite.Events.VMStart) comm);
 			case JDWP.EventKind.VM_DEATH:
 				return new VMDeathEvent(vm, (JDWP.Event.Composite.Events.VMDeath) comm);
+			case JDWP.EventKind.USER_BREAK:
+				return new UserBreakEvent(vm, (JDWP.Event.Composite.Events.UserBreak) comm);
 			default:
 				// Ignore unknown event types
 				System.err.println("Ignoring event cmd " + evt.eventKind + " from the VM");
