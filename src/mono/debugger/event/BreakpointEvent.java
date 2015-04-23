@@ -25,9 +25,9 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
-
-import java.util.List;
+import mono.debugger.EventSetImpl;
+import mono.debugger.JDWP;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of a breakpoint in the target VM.
@@ -40,13 +40,22 @@ import java.util.List;
  * containing an instance of this class will be added
  * to the VM's event queue.
  *
+ * @author Robert Field
  * @see EventQueue
  * @see VirtualMachine
  * @see mono.debugger.request.BreakpointRequest
- *
- * @author Robert Field
- * @since  1.3
+ * @since 1.3
  */
-public interface BreakpointEvent extends LocatableEvent {
+public class BreakpointEvent extends EventSetImpl.LocatableEventImpl
+{
+	public BreakpointEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.Breakpoint evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
+	}
 
+	@Override
+	public String eventName()
+	{
+		return "breakpoint";
+	}
 }

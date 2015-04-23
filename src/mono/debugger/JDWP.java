@@ -976,7 +976,7 @@ public class JDWP
 				 * Notification of a breakpoint in the target VM. The breakpoint event
 				 * is generated before the code at its location is executed.
 				 */
-				static class Breakpoint extends EventsCommon
+				public static class Breakpoint extends EventsCommon
 				{
 					static final byte ALT_ID = JDWP.EventKind.BREAKPOINT;
 
@@ -989,17 +989,17 @@ public class JDWP
 					/**
 					 * Request that generated event
 					 */
-					final int requestID;
+					public final int requestID;
 
 					/**
 					 * Thread which hit breakpoint
 					 */
-					final ThreadMirror thread;
+					public final ThreadMirror thread;
 
 					/**
 					 * Location hit
 					 */
-					final Location location;
+					public final Location location;
 
 					Breakpoint(VirtualMachineImpl vm, PacketStream ps)
 					{

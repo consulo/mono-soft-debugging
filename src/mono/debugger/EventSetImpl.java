@@ -160,7 +160,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	{
 		private Location location;
 
-		LocatableEventImpl(
+		public  LocatableEventImpl(
 				VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread, Location location)
 		{
 			super(virtualMachine, evt, requestID, thread);
@@ -187,20 +187,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			return eventName() + "@" +
 					((location() == null) ? " null" : location().toString()) +
 					" in thread " + thread().name();
-		}
-	}
-
-	class BreakpointEventImpl extends LocatableEventImpl implements BreakpointEvent
-	{
-		BreakpointEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.Breakpoint evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "BreakpointEvent";
 		}
 	}
 
@@ -419,7 +405,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			case JDWP.EventKind.EXCEPTION:
 				return new ExceptionEventImpl(vm, (JDWP.Event.Composite.Events.Exception) comm);
 			case JDWP.EventKind.BREAKPOINT:
-				return new BreakpointEventImpl(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
+				return new BreakpointEvent(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
 			case JDWP.EventKind.METHOD_ENTRY:
 				return new MethodEntryEventImpl(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
 			case JDWP.EventKind.METHOD_EXIT:
