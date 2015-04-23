@@ -424,6 +424,8 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 				return new VMDeathEvent(vm, (JDWP.Event.Composite.Events.VMDeath) comm);
 			case JDWP.EventKind.USER_BREAK:
 				return new UserBreakEvent(vm, (JDWP.Event.Composite.Events.UserBreak) comm);
+			case JDWP.EventKind.USER_LOG:
+				return new UserLogEvent(vm, (JDWP.Event.Composite.Events.UserLog) comm);
 			default:
 				// Ignore unknown event types
 				System.err.println("Ignoring event cmd " + evt.eventKind + " from the VM");

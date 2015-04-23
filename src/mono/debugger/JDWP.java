@@ -882,6 +882,9 @@ public class JDWP
 						case EventKind.USER_BREAK:
 							aEventsCommon = new UserBreak(vm, ps);
 							break;
+						case EventKind.USER_LOG:
+							aEventsCommon = new UserLog(vm, ps);
+							break;
 						case JDWP.EventKind.VM_DEATH:
 							aEventsCommon = new VMDeath(vm, ps);
 							break;
@@ -1440,6 +1443,32 @@ public class JDWP
 					}
 				}
 
+				public static class UserLog extends EventsCommon
+				{
+					static final byte ALT_ID = (byte) mono.debugger.EventKind.USER_LOG.ordinal();
+
+					@Override
+					byte eventKind()
+					{
+						return ALT_ID;
+					}
+
+					public final int requestID;
+					public final ThreadMirror thread;
+					public final int level;
+					public final String category;
+					public final String message;
+
+					public UserLog(VirtualMachineImpl vm, PacketStream ps)
+					{
+						requestID = ps.readInt();
+						thread = ps.readThreadMirror();
+						level = ps.readInt();
+						category = ps.readString();
+						message = ps.readString();
+					}
+				}
+
 				public static class AssemblyUnLoad extends EventsCommon
 				{
 					static final byte ALT_ID = EventKind.ASSEMBLY_LOAD;
@@ -1593,6 +1622,6 @@ EVENT_KIND_VM_START = 0,
 		static final int TYPE_LOAD = 12;
 		static final int EXCEPTION = 13;
 		static final int USER_BREAK = 15;
-		static final int EVENT_KIND_USER_LOG = 16;
+		static final int USER_LOG = 16;
 	}
 }
