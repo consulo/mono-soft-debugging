@@ -841,10 +841,6 @@ public class JDWP
 				Events(VirtualMachineImpl vm, PacketStream ps)
 				{
 					eventKind = ps.readByte();
-					if(vm.traceReceives)
-					{
-						vm.printReceiveTrace(5, "eventKind(byte): " + eventKind);
-					}
 					switch(eventKind)
 					{
 						case JDWP.EventKind.VM_START:
@@ -882,6 +878,9 @@ public class JDWP
 							break;
 						case JDWP.EventKind.ASSEMBLY_UNLOAD:
 							aEventsCommon = new AssemblyUnLoad(vm, ps);
+							break;
+						case EventKind.USER_BREAK:
+							aEventsCommon = new UserBreak(vm, ps);
 							break;
 						case JDWP.EventKind.VM_DEATH:
 							aEventsCommon = new VMDeath(vm, ps);
@@ -1420,9 +1419,30 @@ public class JDWP
 					}
 				}
 
+				public static class UserBreak extends EventsCommon
+				{
+					static final byte ALT_ID = (byte) mono.debugger.EventKind.USER_BREAK.ordinal();
+
+					@Override
+					byte eventKind()
+					{
+						return ALT_ID;
+					}
+
+					public final int requestID;
+
+					public final ThreadMirror thread;
+
+					public UserBreak(VirtualMachineImpl vm, PacketStream ps)
+					{
+						requestID = ps.readInt();
+						thread = ps.readThreadMirror();
+					}
+				}
+
 				public static class AssemblyUnLoad extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_LOAD;
+					static final byte ALT_ID = EventKind.ASSEMBLY_LOAD;
 
 					@Override
 					byte eventKind()
