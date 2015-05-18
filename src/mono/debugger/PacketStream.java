@@ -440,20 +440,17 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_BOOLEAN:
 				return new BooleanValueMirror(vm, readBoolean());
 			case SignatureConstants.ELEMENT_TYPE_I1:
-				return new NumberValueMirror(vm, tag, readByte());
 			case SignatureConstants.ELEMENT_TYPE_U1:
 				return new NumberValueMirror(vm, tag, readByte());
 			case SignatureConstants.ELEMENT_TYPE_U2:
-				return new NumberValueMirror(vm, tag, readShort());
 			case SignatureConstants.ELEMENT_TYPE_I2:
 				return new NumberValueMirror(vm, tag, readShort());
 			case SignatureConstants.ELEMENT_TYPE_U4:
-				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_I4:
 				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_U8:
-				return new NumberValueMirror(vm, tag, readLong());
 			case SignatureConstants.ELEMENT_TYPE_I8:
+			case SignatureConstants.ELEMENT_TYPE_PTR:
 				return new NumberValueMirror(vm, tag, readLong());
 			case SignatureConstants.ELEMENT_TYPE_R4:
 				return new NumberValueMirror(vm, tag, readFloat());
