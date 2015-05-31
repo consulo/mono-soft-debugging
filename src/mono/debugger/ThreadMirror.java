@@ -119,7 +119,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		String threadName = Thread_GetName.process(vm, this).threadName;
 		if(threadName.length() == 0)
 		{
-			return "<empty>";
+			return "";
 		}
 		return threadName;
 	}
