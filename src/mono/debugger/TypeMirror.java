@@ -8,6 +8,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.TypeAttributes;
+import mono.debugger.protocol.Type_GetCustomAttributes;
 import mono.debugger.protocol.Type_GetFields;
 import mono.debugger.protocol.Type_GetInfo;
 import mono.debugger.protocol.Type_GetInterfaces;
@@ -19,7 +20,7 @@ import mono.debugger.util.BitUtil;
  * @author VISTALL
  * @since 10.04.14
  */
-public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, GenericTarget<TypeMirror>
+public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWithId, GenericTarget<TypeMirror>
 {
 	public static final TypeMirror[] EMPTY_ARRAY = new TypeMirror[0];
 	private static final int[] ourNestedAttributes = new int[]{
@@ -237,6 +238,18 @@ public class TypeMirror extends MirrorWithIdAndName implements MirrorWithId, Gen
 			}
 		}
 		return null;
+	}
+
+	@NotNull
+	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException
+	{
+		return Type_GetCustomAttributes.process(vm, this).customAttributeMirrors;
+	}
+
+	@Override
+	public boolean isStatic()
+	{
+		return !isNested();
 	}
 
 	@NotNull

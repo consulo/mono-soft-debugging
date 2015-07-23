@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
  * @author VISTALL
  * @since 11.04.14
  */
-public abstract class FieldOrPropertyMirror extends MirrorWithIdAndName implements ModifierOwner
+public abstract class FieldOrPropertyMirror extends CustomAttributeMirrorOwner implements ModifierOwner
 {
 	private final TypeMirror myParent;
 	protected final int myAttributes;

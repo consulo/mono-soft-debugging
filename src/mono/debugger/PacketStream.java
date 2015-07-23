@@ -33,7 +33,9 @@ import edu.arizona.cs.mbel.signature.SignatureConstants;
 
 public class PacketStream
 {
-	private static final byte NULL_VALUE = (byte) 0xf0;
+	private static final int VALUE_TYPE_ID_NULL = 0xf0;
+	private static final int VALUE_TYPE_ID_TYPE = 0xf1;
+	private static final int VALUE_TYPE_ID_PARENT_VTYPE = 0xf2;
 
 	public final VirtualMachineImpl vm;
 	private int inCursor = 0;
@@ -165,7 +167,7 @@ public class PacketStream
 		}
 		else if(value instanceof NoObjectValueMirror)
 		{
-			writeByte(NULL_VALUE);
+			writeByte((byte) VALUE_TYPE_ID_NULL);
 		}
 		else
 		{
@@ -173,9 +175,9 @@ public class PacketStream
 		}
 	}
 
-	public void writeNumberValue(byte tag, Number boxed)
+	public void writeNumberValue(int tag, Number boxed)
 	{
-		writeByte(tag);
+		writeByte((byte) tag);
 		switch(tag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_U1:
@@ -246,6 +248,16 @@ public class PacketStream
 	{
 		writeInt((int) location.method().id());
 		writeLong(location.codeIndex());
+	}
+
+	/**
+	 * @return unsigned byte
+	 */
+	public int readUByte()
+	{
+		byte ret = pkt.data[inCursor];
+		inCursor += 1;
+		return ret & 0xFF;
 	}
 
 	/**
@@ -432,7 +444,7 @@ public class PacketStream
 	@NotNull
 	public Value readValue()
 	{
-		byte tag = readByte();
+		int tag = readUByte();
 		switch(tag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_VOID:
@@ -467,11 +479,45 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_ARRAY:
 			case SignatureConstants.ELEMENT_TYPE_SZARRAY:
 				return new ArrayValueMirror(vm, readObjectMirror());
-			case NULL_VALUE:
+			case VALUE_TYPE_ID_NULL:
 				return new NoObjectValueMirror(vm);
+			case VALUE_TYPE_ID_TYPE:
+				return new TypeValueMirror(vm, readTypeMirror());
 			default:
 				throw new IllegalArgumentException("Unsupported tag: 0x" + Integer.toHexString(tag));
 		}
+	}
+
+	@NotNull
+	public CustomAttributeMirror[] readCustomAttributes()
+	{
+		int size = readInt();
+		CustomAttributeMirror[] customAttributeMirrors = new CustomAttributeMirror[size];
+		for(int i = 0; i < size; i++)
+		{
+			MethodMirror constructorMirror = readMethodMirror();
+			int constructorValueSize = readInt();
+			Value[] values = new Value[constructorValueSize];
+			for(int j = 0; j < constructorValueSize; j++)
+			{
+				Value value = readValue();
+				values[j] = value;
+			}
+
+			int namedConstructorValueSize = readInt();
+			NamedValue[] namedValues = new NamedValue[namedConstructorValueSize];
+			for(int j = 0; j < namedConstructorValueSize; j++)
+			{
+				boolean property = (readByte() & 0xFF) == 0x54;
+				int fieldOrPropertyId = readInt();
+				Value value = readValue();
+
+				NamedValue namedValue = new NamedValue(value, fieldOrPropertyId, property);
+				namedValues[j] = namedValue;
+			}
+			customAttributeMirrors[i] = new CustomAttributeMirror(vm, constructorMirror, values, namedValues);
+		}
+		return customAttributeMirrors;
 	}
 
 	/**

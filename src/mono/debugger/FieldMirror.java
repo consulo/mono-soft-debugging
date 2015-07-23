@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.FieldAttributes;
 import mono.debugger.protocol.ObjectReference_GetValues;
 import mono.debugger.protocol.ObjectReference_SetValues;
+import mono.debugger.protocol.Type_GetFieldCustomAttributes;
 import mono.debugger.protocol.Type_GetValues;
 import mono.debugger.protocol.Type_SetValues;
 import mono.debugger.util.ImmutablePair;
@@ -83,6 +84,13 @@ public class FieldMirror extends FieldOrPropertyMirror
 	public TypeMirror type()
 	{
 		return myTypeMirror;
+	}
+
+	@NotNull
+	@Override
+	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException
+	{
+		return Type_GetFieldCustomAttributes.process(vm, parent(), this).customAttributeMirrors;
 	}
 
 	@Override

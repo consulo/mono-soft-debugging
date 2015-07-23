@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class NumberValueMirror extends ValueImpl<Number>
 {
-	private final byte myTag;
+	private final int myTag;
 	private final Number myValue;
 
-	public NumberValueMirror(VirtualMachine aVm, byte tag, @NotNull Number value)
+	public NumberValueMirror(VirtualMachine aVm, int tag, @NotNull Number value)
 	{
 		super(aVm);
 		myTag = tag;
@@ -38,7 +38,7 @@ public class NumberValueMirror extends ValueImpl<Number>
 		valueVisitor.visitNumberValue(this, value());
 	}
 
-	public byte getTag()
+	public int getTag()
 	{
 		return myTag;
 	}

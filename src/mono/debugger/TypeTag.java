@@ -28,15 +28,15 @@ public enum TypeTag
 	public static final TypeTag[] VALUES = values();
 
 	private final String myType;
-	private final byte myTag;
+	private final int myTag;
 
-	TypeTag(String type, byte tag)
+	TypeTag(String type, int tag)
 	{
 		myType = type;
 		myTag = tag;
 	}
 
-	public byte getTag()
+	public int getTag()
 	{
 		return myTag;
 	}
@@ -59,7 +59,7 @@ public enum TypeTag
 		return null;
 	}
 
-	public static byte tagByType(@NotNull String type)
+	public static int tagByType(@NotNull String type)
 	{
 		for(TypeTag value : VALUES)
 		{
@@ -72,7 +72,7 @@ public enum TypeTag
 	}
 
 	@NotNull
-	public static String typeByTag(byte tag)
+	public static String typeByTag(int tag)
 	{
 		for(TypeTag value : VALUES)
 		{

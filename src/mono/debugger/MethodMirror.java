@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import edu.arizona.cs.mbel.signature.MethodAttributes;
+import mono.debugger.protocol.Method_GetCustomAttributes;
 import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.protocol.Method_GetDeclarationType;
 import mono.debugger.protocol.Method_GetInfo;
@@ -18,7 +19,7 @@ import mono.debugger.protocol.VirtualMachine_InvokeMethod;
  * @author VISTALL
  * @since 10.04.14
  */
-public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, ModifierOwner
+public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWithId, ModifierOwner
 {
 	private static final Method_GetDebugInfo.Entry[] EMPTY_ENTRIES = new Method_GetDebugInfo.Entry[0];
 
@@ -168,6 +169,12 @@ public class MethodMirror extends MirrorWithIdAndName implements MirrorWithId, M
 			}
 		}
 		return localVariableMirrors.toArray(new LocalVariableMirror[localVariableMirrors.size()]);
+	}
+
+	@Override
+	protected CustomAttributeMirror[] customAttributesImpl() throws JDWPException
+	{
+		return Method_GetCustomAttributes.process(vm, this).customAttributeMirrors;
 	}
 
 	@NotNull

@@ -2,6 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import mono.debugger.protocol.Type_GetPropertyCustomAttributes;
 
 /**
  * @author VISTALL
@@ -127,5 +128,12 @@ public class PropertyMirror extends FieldOrPropertyMirror
 			return mySetMethod.isStatic();
 		}
 		throw new IllegalArgumentException();
+	}
+
+	@NotNull
+	@Override
+	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException
+	{
+		return Type_GetPropertyCustomAttributes.process(vm, parent(), this).customAttributeMirrors;
 	}
 }
