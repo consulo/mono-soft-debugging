@@ -14,6 +14,7 @@ import mono.debugger.protocol.Type_GetInfo;
 import mono.debugger.protocol.Type_GetInterfaces;
 import mono.debugger.protocol.Type_GetMethods;
 import mono.debugger.protocol.Type_GetProperties;
+import mono.debugger.protocol.Type_IsAssignableFrom;
 import mono.debugger.util.BitUtil;
 
 /**
@@ -78,6 +79,18 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 			}
 		}
 		return false;
+	}
+
+	public boolean isAssignableFrom(@NotNull TypeMirror typeMirror)
+	{
+		try
+		{
+			return Type_IsAssignableFrom.process(vm, this, typeMirror).value;
+		}
+		catch(JDWPException e)
+		{
+			throw e.asUncheckedException();
+		}
 	}
 
 	@Nullable
@@ -218,7 +231,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 					{
 						MethodParameterMirror parameter = parameters[i];
 						TypeMirror expectedType = expectedParameters[i];
-						if(!expectedType.qualifiedName().equals(parameter.type().qualifiedName()))
+						if(!parameter.type().isAssignableFrom(expectedType))
 						{
 							continue loop;
 						}
