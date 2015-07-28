@@ -25,6 +25,7 @@
 
 package mono.debugger.request;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -262,7 +263,7 @@ public interface EventRequestManager extends Mirror
 	 * @param eventRequests the list of eventRequests to remove
 	 * @see #deleteEventRequest(EventRequest)
 	 */
-	void deleteEventRequests(List<? extends EventRequest> eventRequests);
+	void deleteEventRequests(Collection<? extends EventRequest> eventRequests);
 
 	/**
 	 * Remove all breakpoints managed by this EventRequestManager.

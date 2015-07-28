@@ -26,9 +26,9 @@
 package mono.debugger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -146,14 +146,12 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	}
 
 	@Override
-	public void deleteEventRequests(List<? extends EventRequest> eventRequests)
+	public void deleteEventRequests(Collection<? extends EventRequest> eventRequests)
 	{
 		validateMirrors(eventRequests);
-		// copy the eventRequests to avoid ConcurrentModificationException
-		Iterator<? extends EventRequest> iter = (new ArrayList<EventRequest>(eventRequests)).iterator();
-		while(iter.hasNext())
+		for(EventRequest eventRequest : eventRequests)
 		{
-			((EventRequestImpl) iter.next()).delete();
+			((EventRequestImpl)eventRequest).delete();
 		}
 	}
 
