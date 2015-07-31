@@ -53,7 +53,12 @@ public abstract class MirrorWithIdAndName extends MirrorImpl implements MirrorWi
 	public String toString()
 	{
 		StringBuilder builder = new StringBuilder();
-		builder.append(getClass().getSimpleName()).append(" {").append(" id = ").append(id()).append(", name = ").append(name()).append(" }");
+		String name = myName;
+		if(name == null)
+		{
+			name = "'not loaded'";
+		}
+		builder.append(getClass().getSimpleName()).append(" {").append(" id = ").append(id()).append(", name = ").append(name).append(" }");
 		return builder.toString();
 	}
 }
