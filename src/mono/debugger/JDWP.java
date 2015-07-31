@@ -1471,12 +1471,10 @@ public class JDWP
 
 				public static class AssemblyUnLoad extends EventsCommon
 				{
-					static final byte ALT_ID = EventKind.ASSEMBLY_LOAD;
-
 					@Override
 					byte eventKind()
 					{
-						return ALT_ID;
+						return EventKind.ASSEMBLY_UNLOAD;
 					}
 
 					/**
