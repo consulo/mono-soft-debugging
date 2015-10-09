@@ -1,5 +1,7 @@
 package mono.debugger.event;
 
+import org.jetbrains.annotations.NotNull;
+import mono.debugger.AppDomainMirror;
 import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
@@ -10,9 +12,18 @@ import mono.debugger.VirtualMachine;
  */
 public class AppDomainUnloadEvent extends EventSetImpl.ThreadedEventImpl implements Event
 {
+	private AppDomainMirror myAppDomainMirror;
+
 	public AppDomainUnloadEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.AppDomainUnload evt)
 	{
 		super(virtualMachine, evt, evt.requestID, evt.thread);
+		myAppDomainMirror = evt.appDomainMirror;
+	}
+
+	@NotNull
+	public AppDomainMirror getAppDomainMirror()
+	{
+		return myAppDomainMirror;
 	}
 
 	@Override
