@@ -472,8 +472,17 @@ public class PacketStream
 				return new StringValueMirror(vm, readObjectMirror());
 			case SignatureConstants.ELEMENT_TYPE_CHAR:
 				return new CharValueMirror(vm, (char) readInt());
-			case SignatureConstants.ELEMENT_TYPE_CLASS:
 			case SignatureConstants.ELEMENT_TYPE_VALUETYPE:
+				boolean isEnum = readByte() == 1;
+				TypeMirror typeMirror = readTypeMirror();
+				int fieldCount = readInt();
+				Value[] values = new Value[fieldCount];
+				for(int i = 0; i < fieldCount; i++)
+				{
+					values[i] = readValue();
+				}
+				return new StructValueMirror(vm, typeMirror, values);
+			case SignatureConstants.ELEMENT_TYPE_CLASS:
 			case SignatureConstants.ELEMENT_TYPE_OBJECT:
 				return readObjectMirror();
 			case SignatureConstants.ELEMENT_TYPE_ARRAY:
