@@ -28,7 +28,6 @@ public class StructValueMirror extends ValueImpl<Object>
 		myValues = values;
 	}
 
-
 	@NotNull
 	public Map<FieldOrPropertyMirror, Value<?>> values()
 	{
