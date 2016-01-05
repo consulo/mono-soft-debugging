@@ -158,7 +158,14 @@ public class PacketStream
 		}
 		else if(value instanceof NumberValueMirror)
 		{
-			writeNumberValue(((NumberValueMirror) value).getTag(), ((NumberValueMirror) value).value());
+			if(((NumberValueMirror) value).getTag() == SignatureConstants.ELEMENT_TYPE_PTR)
+			{
+				writeNumberValue(SignatureConstants.ELEMENT_TYPE_U8, ((NumberValueMirror) value).value());
+			}
+			else
+			{
+				writeNumberValue(((NumberValueMirror) value).getTag(), ((NumberValueMirror) value).value());
+			}
 		}
 		else if(value instanceof ValueTypeValueMirror)
 		{
@@ -212,6 +219,7 @@ public class PacketStream
 				writeInt(boxed.intValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_U8:
+			case SignatureConstants.ELEMENT_TYPE_PTR:
 				writeLong(boxed.longValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I8:
@@ -223,6 +231,8 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_R8:
 				writeDouble(boxed.doubleValue());
 				break;
+			default:
+				throw new UnsupportedOperationException("Tag 0x" + Integer.toHexString(tag) + " is not handled");
 		}
 	}
 
