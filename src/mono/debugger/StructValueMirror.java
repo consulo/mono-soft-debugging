@@ -1,8 +1,10 @@
 package mono.debugger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +20,7 @@ public class StructValueMirror extends ValueTypeValueMirror<Object>
 {
 	public static final Pattern BackingFieldPattern = Pattern.compile("<([\\S\\d]+)>k__BackingField");
 
-	public StructValueMirror(VirtualMachine aVm, @NotNull TypeMirror typeMirror, Value[] values)
+	public StructValueMirror(VirtualMachine aVm, @NotNull TypeMirror typeMirror, @NotNull Value[] values)
 	{
 		super(aVm, typeMirror, values);
 	}
@@ -28,8 +30,18 @@ public class StructValueMirror extends ValueTypeValueMirror<Object>
 	{
 		Value[] fieldValues = fieldValues();
 		TypeMirror type = type();
-		FieldMirror[] fields = type.fields();
-		if(fields.length != fieldValues.length)
+		FieldMirror[] allFields = type.fields();
+
+		List<FieldMirror> instanceFields = new ArrayList<FieldMirror>(allFields.length);
+		for(FieldMirror field : allFields)
+		{
+			if(!field.isStatic())
+			{
+				instanceFields.add(field);
+			}
+		}
+
+		if(instanceFields.size() != fieldValues.length)
 		{
 			return Collections.emptyMap();
 		}
@@ -42,9 +54,9 @@ public class StructValueMirror extends ValueTypeValueMirror<Object>
 		}
 
 		Map<FieldOrPropertyMirror, Value<?>> values = new LinkedHashMap<FieldOrPropertyMirror, Value<?>>();
-		for(int i = 0; i < fields.length; i++)
+		for(int i = 0; i < fieldValues.length; i++)
 		{
-			FieldMirror field = fields[i];
+			FieldMirror field = instanceFields.get(i);
 
 			FieldOrPropertyMirror fieldOrPropertyMirror = field;
 			String name = field.name();
