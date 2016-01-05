@@ -22,6 +22,11 @@ public abstract class FieldOrPropertyMirror extends CustomAttributeMirrorOwner i
 		myName = name;
 	}
 
+	public int attributes()
+	{
+		return myAttributes;
+	}
+
 	@NotNull
 	@Override
 	protected String nameImpl() throws JDWPException
