@@ -160,6 +160,19 @@ public class PacketStream
 		{
 			writeNumberValue(((NumberValueMirror) value).getTag(), ((NumberValueMirror) value).value());
 		}
+		else if(value instanceof ValueTypeValueMirror)
+		{
+			writeByte(SignatureConstants.ELEMENT_TYPE_VALUETYPE);
+			ValueTypeValueMirror valueTypeValue = (ValueTypeValueMirror) value;
+			writeByte((byte) (valueTypeValue.isEnum() ? 1 : 0));
+			writeId(value.type());
+			Value[] fieldValues = valueTypeValue.fieldValues();
+			writeInt(fieldValues.length);
+			for(Value fieldValue : fieldValues)
+			{
+				writeValue(fieldValue);
+			}
+		}
 		else if(value instanceof ObjectValueMirror)
 		{
 			writeByte(SignatureConstants.ELEMENT_TYPE_OBJECT);
@@ -475,11 +488,16 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_VALUETYPE:
 				boolean isEnum = readByte() == 1;
 				TypeMirror typeMirror = readTypeMirror();
+				assert typeMirror != null;
 				int fieldCount = readInt();
 				Value[] values = new Value[fieldCount];
 				for(int i = 0; i < fieldCount; i++)
 				{
 					values[i] = readValue();
+				}
+				if(isEnum)
+				{
+					return new EnumValueMirror(vm, typeMirror, values);
 				}
 				return new StructValueMirror(vm, typeMirror, values);
 			case SignatureConstants.ELEMENT_TYPE_CLASS:

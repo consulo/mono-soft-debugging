@@ -14,26 +14,22 @@ import org.jetbrains.annotations.Nullable;
  * @author VISTALL
  * @since 04.01.2016
  */
-public class StructValueMirror extends ValueImpl<Object>
+public class StructValueMirror extends ValueTypeValueMirror<Object>
 {
 	public static final Pattern BackingFieldPattern = Pattern.compile("<([\\S\\d]+)>k__BackingField");
 
-	private TypeMirror myTypeMirror;
-	private Value[] myValues;
-
 	public StructValueMirror(VirtualMachine aVm, @NotNull TypeMirror typeMirror, Value[] values)
 	{
-		super(aVm);
-		myTypeMirror = typeMirror;
-		myValues = values;
+		super(aVm, typeMirror, values);
 	}
 
 	@NotNull
-	public Map<FieldOrPropertyMirror, Value<?>> values()
+	public Map<FieldOrPropertyMirror, Value<?>> map()
 	{
+		Value[] fieldValues = fieldValues();
 		TypeMirror type = type();
 		FieldMirror[] fields = type.fields();
-		if(fields.length != myValues.length)
+		if(fields.length != fieldValues.length)
 		{
 			return Collections.emptyMap();
 		}
@@ -62,16 +58,15 @@ public class StructValueMirror extends ValueImpl<Object>
 				}
 			}
 
-			values.put(fieldOrPropertyMirror, myValues[i]);
+			values.put(fieldOrPropertyMirror, fieldValues[i]);
 		}
 		return values;
 	}
 
-	@NotNull
 	@Override
-	public TypeMirror type()
+	public boolean isEnum()
 	{
-		return myTypeMirror;
+		return false;
 	}
 
 	@Nullable

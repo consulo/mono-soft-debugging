@@ -54,6 +54,11 @@ public interface ValueVisitor
 		public void visitStructValue(@NotNull StructValueMirror mirror)
 		{
 		}
+
+		@Override
+		public void visitEnumValue(@NotNull EnumValueMirror mirror)
+		{
+		}
 	}
 
 	void visitObjectValue(@NotNull ObjectValueMirror value);
@@ -73,4 +78,6 @@ public interface ValueVisitor
 	void visitTypeValue(@NotNull TypeValueMirror typeValueMirror, @NotNull TypeMirror mainValue);
 
 	void visitStructValue(@NotNull StructValueMirror mirror);
+
+	void visitEnumValue(@NotNull EnumValueMirror mirror);
 }
