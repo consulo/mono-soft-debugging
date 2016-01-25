@@ -201,16 +201,16 @@ public class PacketStream
 		switch(tag)
 		{
 			case SignatureConstants.ELEMENT_TYPE_U1:
-				writeByte(boxed.byteValue());
+				writeInt(boxed.byteValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I1:
-				writeByte(boxed.byteValue());
+				writeInt(boxed.byteValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_U2:
-				writeShort(boxed.shortValue());
+				writeInt(boxed.shortValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_I2:
-				writeShort(boxed.shortValue());
+				writeInt(boxed.shortValue());
 				break;
 			case SignatureConstants.ELEMENT_TYPE_U4:
 				writeInt(boxed.intValue());
@@ -476,10 +476,10 @@ public class PacketStream
 				return new BooleanValueMirror(vm, readBoolean());
 			case SignatureConstants.ELEMENT_TYPE_I1:
 			case SignatureConstants.ELEMENT_TYPE_U1:
-				return new NumberValueMirror(vm, tag, readByte());
+				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_U2:
 			case SignatureConstants.ELEMENT_TYPE_I2:
-				return new NumberValueMirror(vm, tag, readShort());
+				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_U4:
 			case SignatureConstants.ELEMENT_TYPE_I4:
 				return new NumberValueMirror(vm, tag, readInt());
