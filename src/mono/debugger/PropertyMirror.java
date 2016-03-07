@@ -52,11 +52,11 @@ public class PropertyMirror extends FieldOrPropertyMirror
 	{
 		if(myGetMethod != null)
 		{
-			return myGetMethod.parameters().length == 1;
+			return myGetMethod.parameters().length >= 1;
 		}
 		else if(mySetMethod != null)
 		{
-			return mySetMethod.parameters().length == 2;
+			return mySetMethod.parameters().length >= 2;
 		}
 		throw new IllegalArgumentException("Not setter and getter");
 	}
