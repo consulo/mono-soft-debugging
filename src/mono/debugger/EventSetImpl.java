@@ -241,37 +241,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 	}
 
-	class ExceptionEventImpl extends LocatableEventImpl implements ExceptionEvent
-	{
-		private ObjectValueMirror exception;
-		private Location catchLocation;
-
-		ExceptionEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.Exception evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
-			this.exception = evt.exception;
-			this.catchLocation = evt.catchLocation;
-		}
-
-		@Override
-		public ObjectValueMirror exception()
-		{
-			return exception;
-		}
-
-		@Override
-		public Location catchLocation()
-		{
-			return catchLocation;
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "ExceptionEvent";
-		}
-	}
-
 	class ThreadDeathEventImpl extends ThreadedEventImpl implements ThreadDeathEvent
 	{
 		ThreadDeathEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ThreadDeath evt)
@@ -403,7 +372,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			case JDWP.EventKind.THREAD_DEATH:
 				return new ThreadDeathEventImpl(vm, (JDWP.Event.Composite.Events.ThreadDeath) comm);
 			case JDWP.EventKind.EXCEPTION:
-				return new ExceptionEventImpl(vm, (JDWP.Event.Composite.Events.Exception) comm);
+				return new ExceptionEvent(vm, (JDWP.Event.Composite.Events.Exception) comm);
 			case JDWP.EventKind.BREAKPOINT:
 				return new BreakpointEvent(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
 			case JDWP.EventKind.METHOD_ENTRY:

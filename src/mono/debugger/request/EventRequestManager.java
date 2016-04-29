@@ -87,8 +87,7 @@ public interface EventRequestManager extends Mirror
 	 * EventRequestManager. Use {@link EventRequest#enable()} to
 	 * activate this event request.
 	 * <p/>
-	 * A specific exception type and its subclasses can be selected
-	 * for exception events. Caught exceptions,  uncaught exceptions,
+	 * A specific exception type. Caught exceptions,  uncaught exceptions,
 	 * or both can be selected. Note, however, that
 	 * at the time an exception is thrown, it is not always
 	 * possible to determine whether it is truly caught. See
@@ -96,15 +95,13 @@ public interface EventRequestManager extends Mirror
 	 * details.
 	 *
 	 * @param refType        If non-null, specifies that exceptions which are
-	 *                       instances of refType will be reported. Note: this
-	 *                       will include instances of sub-types.  If null,
+	 *                       instances of refType will be reported. If null,
 	 *                       all instances will be reported
 	 * @param notifyCaught   If true, caught exceptions will be reported.
 	 * @param notifyUncaught If true, uncaught exceptions will be reported.
 	 * @return the created {@link ExceptionRequest}
 	 */
-	ExceptionRequest createExceptionRequest(
-			TypeMirror refType, boolean notifyCaught, boolean notifyUncaught);
+	ExceptionRequest createExceptionRequest(@NotNull TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses);
 
 	/**
 	 * Creates a new disabled {@link MethodEntryRequest}.

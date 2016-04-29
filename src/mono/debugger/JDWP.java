@@ -1,5 +1,6 @@
 package mono.debugger;
 
+import org.jetbrains.annotations.Nullable;
 import mono.debugger.request.StepRequest;
 
 public class JDWP
@@ -230,15 +231,13 @@ public class JDWP
 		{
 			static final int COMMAND = 5;
 
-			static Exit process(
-					VirtualMachineImpl vm, int exitCode) throws JDWPException
+			static Exit process(VirtualMachineImpl vm, int exitCode) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, exitCode);
 				return waitForReply(vm, ps);
 			}
 
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, int exitCode)
+			static PacketStream enqueueCommand(VirtualMachineImpl vm, int exitCode)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				ps.writeInt(exitCode);
@@ -419,53 +418,43 @@ public class JDWP
 				 * This modifier can be used with
 				 * exception event kinds only.
 				 */
-				static class ExceptionOnly extends ModifierCommon
+				public static class ExceptionOnly extends ModifierCommon
 				{
 					static final byte ALT_ID = 8;
 
-					static Modifier create(TypeMirror exceptionOrNull, boolean caught, boolean uncaught)
+					public static Modifier create(@Nullable TypeMirror exceptionOrNull, boolean caught, boolean uncaught, boolean subclasses)
 					{
-						return new Modifier(ALT_ID, new ExceptionOnly(exceptionOrNull, caught, uncaught));
+						return new Modifier(ALT_ID, new ExceptionOnly(exceptionOrNull, caught, uncaught, subclasses));
 					}
 
-					/**
-					 * Exception to report. Null (0) means report
-					 * exceptions of all types.
-					 * A non-null type restricts the reported exception
-					 * events to exceptions of the given type or
-					 * any of its subtypes.
-					 */
+					@Nullable
 					final TypeMirror exceptionOrNull;
-
-					/**
-					 * Report caught exceptions
-					 */
 					final boolean caught;
-
-					/**
-					 * Report uncaught exceptions.
-					 * Note that it
-					 * is not always possible to determine whether an
-					 * exception is caught or uncaught at the time it is
-					 * thrown. See the exception event catch location under
-					 * <a href="#JDWP_Event_Composite">composite events</a>
-					 * for more information.
-					 */
 					final boolean uncaught;
+					private boolean mySubclasses;
 
-					ExceptionOnly(TypeMirror exceptionOrNull, boolean caught, boolean uncaught)
+					ExceptionOnly(@Nullable TypeMirror exceptionOrNull, boolean caught, boolean uncaught, boolean subclasses)
 					{
 						this.exceptionOrNull = exceptionOrNull;
 						this.caught = caught;
 						this.uncaught = uncaught;
+						mySubclasses = subclasses;
 					}
 
 					@Override
 					void write(PacketStream ps, VirtualMachineImpl vm)
 					{
-						ps.writeClassRef(exceptionOrNull.id());
-						ps.writeBoolean(caught);
-						ps.writeBoolean(uncaught);
+						ps.writeId(exceptionOrNull);
+						if(vm.isAtLeastVersion(2, 0))
+						{
+							ps.writeBoolean(caught);
+							ps.writeBoolean(uncaught);
+						}
+
+						if(vm.isAtLeastVersion(2, 24))
+						{
+							ps.writeBoolean(mySubclasses);
+						}
 					}
 				}
 
@@ -593,15 +582,13 @@ public class JDWP
 				}
 			}
 
-			public static Set process(
-					VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers) throws JDWPException
+			public static Set process(VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, eventKind, suspendPolicy, modifiers);
 				return waitForReply(vm, ps);
 			}
 
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers)
+			static PacketStream enqueueCommand(VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				ps.writeByte((byte) eventKind);
@@ -654,15 +641,13 @@ public class JDWP
 		{
 			static final int COMMAND = 2;
 
-			public static Clear process(
-					VirtualMachineImpl vm, byte eventKind, int requestID) throws JDWPException
+			public static Clear process(VirtualMachineImpl vm, byte eventKind, int requestID) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, eventKind, requestID);
 				return waitForReply(vm, ps);
 			}
 
-			static PacketStream enqueueCommand(
-					VirtualMachineImpl vm, byte eventKind, int requestID)
+			static PacketStream enqueueCommand(VirtualMachineImpl vm, byte eventKind, int requestID)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 				ps.writeByte(eventKind);
@@ -1154,9 +1139,9 @@ public class JDWP
 				 * is generated at the first non-native location reached after the exception
 				 * is thrown.
 				 */
-				static class Exception extends EventsCommon
+				public static class Exception extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.EXCEPTION;
+					static final byte ALT_ID = (byte) mono.debugger.EventKind.EXCEPTION.ordinal();
 
 					@Override
 					byte eventKind()
@@ -1167,80 +1152,30 @@ public class JDWP
 					/**
 					 * Request that generated event
 					 */
-					final int requestID;
+					public final int requestID;
 
 					/**
 					 * Thread with exception
 					 */
-					final ThreadMirror thread;
+					public final ThreadMirror thread;
 
 					/**
 					 * Location of exception throw
 					 * (or first non-native location after throw if thrown from a native method)
 					 */
-					final Location location;
+					public final Location location;
 
 					/**
 					 * Thrown exception
 					 */
-					final ObjectValueMirror exception;
-
-					/**
-					 * Location of catch, or 0 if not caught. An exception
-					 * is considered to be caught if, at the point of the throw, the
-					 * current location is dynamically enclosed in a try statement that
-					 * handles the exception. (See the JVM specification for details).
-					 * If there is such a try statement, the catch location is the
-					 * first location in the appropriate catch clause.
-					 * <p/>
-					 * If there are native methods in the call stack at the time of the
-					 * exception, there are important restrictions to note about the
-					 * returned catch location. In such cases,
-					 * it is not possible to predict whether an exception will be handled
-					 * by some native method on the call stack.
-					 * Thus, it is possible that exceptions considered uncaught
-					 * here will, in fact, be handled by a native method and not cause
-					 * termination of the target VM. Furthermore, it cannot be assumed that the
-					 * catch location returned here will ever be reached by the throwing
-					 * thread. If there is
-					 * a native frame between the current location and the catch location,
-					 * the exception might be handled and cleared in that native method
-					 * instead.
-					 * <p/>
-					 * Note that compilers can generate try-catch blocks in some cases
-					 * where they are not explicit in the source code; for example,
-					 * the code generated for <code>synchronized</code> and
-					 * <code>finally</code> blocks can contain implicit try-catch blocks.
-					 * If such an implicitly generated try-catch is
-					 * present on the call stack at the time of the throw, the exception
-					 * will be considered caught even though it appears to be uncaught from
-					 * examination of the source code.
-					 */
-					final Location catchLocation;
+					public final ObjectValueMirror exception;
 
 					Exception(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
-						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
 						exception = ps.readObjectMirror();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "exception(ObjectReferenceImpl): " + (exception == null ? "NULL" : "ref=" + exception.id()));
-						}
-						catchLocation = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "catchLocation(Location): " + catchLocation);
-						}
+						location = null; //FIXME [VISTALL] we can't read from mono?
 					}
 				}
 

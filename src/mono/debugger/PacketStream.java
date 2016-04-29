@@ -135,9 +135,9 @@ public class PacketStream
 		writeLong(Double.doubleToLongBits(data));
 	}
 
-	public void writeId(MirrorWithId data)
+	public void writeId(@Nullable MirrorWithId data)
 	{
-		writeInt(data.id());
+		writeInt(data == null ? 0 : data.id());
 	}
 
 	public void writeValue(Value<?> value)

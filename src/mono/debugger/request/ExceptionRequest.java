@@ -26,8 +26,10 @@
 package mono.debugger.request;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
+import mono.debugger.JDWP;
 import mono.debugger.TypeMirror;
 import mono.debugger.VirtualMachineImpl;
 
@@ -48,29 +50,22 @@ import mono.debugger.VirtualMachineImpl;
  */
 public class ExceptionRequest extends ClassVisibleEventRequest
 {
-	TypeMirror exception = null;
-	boolean caught = true;
-	boolean uncaught = true;
+	private TypeMirror exception = null;
+	private boolean caught = true;
+	private boolean uncaught = true;
+	private boolean myNotifyOnSubclasses;
 
-	public ExceptionRequest(
-			TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, VirtualMachineImpl vm, EventRequestManagerImpl requestManager)
+	public ExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses, VirtualMachineImpl vm, EventRequestManagerImpl requestManager)
 	{
 		super(vm, requestManager);
 		exception = refType;
-		caught = notifyCaught;
-		uncaught = notifyUncaught;
-		  /*  {
-				ReferenceTypeImpl exc;
-                if (exception == null) {
-                    exc = new ClassTypeImpl(vm, 0);
-                } else {
-                    exc = (ReferenceTypeImpl)exception;
-                }
-                filters.add(JDWP.EventRequest.Set.Modifier.ExceptionOnly.
-                            create(exc, caught, uncaught));
-            }  */
+		this.caught = notifyCaught;
+		this.uncaught = notifyUncaught;
+		myNotifyOnSubclasses = notifyOnSubclasses;
+		filters.add(0, JDWP.EventRequest.Set.Modifier.ExceptionOnly.create(refType, notifyCaught, notifyUncaught, notifyOnSubclasses));
 	}
 
+	@NotNull
 	public TypeMirror exception()
 	{
 		return exception;
@@ -84,6 +79,11 @@ public class ExceptionRequest extends ClassVisibleEventRequest
 	public boolean notifyUncaught()
 	{
 		return uncaught;
+	}
+
+	public boolean notifyOnSubclasses()
+	{
+		return myNotifyOnSubclasses;
 	}
 
 	@Override

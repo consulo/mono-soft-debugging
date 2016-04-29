@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import mono.debugger.request.*;
 
 /**
@@ -62,11 +63,10 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	}
 
 	@Override
-	public ExceptionRequest createExceptionRequest(
-			TypeMirror refType, boolean notifyCaught, boolean notifyUncaught)
+	public ExceptionRequest createExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses)
 	{
 		validateMirrorOrNull(refType);
-		return add(new ExceptionRequest(refType, notifyCaught, notifyUncaught, vm, this));
+		return add(new ExceptionRequest(refType, notifyCaught, notifyUncaught, notifyOnSubclasses, vm, this));
 	}
 
 	@Override
