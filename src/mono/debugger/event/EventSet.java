@@ -25,6 +25,7 @@
 
 package mono.debugger.event;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ import mono.debugger.VirtualMachine;
  * to deliver {@link Event} objects.  EventSets are delivered by
  * the {@link EventQueue}.
  * EventSets are unmodifiable.
- * <P>
+ * <p/>
  * Associated with the issuance of an event set, suspensions may
  * have occurred in the target VM.  These suspensions correspond
  * with the {@link #suspendPolicy() suspend policy}.
@@ -53,114 +54,113 @@ import mono.debugger.VirtualMachine;
  * where possible,
  * to complete the processing of an event set with
  * {@link #resume() EventSet.resume()}.
- * <P>
+ * <p/>
  * The events that are grouped in an EventSet are restricted in the
  * following ways:
- * <P>
+ * <p/>
  * <UL>
  * <LI>Always singleton sets:
- *     <UL>
- *     <LI>{@link VMStartEvent}
- *     <LI>{@link VMDisconnectEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link VMStartEvent}
+ * <LI>{@link VMDisconnectEvent}
+ * </UL>
  * <LI>Only with other VMDeathEvents:
- *     <UL>
- *     <LI>{@link VMDeathEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link VMDeathEvent}
+ * </UL>
  * <LI>Only with other ThreadStartEvents for the same thread:
- *     <UL>
- *     <LI>{@link ThreadStartEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link ThreadStartEvent}
+ * </UL>
  * <LI>Only with other ThreadDeathEvents for the same thread:
- *     <UL>
- *     <LI>{@link ThreadDeathEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link ThreadDeathEvent}
+ * </UL>
  * <LI>Only with other ClassPrepareEvents for the same class:
- *     <UL>
- *     <LI>{@link ClassPrepareEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link ClassPrepareEvent}
+ * </UL>
  * <LI>Only with other ClassUnloadEvents for the same class:
- *     <UL>
- *     <LI>{@link ClassUnloadEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link ClassUnloadEvent}
+ * </UL>
  * <LI>Only with other AccessWatchpointEvents for the same field access:
- *     <UL>
- *     <LI>{@link AccessWatchpointEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link AccessWatchpointEvent}
+ * </UL>
  * <LI>Only with other ModificationWatchpointEvents for the same field
  * modification:
- *     <UL>
- *     <LI>{@link ModificationWatchpointEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link ModificationWatchpointEvent}
+ * </UL>
  * <LI>Only with other ExceptionEvents for the same exception occurrance:
- *     <UL>
- *     <LI>{@link ExceptionEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link ExceptionEvent}
+ * </UL>
  * <LI>Only with other MethodExitEvents for the same method exit:
- *     <UL>
- *     <LI>{@link MethodExitEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link MethodExitEvent}
+ * </UL>
  * <LI>Only with other Monitor contended enter events for the same monitor object:
- *     <UL>
- *     <LI>Monitor Contended Enter Event
- *     </UL>
+ * <UL>
+ * <LI>Monitor Contended Enter Event
+ * </UL>
  * <LI>Only with other Monitor contended entered events for the same monitor object:
- *     <UL>
- *     <LI>Monitor Contended Entered Event
- *    </UL>
+ * <UL>
+ * <LI>Monitor Contended Entered Event
+ * </UL>
  * <LI>Only with other Monitor wait events for the same monitor object:
- *     <UL>
- *     <LI>Monitor Wait Event
- *     </UL>
+ * <UL>
+ * <LI>Monitor Wait Event
+ * </UL>
  * <LI>Only with other Monitor waited events for the same monitor object:
- *     <UL>
- *     <LI>Monitor Waited Event
- *     </UL>
+ * <UL>
+ * <LI>Monitor Waited Event
+ * </UL>
  * <LI>Only with other members of this group, at the same location
  * and in the same thread:
- *     <UL>
- *     <LI>{@link BreakpointEvent}
- *     <LI>{@link StepEvent}
- *     <LI>{@link MethodEntryEvent}
- *     </UL>
+ * <UL>
+ * <LI>{@link BreakpointEvent}
+ * <LI>{@link StepEvent}
+ * <LI>{@link MethodEntryEvent}
+ * </UL>
  * </UL>
  *
+ * @author Robert Field
  * @see Event
  * @see EventQueue
- *
- * @author Robert Field
- * @since  1.3
+ * @since 1.3
  */
 
-public interface EventSet extends Mirror, Set<Event> {
-
-    /**
-     * Returns the policy used to suspend threads in the target VM
-     * for this event set. This policy is selected from the suspend
-     * policies for each event's request; the target VM chooses the
-     * policy which suspends the most threads.  The target VM
-     * suspends threads according to that policy
-     * and that policy is returned here. See
-     * {@link mono.debugger.request.EventRequest} for the possible
-     * policy values.
-     * <p>
-     * In rare cases, the suspend policy may differ from the requested
-     * value if a {@link ClassPrepareEvent} has occurred in a
-     * debugger system thread. See {@link ClassPrepareEvent#thread}
-     * for details.
-     *
-     * @return the suspendPolicy which is either
-     * {@link mono.debugger.request.EventRequest#SUSPEND_ALL SUSPEND_ALL},
-     * {@link mono.debugger.request.EventRequest#SUSPEND_EVENT_THREAD SUSPEND_EVENT_THREAD} or
-     * {@link mono.debugger.request.EventRequest#SUSPEND_NONE SUSPEND_NONE}.
-     */
+public interface EventSet extends Mirror, Set<Event>
+{
+	/**
+	 * Returns the policy used to suspend threads in the target VM
+	 * for this event set. This policy is selected from the suspend
+	 * policies for each event's request; the target VM chooses the
+	 * policy which suspends the most threads.  The target VM
+	 * suspends threads according to that policy
+	 * and that policy is returned here. See
+	 * {@link mono.debugger.request.EventRequest} for the possible
+	 * policy values.
+	 * <p/>
+	 * In rare cases, the suspend policy may differ from the requested
+	 * value if a {@link ClassPrepareEvent} has occurred in a
+	 * debugger system thread. See {@link ClassPrepareEvent#thread}
+	 * for details.
+	 *
+	 * @return the suspendPolicy which is either
+	 * {@link mono.debugger.request.EventRequest#SUSPEND_ALL SUSPEND_ALL},
+	 * {@link mono.debugger.request.EventRequest#SUSPEND_EVENT_THREAD SUSPEND_EVENT_THREAD} or
+	 * {@link mono.debugger.request.EventRequest#SUSPEND_NONE SUSPEND_NONE}.
+	 */
 	@NotNull
 	SuspendPolicy suspendPolicy();
 
-    /**
-     * Return an iterator specific to {@link Event} objects.
-     */
-    EventIterator eventIterator();
+	/**
+	 * Return an iterator specific to {@link Event} objects.
+	 */
+	Iterator<Event> eventIterator();
 
 	ThreadMirror eventThread();
 }

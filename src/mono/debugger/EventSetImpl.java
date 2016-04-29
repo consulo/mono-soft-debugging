@@ -160,8 +160,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	{
 		private Location location;
 
-		public  LocatableEventImpl(
-				VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread, Location location)
+		public LocatableEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread, Location location)
 		{
 			super(virtualMachine, evt, requestID, thread);
 			this.location = location;
@@ -436,12 +435,12 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	}
 
 	@Override
-	public EventIterator eventIterator()
+	public Iterator<Event> eventIterator()
 	{
 		return new Itr();
 	}
 
-	public class Itr implements EventIterator
+	public class Itr implements Iterator<Event>
 	{
 		/**
 		 * Index of element to be returned by subsequent call to next.
@@ -467,12 +466,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			{
 				throw new NoSuchElementException();
 			}
-		}
-
-		@Override
-		public Event nextEvent()
-		{
-			return next();
 		}
 
 		@Override
