@@ -77,7 +77,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	public abstract static class EventImpl extends MirrorImpl implements Event
 	{
 
-		private final byte eventCmd;
+		private final EventKind eventCmd;
 		private final int requestID;
 		// This is set only for client requests, not internal requests.
 		private final EventRequest request;
@@ -91,13 +91,13 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			this.eventCmd = evt.eventKind();
 			this.requestID = requestID;
 			EventRequestManagerImpl ermi = vm.eventRequestManagerImpl();
-			request = ermi.request(EventKind.values()[eventCmd], requestID);
+			request = ermi.request(eventCmd, requestID);
 		}
 
 		/**
 		 * Constructor for VM disconnected events.
 		 */
-		protected EventImpl(VirtualMachine virtualMachine, byte eventCmd)
+		protected EventImpl(VirtualMachine virtualMachine, EventKind eventCmd)
 		{
 			super(virtualMachine);
 			this.eventCmd = eventCmd;
@@ -363,37 +363,37 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		JDWP.Event.Composite.Events.EventsCommon comm = evt.aEventsCommon;
 		switch(evt.eventKind)
 		{
-			case JDWP.EventKind.APPDOMAIN_CREATE:
+			case APPDOMAIN_CREATE:
 				return new AppDomainCreateEvent(vm, (JDWP.Event.Composite.Events.AppDomainCreate) comm);
-			case JDWP.EventKind.APPDOMAIN_UNLOAD:
+			case APPDOMAIN_UNLOAD:
 				return new AppDomainUnloadEvent(vm, (JDWP.Event.Composite.Events.AppDomainUnload) comm);
-			case JDWP.EventKind.THREAD_START:
+			case THREAD_START:
 				return new ThreadStartEventImpl(vm, (JDWP.Event.Composite.Events.ThreadStart) comm);
-			case JDWP.EventKind.THREAD_DEATH:
+			case THREAD_DEATH:
 				return new ThreadDeathEventImpl(vm, (JDWP.Event.Composite.Events.ThreadDeath) comm);
-			case JDWP.EventKind.EXCEPTION:
+			case EXCEPTION:
 				return new ExceptionEvent(vm, (JDWP.Event.Composite.Events.Exception) comm);
-			case JDWP.EventKind.BREAKPOINT:
+			case BREAKPOINT:
 				return new BreakpointEvent(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
-			case JDWP.EventKind.METHOD_ENTRY:
+			case METHOD_ENTRY:
 				return new MethodEntryEventImpl(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
-			case JDWP.EventKind.METHOD_EXIT:
+			case METHOD_EXIT:
 				return new MethodExitEventImpl(vm, (JDWP.Event.Composite.Events.MethodExit) comm);
-			case JDWP.EventKind.TYPE_LOAD:
+			case TYPE_LOAD:
 				return new TypeLoadEvent(vm, (JDWP.Event.Composite.Events.TypeLoad) comm);
-			case JDWP.EventKind.SINGLE_STEP:
+			case STEP:
 				return new StepEventImpl(vm, (JDWP.Event.Composite.Events.SingleStep) comm);
-			case JDWP.EventKind.ASSEMBLY_LOAD:
+			case ASSEMBLY_LOAD:
 				return new AssemblyLoadEvent(vm, (JDWP.Event.Composite.Events.AssemblyLoad) comm);
-			case JDWP.EventKind.ASSEMBLY_UNLOAD:
+			case ASSEMBLY_UNLOAD:
 				return new AssemblyUnloadEvent(vm, (JDWP.Event.Composite.Events.AssemblyUnLoad) comm);
-			case JDWP.EventKind.VM_START:
+			case VM_START:
 				return new VMStartEvent(vm, (JDWP.Event.Composite.Events.VMStart) comm);
-			case JDWP.EventKind.VM_DEATH:
+			case VM_DEATH:
 				return new VMDeathEvent(vm, (JDWP.Event.Composite.Events.VMDeath) comm);
-			case JDWP.EventKind.USER_BREAK:
+			case USER_BREAK:
 				return new UserBreakEvent(vm, (JDWP.Event.Composite.Events.UserBreak) comm);
-			case JDWP.EventKind.USER_LOG:
+			case USER_LOG:
 				return new UserLogEvent(vm, (JDWP.Event.Composite.Events.UserLog) comm);
 			default:
 				// Ignore unknown event types

@@ -814,66 +814,67 @@ public class JDWP
 			{
 				public abstract static class EventsCommon
 				{
-					abstract byte eventKind();
+					abstract EventKind eventKind();
 				}
 
 				/**
 				 * Event kind selector
 				 */
-				final byte eventKind;
+				final EventKind eventKind;
 				EventsCommon aEventsCommon;
 
 				Events(VirtualMachineImpl vm, PacketStream ps)
 				{
-					eventKind = ps.readByte();
+					byte ek = ps.readByte();
+					eventKind = EventKind.values()[ek];
 					switch(eventKind)
 					{
-						case JDWP.EventKind.VM_START:
+						case VM_START:
 							aEventsCommon = new VMStart(vm, ps);
 							break;
-						case JDWP.EventKind.SINGLE_STEP:
+						case STEP:
 							aEventsCommon = new SingleStep(vm, ps);
 							break;
-						case JDWP.EventKind.BREAKPOINT:
+						case BREAKPOINT:
 							aEventsCommon = new Breakpoint(vm, ps);
 							break;
-						case JDWP.EventKind.METHOD_ENTRY:
+						case METHOD_ENTRY:
 							aEventsCommon = new MethodEntry(vm, ps);
 							break;
-						case JDWP.EventKind.METHOD_EXIT:
+						case METHOD_EXIT:
 							aEventsCommon = new MethodExit(vm, ps);
 							break;
-						case JDWP.EventKind.EXCEPTION:
+						case EXCEPTION:
 							aEventsCommon = new Exception(vm, ps);
 							break;
-						case JDWP.EventKind.THREAD_START:
+						case THREAD_START:
 							aEventsCommon = new ThreadStart(vm, ps);
 							break;
-						case JDWP.EventKind.THREAD_DEATH:
+						case THREAD_DEATH:
 							aEventsCommon = new ThreadDeath(vm, ps);
 							break;
-						case EventKind.APPDOMAIN_CREATE:
+						case APPDOMAIN_CREATE:
 							aEventsCommon = new AppDomainCreate(vm, ps);
 							break;
-						case EventKind.APPDOMAIN_UNLOAD:
+						case APPDOMAIN_UNLOAD:
 							aEventsCommon = new AppDomainUnload(vm, ps);
 							break;
-						case JDWP.EventKind.ASSEMBLY_LOAD:
+						case ASSEMBLY_LOAD:
 							aEventsCommon = new AssemblyLoad(vm, ps);
 							break;
-						case JDWP.EventKind.ASSEMBLY_UNLOAD:
+						case ASSEMBLY_UNLOAD:
 							aEventsCommon = new AssemblyUnLoad(vm, ps);
 							break;
-						case EventKind.USER_BREAK:
+						case USER_BREAK:
 							aEventsCommon = new UserBreak(vm, ps);
 							break;
-						case EventKind.USER_LOG:
+						case USER_LOG:
 							aEventsCommon = new UserLog(vm, ps);
 							break;
-						case JDWP.EventKind.VM_DEATH:
+						case VM_DEATH:
 							aEventsCommon = new VMDeath(vm, ps);
 							break;
-						case EventKind.TYPE_LOAD:
+						case TYPE_LOAD:
 							aEventsCommon = new TypeLoad(vm, ps);
 							break;
 						default:
@@ -893,12 +894,10 @@ public class JDWP
 				 */
 				public static class VMStart extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.VM_START;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.VM_START;
 					}
 
 					/**
@@ -929,12 +928,10 @@ public class JDWP
 				 */
 				static class SingleStep extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.SINGLE_STEP;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.STEP;
 					}
 
 					/**
@@ -966,12 +963,11 @@ public class JDWP
 				 */
 				public static class Breakpoint extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.BREAKPOINT;
 
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.BREAKPOINT;
 					}
 
 					/**
@@ -1009,12 +1005,10 @@ public class JDWP
 				 */
 				static class MethodEntry extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.METHOD_ENTRY;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.METHOD_ENTRY;
 					}
 
 					/**
@@ -1058,12 +1052,10 @@ public class JDWP
 				 */
 				static class MethodExit extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.METHOD_EXIT;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.METHOD_EXIT;
 					}
 
 					/**
@@ -1099,12 +1091,10 @@ public class JDWP
 
 				public static class TypeLoad extends EventsCommon
 				{
-					static final byte ALT_ID = (byte) mono.debugger.EventKind.TYPE_LOAD.ordinal();
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.TYPE_LOAD;
 					}
 
 					/**
@@ -1141,12 +1131,10 @@ public class JDWP
 				 */
 				public static class Exception extends EventsCommon
 				{
-					static final byte ALT_ID = (byte) mono.debugger.EventKind.EXCEPTION.ordinal();
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.EXCEPTION;
 					}
 
 					/**
@@ -1201,12 +1189,10 @@ public class JDWP
 				 */
 				static class ThreadStart extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.THREAD_START;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.THREAD_START;
 					}
 
 					/**
@@ -1233,22 +1219,16 @@ public class JDWP
 				/**
 				 * Notification of a completed thread in the target VM. The
 				 * notification is generated by the dying thread before it terminates.
-				 * Because of this timing, it is possible
-				 * for {@link VirtualMachine#allThreads} to return this thread
-				 * after this event is received.
-				 * <p/>
 				 * Note that this event gives no information
 				 * about the lifetime of the thread object. It may or may not be collected
 				 * soon depending on what references exist in the target VM.
 				 */
 				static class ThreadDeath extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.THREAD_DEATH;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.THREAD_DEATH;
 					}
 
 					/**
@@ -1274,12 +1254,10 @@ public class JDWP
 
 				public static class AppDomainCreate extends EventsCommon
 				{
-					static final byte ALT_ID = EventKind.APPDOMAIN_CREATE;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.APPDOMAIN_CREATE;
 					}
 
 					public final int requestID;
@@ -1298,12 +1276,10 @@ public class JDWP
 
 				public static class AppDomainUnload extends EventsCommon
 				{
-					static final byte ALT_ID = EventKind.APPDOMAIN_UNLOAD;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.APPDOMAIN_UNLOAD;
 					}
 
 					public final int requestID;
@@ -1322,12 +1298,10 @@ public class JDWP
 
 				public static class AssemblyLoad extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.ASSEMBLY_LOAD;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.ASSEMBLY_LOAD;
 					}
 
 					/**
@@ -1359,12 +1333,10 @@ public class JDWP
 
 				public static class UserBreak extends EventsCommon
 				{
-					static final byte ALT_ID = (byte) mono.debugger.EventKind.USER_BREAK.ordinal();
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.USER_BREAK;
 					}
 
 					public final int requestID;
@@ -1380,12 +1352,10 @@ public class JDWP
 
 				public static class UserLog extends EventsCommon
 				{
-					static final byte ALT_ID = (byte) mono.debugger.EventKind.USER_LOG.ordinal();
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.USER_LOG;
 					}
 
 					public final int requestID;
@@ -1407,7 +1377,7 @@ public class JDWP
 				public static class AssemblyUnLoad extends EventsCommon
 				{
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
 						return EventKind.ASSEMBLY_UNLOAD;
 					}
@@ -1440,12 +1410,10 @@ public class JDWP
 
 				public static class VMDeath extends EventsCommon
 				{
-					static final byte ALT_ID = JDWP.EventKind.VM_DEATH;
-
 					@Override
-					byte eventKind()
+					EventKind eventKind()
 					{
-						return ALT_ID;
+						return EventKind.VM_DEATH;
 					}
 
 					public final int requestID;
@@ -1516,45 +1484,5 @@ public class JDWP
 		static final int ERR_NO_INVOCATION = 104;
 		static final int ABSENT_INFORMATION = 105;
 		static final int NO_SEQ_POINT_AT_IL_OFFSET = 106;
-	}
-
-	@Deprecated
-	static class EventKind
-	{
-		/*
-EVENT_KIND_VM_START = 0,
-	EVENT_KIND_VM_DEATH = 1,
-	EVENT_KIND_THREAD_START = 2,
-	EVENT_KIND_THREAD_DEATH = 3,
-	EVENT_KIND_APPDOMAIN_CREATE = 4,
-	EVENT_KIND_APPDOMAIN_UNLOAD = 5,
-	EVENT_KIND_METHOD_ENTRY = 6,
-	EVENT_KIND_METHOD_EXIT = 7,
-	EVENT_KIND_ASSEMBLY_LOAD = 8,
-	EVENT_KIND_ASSEMBLY_UNLOAD = 9,
-	EVENT_KIND_BREAKPOINT = 10,
-	EVENT_KIND_STEP = 11,
-	EVENT_KIND_TYPE_LOAD = 12,
-	EVENT_KIND_EXCEPTION = 13,
-	EVENT_KIND_KEEPALIVE = 14,
-	EVENT_KIND_USER_BREAK = 15,
-	EVENT_KIND_USER_LOG = 16
-		 */
-		static final int VM_START = 0;
-		static final int VM_DEATH = 1;
-		static final int THREAD_START = 2;
-		static final int THREAD_DEATH = 3;
-		static final int APPDOMAIN_CREATE = 4;
-		static final int APPDOMAIN_UNLOAD = 5;
-		static final int METHOD_ENTRY = 6;
-		static final int METHOD_EXIT = 7;
-		static final int ASSEMBLY_LOAD = 8;
-		static final int ASSEMBLY_UNLOAD = 9;
-		static final int BREAKPOINT = 10;
-		static final int SINGLE_STEP = 11;
-		static final int TYPE_LOAD = 12;
-		static final int EXCEPTION = 13;
-		static final int USER_BREAK = 15;
-		static final int USER_LOG = 16;
 	}
 }
