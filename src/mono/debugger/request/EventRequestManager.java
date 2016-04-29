@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.NativeMethodException;
@@ -101,7 +102,7 @@ public interface EventRequestManager extends Mirror
 	 * @param notifyUncaught If true, uncaught exceptions will be reported.
 	 * @return the created {@link ExceptionRequest}
 	 */
-	ExceptionRequest createExceptionRequest(@NotNull TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses);
+	ExceptionRequest createExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses);
 
 	/**
 	 * Creates a new disabled {@link MethodEntryRequest}.
