@@ -23,7 +23,7 @@ public class VirtualMachine_GetTypesForSourceFile implements VirtualMachine
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeString(sourceFile);
-		ps.writeBoolean(ignoreCase);
+		ps.writeByteBool(ignoreCase);
 		ps.send();
 		return ps;
 	}

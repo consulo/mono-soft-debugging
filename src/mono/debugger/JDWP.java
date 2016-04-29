@@ -447,13 +447,13 @@ public class JDWP
 						ps.writeId(exceptionOrNull);
 						if(vm.isAtLeastVersion(2, 0))
 						{
-							ps.writeBoolean(caught);
-							ps.writeBoolean(uncaught);
+							ps.writeByteBool(caught);
+							ps.writeByteBool(uncaught);
 						}
 
 						if(vm.isAtLeastVersion(2, 24))
 						{
-							ps.writeBoolean(mySubclasses);
+							ps.writeByteBool(mySubclasses);
 						}
 					}
 				}
@@ -582,16 +582,16 @@ public class JDWP
 				}
 			}
 
-			public static Set process(VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers) throws JDWPException
+			public static Set process(VirtualMachineImpl vm, byte eventKind, int suspendPolicy, Modifier[] modifiers) throws JDWPException
 			{
 				PacketStream ps = enqueueCommand(vm, eventKind, suspendPolicy, modifiers);
 				return waitForReply(vm, ps);
 			}
 
-			static PacketStream enqueueCommand(VirtualMachineImpl vm, int eventKind, int suspendPolicy, Modifier[] modifiers)
+			static PacketStream enqueueCommand(VirtualMachineImpl vm, byte eventKind, int suspendPolicy, Modifier[] modifiers)
 			{
 				PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
-				ps.writeByte((byte) eventKind);
+				ps.writeByte(eventKind);
 				ps.writeByte((byte) suspendPolicy);
 				ps.writeByte((byte) modifiers.length);
 				for(int i = 0; i < modifiers.length; i++)

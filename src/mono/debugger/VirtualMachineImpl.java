@@ -354,7 +354,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		{
 			try
 			{
-				JDWP.EventRequest.Set.process(vm, eventKind.ordinal(), SuspendPolicy.NONE.ordinal(), new JDWP.EventRequest.Set.Modifier[0]);
+				JDWP.EventRequest.Set.process(vm, (byte) eventKind.ordinal(), SuspendPolicy.NONE.ordinal(), new JDWP.EventRequest.Set.Modifier[0]);
 			}
 			catch(JDWPException e)
 			{

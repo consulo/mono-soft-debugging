@@ -25,7 +25,7 @@ public class Assembly_GetType implements Assembly
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(assemblyMirror);
 		ps.writeString(name);
-		ps.writeBoolean(ignoreCase);
+		ps.writeByteBool(ignoreCase);
 		ps.send();
 		return ps;
 	}

@@ -88,9 +88,14 @@ public class PacketStream
 		}
 	}
 
-	public void writeBoolean(boolean data)
+	public void writeIntBool(boolean data)
 	{
 		writeInt(data ? 1 : 0);
+	}
+
+	public void writeByteBool(boolean data)
+	{
+		writeByte((byte) (data ? 1 : 0));
 	}
 
 	public void writeByte(byte data)
@@ -154,7 +159,7 @@ public class PacketStream
 		else if(value instanceof BooleanValueMirror)
 		{
 			writeByte(SignatureConstants.ELEMENT_TYPE_BOOLEAN);
-			writeBoolean(((BooleanValueMirror) value).value());
+			writeIntBool(((BooleanValueMirror) value).value());
 		}
 		else if(value instanceof NumberValueMirror)
 		{
@@ -294,9 +299,15 @@ public class PacketStream
 	}
 
 	/**
-	 * Read boolean represented as one byte.
+	 * Read boolean represented as 4 byte.
 	 */
-	public boolean readBoolean()
+	public boolean readIntBool()
+	{
+		int ret = readInt();
+		return (ret != 0);
+	}
+
+	public boolean readByteBool()
 	{
 		int ret = readInt();
 		return (ret != 0);
@@ -473,7 +484,7 @@ public class PacketStream
 			case SignatureConstants.ELEMENT_TYPE_VOID:
 				return new VoidValueMirror(vm);
 			case SignatureConstants.ELEMENT_TYPE_BOOLEAN:
-				return new BooleanValueMirror(vm, readBoolean());
+				return new BooleanValueMirror(vm, readIntBool());
 			case SignatureConstants.ELEMENT_TYPE_I1:
 			case SignatureConstants.ELEMENT_TYPE_U1:
 				return new NumberValueMirror(vm, tag, readInt());

@@ -28,7 +28,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 * access/modification should be protected by synchronizing on
 	 * the enclosing instance of EventRequestImpl.
 	 */
-	public List<Object> filters = new ArrayList<Object>();
+	public List<JDWP.EventRequest.Set.Modifier> filters = new ArrayList<JDWP.EventRequest.Set.Modifier>();
 
 	boolean isEnabled = false;
 	protected boolean deleted = false;
