@@ -58,14 +58,6 @@ public interface Connector {
     String name();
 
     /**
-     * Returns a human-readable description of this connector
-     * and its purpose.
-     *
-     * @return the description of this connector
-     */
-    String description();
-
-    /**
      * Returns the transport mechanism used by this connector to establish
      * connections with a target VM.
      *
@@ -100,20 +92,6 @@ public interface Connector {
          */
         String name();
 
-        /**
-         * Returns a short human-readable label for this argument.
-         *
-         * @return a label for this argument
-         */
-        String label();
-
-        /**
-         * Returns a human-readable description of this argument
-         * and its purpose.
-         *
-         * @return the description of this argument
-         */
-        String description();
 
         /**
          * Returns the current value of the argument. Initially, the

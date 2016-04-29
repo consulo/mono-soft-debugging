@@ -24,81 +24,72 @@
  */
 package mono.debugger;
 
-import mono.debugger.VirtualMachine;
-import mono.debugger.connect.*;
-import mono.debugger.connect.spi.*;
-import java.util.Map;
-import java.util.HashMap;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
+
+import mono.debugger.connect.Connector;
+import mono.debugger.connect.IllegalConnectorArgumentsException;
+import mono.debugger.connect.Transport;
 
 /*
  * An AttachingConnector that uses the SocketTransportService
  */
-public class SocketAttachingConnector extends GenericAttachingConnector {
+public class SocketAttachingConnector extends GenericAttachingConnector
+{
 
-    static final String ARG_PORT = "port";
-    static final String ARG_HOST = "hostname";
+	static final String ARG_PORT = "port";
+	static final String ARG_HOST = "hostname";
 
-    public SocketAttachingConnector() {
-        super(new SocketTransportService());
+	public SocketAttachingConnector()
+	{
+		super(new SocketTransportService());
 
-        String defaultHostName;
-        try {
-            defaultHostName = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            defaultHostName = "";
-        }
+		String defaultHostName;
+		try
+		{
+			defaultHostName = InetAddress.getLocalHost().getHostName();
+		}
+		catch(UnknownHostException e)
+		{
+			defaultHostName = "";
+		}
 
-        addStringArgument(
-            ARG_HOST,
-            getString("socket_attaching.host.label"),
-            getString("socket_attaching.host"),
-            defaultHostName,
-            false);
+		addStringArgument(ARG_HOST, defaultHostName, false);
 
-        addIntegerArgument(
-            ARG_PORT,
-            getString("socket_attaching.port.label"),
-            getString("socket_attaching.port"),
-            "",
-            true,
-            0, Integer.MAX_VALUE);
+		addIntegerArgument(ARG_PORT, "", true, 0, Integer.MAX_VALUE);
 
-        transport = new Transport() {
-            @Override
-			public String name() {
-                return "dt_socket";     // for compatability reasons
-            }
-        };
+		transport = new Transport()
+		{
+			@Override
+			public String name()
+			{
+				return "dt_socket";     // for compatability reasons
+			}
+		};
 
-    }
+	}
 
-    /*
-     * Create an "address" from the hostname and port connector
-     * arguments and attach to the target VM.
-     */
-    @Override
-	public VirtualMachine
-        attach(Map<String,? extends Connector.Argument> arguments)
-        throws IOException, IllegalConnectorArgumentsException
-    {
-        String host = argument(ARG_HOST, arguments).value();
-        if (host.length() > 0) {
-            host = host + ":";
-        }
-        String address = host + argument(ARG_PORT, arguments).value();
-        return super.attach(address, arguments);
-    }
+	/*
+	 * Create an "address" from the hostname and port connector
+	 * arguments and attach to the target VM.
+	 */
+	@Override
+	public VirtualMachine attach(Map<String, ? extends Connector.Argument> arguments) throws IOException, IllegalConnectorArgumentsException
+	{
+		String host = argument(ARG_HOST, arguments).value();
+		if(host.length() > 0)
+		{
+			host = host + ":";
+		}
+		String address = host + argument(ARG_PORT, arguments).value();
+		return super.attach(address, arguments);
+	}
 
-    @Override
-	public String name() {
-       return "mono.debugger.SocketAttach";
-    }
-
-    @Override
-	public String description() {
-       return getString("socket_attaching.description");
-    }
+	@Override
+	public String name()
+	{
+		return "mono.debugger.SocketAttach";
+	}
 }

@@ -25,167 +25,157 @@
 
 package mono.debugger;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import mono.debugger.Bootstrap;
-import mono.debugger.VirtualMachine;
-import mono.debugger.connect.*;
-import mono.debugger.connect.spi.*;
+import mono.debugger.connect.Connector;
+import mono.debugger.connect.IllegalConnectorArgumentsException;
+import mono.debugger.connect.ListeningConnector;
+import mono.debugger.connect.Transport;
+import mono.debugger.connect.spi.Connection;
+import mono.debugger.connect.spi.TransportService;
 
 /*
  * A ListeningConnector to listen for connections from target VM
  * using the configured transport service
  */
-public class GenericListeningConnector
-        extends ConnectorImpl implements ListeningConnector
+public class GenericListeningConnector extends ConnectorImpl implements ListeningConnector
 {
-    static final String ARG_ADDRESS = "address";
-    static final String ARG_TIMEOUT = "timeout";
+	static final String ARG_ADDRESS = "address";
+	static final String ARG_TIMEOUT = "timeout";
 
-    Map<Map<String,? extends Connector.Argument>, TransportService.ListenKey>  listenMap;
-    TransportService transportService;
-    Transport transport;
+	Map<Map<String, ? extends Connector.Argument>, TransportService.ListenKey> listenMap;
+	TransportService transportService;
+	Transport transport;
 
-    /**
-     * Initialize a new instance of this connector. The connector
-     * encapsulates a transport service, has a "timeout" connector argument,
-     * and optionally an "address" connector argument.
-     */
-    private GenericListeningConnector(TransportService ts,
-                                      boolean addAddressArgument)
-    {
-        transportService = ts;
-        transport = new Transport() {
-                @Override
-				public String name() {
-                    return transportService.name();
-                }
-            };
+	/**
+	 * Initialize a new instance of this connector. The connector
+	 * encapsulates a transport service, has a "timeout" connector argument,
+	 * and optionally an "address" connector argument.
+	 */
+	private GenericListeningConnector(TransportService ts, boolean addAddressArgument)
+	{
+		transportService = ts;
+		transport = new Transport()
+		{
+			@Override
+			public String name()
+			{
+				return transportService.name();
+			}
+		};
 
-        if (addAddressArgument) {
-            addStringArgument(
-                ARG_ADDRESS,
-                getString("generic_listening.address.label"),
-                getString("generic_listening.address"),
-                "",
-                false);
-        }
+		if(addAddressArgument)
+		{
+			addStringArgument(ARG_ADDRESS, "", false);
+		}
 
-        addIntegerArgument(
-                ARG_TIMEOUT,
-                getString("generic_listening.timeout.label"),
-                getString("generic_listening.timeout"),
-                "",
-                false,
-                0, Integer.MAX_VALUE);
+		addIntegerArgument(ARG_TIMEOUT, "", false, 0, Integer.MAX_VALUE);
 
-        listenMap = new HashMap<Map<String,? extends Connector.Argument>,TransportService.ListenKey>(10);
-    }
+		listenMap = new HashMap<Map<String, ? extends Connector.Argument>, TransportService.ListenKey>(10);
+	}
 
-    /**
-     * Initialize a new instance of this connector. This constructor is used
-     * when sub-classing - the resulting connector will a "timeout" connector
-     * argument.
-     */
-    protected GenericListeningConnector(TransportService ts) {
-        this(ts, false);
-    }
+	/**
+	 * Initialize a new instance of this connector. This constructor is used
+	 * when sub-classing - the resulting connector will a "timeout" connector
+	 * argument.
+	 */
+	protected GenericListeningConnector(TransportService ts)
+	{
+		this(ts, false);
+	}
 
-    /**
-     * Create an instance of this Connector. The resulting ListeningConnector will
-     * have "address" and "timeout" connector arguments.
-     */
-    public static GenericListeningConnector create(TransportService ts) {
-        return new GenericListeningConnector(ts, true);
-    }
+	/**
+	 * Create an instance of this Connector. The resulting ListeningConnector will
+	 * have "address" and "timeout" connector arguments.
+	 */
+	public static GenericListeningConnector create(TransportService ts)
+	{
+		return new GenericListeningConnector(ts, true);
+	}
 
-    public String startListening(String address, Map<String,? extends Connector.Argument> args)
-        throws IOException, IllegalConnectorArgumentsException
-    {
-        TransportService.ListenKey listener = listenMap.get(args);
-        if (listener != null) {
-           throw new IllegalConnectorArgumentsException("Already listening",
-               new ArrayList<String>(args.keySet()));
-        }
+	public String startListening(String address, Map<String, ? extends Connector.Argument> args) throws IOException, IllegalConnectorArgumentsException
+	{
+		TransportService.ListenKey listener = listenMap.get(args);
+		if(listener != null)
+		{
+			throw new IllegalConnectorArgumentsException("Already listening", new ArrayList<String>(args.keySet()));
+		}
 
-        listener = transportService.startListening(address);
-        listenMap.put(args, listener);
-        return listener.address();
-    }
+		listener = transportService.startListening(address);
+		listenMap.put(args, listener);
+		return listener.address();
+	}
 
-    @Override
-	public String
-        startListening(Map<String,? extends Connector.Argument> args)
-        throws IOException, IllegalConnectorArgumentsException
-    {
-        String address = argument(ARG_ADDRESS, args).value();
-        return startListening(address, args);
-    }
+	@Override
+	public String startListening(Map<String, ? extends Connector.Argument> args) throws IOException, IllegalConnectorArgumentsException
+	{
+		String address = argument(ARG_ADDRESS, args).value();
+		return startListening(address, args);
+	}
 
-    @Override
-	public void stopListening(Map<String,? extends Connector.Argument> args)
-        throws IOException, IllegalConnectorArgumentsException
-    {
-        TransportService.ListenKey listener = listenMap.get(args);
-        if (listener == null) {
-           throw new IllegalConnectorArgumentsException("Not listening",
-               new ArrayList<String>(args.keySet()));
-        }
-        transportService.stopListening(listener);
-        listenMap.remove(args);
-    }
+	@Override
+	public void stopListening(Map<String, ? extends Connector.Argument> args) throws IOException, IllegalConnectorArgumentsException
+	{
+		TransportService.ListenKey listener = listenMap.get(args);
+		if(listener == null)
+		{
+			throw new IllegalConnectorArgumentsException("Not listening", new ArrayList<String>(args.keySet()));
+		}
+		transportService.stopListening(listener);
+		listenMap.remove(args);
+	}
 
-    @Override
-	public VirtualMachine
-        accept(Map<String,? extends Connector.Argument> args)
-        throws IOException, IllegalConnectorArgumentsException
-    {
-        String ts = argument(ARG_TIMEOUT, args).value();
-        int timeout = 0;
-        if (ts.length() > 0) {
-            timeout = Integer.decode(ts).intValue();
-        }
+	@Override
+	public VirtualMachine accept(Map<String, ? extends Connector.Argument> args) throws IOException, IllegalConnectorArgumentsException
+	{
+		String ts = argument(ARG_TIMEOUT, args).value();
+		int timeout = 0;
+		if(ts.length() > 0)
+		{
+			timeout = Integer.decode(ts).intValue();
+		}
 
-        TransportService.ListenKey listener = listenMap.get(args);
-        Connection connection;
-        if (listener != null) {
-            connection = transportService.accept(listener, timeout, 0);
-        } else {
-            /*
+		TransportService.ListenKey listener = listenMap.get(args);
+		Connection connection;
+		if(listener != null)
+		{
+			connection = transportService.accept(listener, timeout, 0);
+		}
+		else
+		{
+			/*
              * Keep compatibility with previous releases - if the
              * debugger hasn't called startListening then we do a
              * once-off accept
              */
-             startListening(args);
-             listener = listenMap.get(args);
-             assert listener != null;
-             connection = transportService.accept(listener, timeout, 0);
-             stopListening(args);
-        }
-        return Bootstrap.virtualMachineManager().createVirtualMachine(connection);
-    }
+			startListening(args);
+			listener = listenMap.get(args);
+			assert listener != null;
+			connection = transportService.accept(listener, timeout, 0);
+			stopListening(args);
+		}
+		return Bootstrap.virtualMachineManager().createVirtualMachine(connection);
+	}
 
-    @Override
-	public boolean supportsMultipleConnections() {
-        return transportService.capabilities().supportsMultipleConnections();
-    }
+	@Override
+	public boolean supportsMultipleConnections()
+	{
+		return transportService.capabilities().supportsMultipleConnections();
+	}
 
-    @Override
-	public String name() {
-        return transport.name() + "Listen";
-    }
+	@Override
+	public String name()
+	{
+		return transport.name() + "Listen";
+	}
 
-    @Override
-	public String description() {
-        return transportService.description();
-    }
-
-    @Override
-	public Transport transport() {
-        return transport;
-    }
+	@Override
+	public Transport transport()
+	{
+		return transport;
+	}
 
 }
