@@ -350,11 +350,17 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	@Override
 	public void enableEvents(@NotNull EventKind... eventKinds)
 	{
+		enableEvents(SuspendPolicy.ALL, eventKinds);
+	}
+
+	@Override
+	public void enableEvents(@NotNull SuspendPolicy policy, @NotNull EventKind... eventKinds)
+	{
 		for(EventKind eventKind : eventKinds)
 		{
 			try
 			{
-				JDWP.EventRequest.Set.process(vm, (byte) eventKind.ordinal(), SuspendPolicy.NONE.ordinal(), new JDWP.EventRequest.Set.Modifier[0]);
+				JDWP.EventRequest.Set.process(vm, (byte) eventKind.ordinal(), policy.ordinal(), new JDWP.EventRequest.Set.Modifier[0]);
 			}
 			catch(JDWPException e)
 			{

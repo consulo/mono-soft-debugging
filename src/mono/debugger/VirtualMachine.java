@@ -221,6 +221,8 @@ public interface VirtualMachine extends Mirror
 
 	void enableEvents(@NotNull EventKind... eventKinds);
 
+	void enableEvents(@NotNull SuspendPolicy policy, @NotNull EventKind... eventKinds);
+
 	/**
 	 * Returns the name of the target VM as reported by the
 	 * property <code>java.vm.name</code>.
