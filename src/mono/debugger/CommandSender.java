@@ -25,9 +25,7 @@
 
 package mono.debugger;
 
-import mono.debugger.*;
-import java.util.EventListener;
-
-interface CommandSender {
-    PacketStream send();
+interface CommandSender
+{
+	PacketStream send();
 }

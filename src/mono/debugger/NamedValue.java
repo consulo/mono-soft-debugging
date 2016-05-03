@@ -1,7 +1,5 @@
 package mono.debugger;
 
-import mono.debugger.Value;
-
 /**
  * @author VISTALL
  * @since 23.07.2015

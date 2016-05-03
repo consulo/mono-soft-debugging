@@ -39,26 +39,26 @@ import mono.debugger.connect.spi.Connection;
  * contains methods to manage connections
  * to remote target VMs and to obtain the {@link VirtualMachine}
  * mirror for available target VMs.
- * <p>
+ * <p/>
  * Connections can be made using one of several different
  * {@link mono.debugger.connect.Connector} objects. Each connector encapsulates
  * a different way of connecting the debugger with a target VM.
- * <p>
+ * <p/>
  * The VirtualMachineManager supports many different scenarios for
  * connecting a debugger to a virtual machine. Four examples
  * are presented in the table below. The
  * examples use the command line syntax in Sun's implementation.
  * Some {@link mono.debugger.connect.Connector} implementations may require slightly
  * different handling than presented below.
- * <p>
+ * <p/>
  * <TABLE BORDER WIDTH="75%" SUMMARY="Four scenarios for connecting a debugger
- *  to a virtual machine">
+ * to a virtual machine">
  * <TR>
  * <TH scope=col>Scenario</TH>
  * <TH scope=col>Description</TH>
  * <TR>
  * <TD>Debugger launches target VM (simplest, most-common scenario)</TD>
- *
+ * <p/>
  * <TD>Debugger calls the
  * {@link mono.debugger.connect.LaunchingConnector#launch(java.util.Map)}
  * method of the default connector, obtained with {@link #defaultConnector}. The
@@ -106,7 +106,7 @@ import mono.debugger.connect.spi.Connection;
  * </UL>
  * </TD>
  * </TR>
- *
+ * <p/>
  * <TR>
  * <TD>Target VM attaches to previously-running debugger</TD>
  * <TD>
@@ -137,7 +137,7 @@ import mono.debugger.connect.spi.Connection;
  * a {@link VirtualMachine} mirror.</LI>
  * </TD>
  * </TR>
- *
+ * <p/>
  * <TR>
  * <TD>Target VM launches debugger (sometimes called "Just-In-Time" debugging)</TD>
  * <TD>
@@ -174,21 +174,21 @@ import mono.debugger.connect.spi.Connection;
  * </TD>
  * </TR>
  * </TABLE>
- *
+ * <p/>
  * <p> Connectors are created at start-up time. That is, they
  * are created the first time that {@link
  * mono.debugger.Bootstrap#virtualMachineManager()} is invoked.
  * The list of all Connectors created at start-up time can be
  * obtained from the VirtualMachineManager by invoking the
  * {@link #allConnectors allConnectors} method.
- *
+ * <p/>
  * <p> Connectors are created at start-up time if they are
  * installed on the platform. In addition, Connectors are created
  * automatically by the VirtualMachineManager to encapsulate any
  * {@link mono.debugger.connect.spi.TransportService} implementations
  * that are installed on the platform. These two mechanisms for
  * creating Connectors are described here.
- *
+ * <p/>
  * <p> A Connector is installed on the platform if it is installed
  * in a jar file that is visible to the defining class loader of
  * the {@link mono.debugger.connect.Connector} type,
@@ -208,13 +208,13 @@ import mono.debugger.connect.spi.Connection;
  * comment character is <tt>'#'</tt> (<tt>0x23</tt>), and on each
  * line all characters following the first comment character are
  * ignored. The file must be encoded in UTF-8.
- *
+ * <p/>
  * <p> At start-up time the VirtualMachineManager attempts to load
  * and instantiate (using the no-arg constructor) each class listed
  * in the provider configuration file. Exceptions thrown when loading
  * or creating the Connector are caught and ignored. In other words,
  * the start-up process continues despite of errors.
- *
+ * <p/>
  * <p> In addition to Connectors installed on the platform the
  * VirtualMachineManager will also create Connectors to encapsulate
  * any {@link mono.debugger.connect.spi.TransportService} implementations
@@ -232,7 +232,7 @@ import mono.debugger.connect.spi.Connection;
  * is the same as the provider configuration file for Connectors
  * except that each class listed must be the fully-qualified class
  * name of a class that implements the TransportService interface.
- *
+ * <p/>
  * <p> For each TransportService installed on the platform, the
  * VirtualMachineManager creates a corresponding
  * {@link mono.debugger.connect.AttachingConnector} and
@@ -262,121 +262,107 @@ import mono.debugger.connect.spi.Connection;
  * timeout when attaching, or accepting. The timeout connector may be
  * ignored depending on if the transport service supports an attach
  * timeout or accept timeout.
- *
+ * <p/>
  * <p> Initialization of the virtual machine manager will fail, that is
  * {@link mono.debugger.Bootstrap#virtualMachineManager()} will throw an
  * error if the virtual machine manager is unable to create any
  * connectors.
  *
  * @author Gordon Hirsch
- * @since  1.3
+ * @since 1.3
  */
-public interface VirtualMachineManager {
-    /**
-     * Lists all target VMs which are connected to the debugger.
-     * The list includes {@link VirtualMachine} instances for
-     * any target VMs which initiated a connection
-     * and any
-     * target VMs to which this manager has initiated a connection.
-     * A target VM will remain in this list
-     * until the VM is disconnected.
-     * {@link mono.debugger.event.VMDisconnectEvent} is placed in the event queue
-     * after the VM is removed from the list.
-     *
-     * @return a list of {@link VirtualMachine} objects, each mirroring
-     * a target VM.
-     */
-     List<VirtualMachine> connectedVirtualMachines();
+public interface VirtualMachineManager
+{
+	/**
+	 * Lists all target VMs which are connected to the debugger.
+	 * The list includes {@link VirtualMachine} instances for
+	 * any target VMs which initiated a connection
+	 * and any
+	 * target VMs to which this manager has initiated a connection.
+	 * A target VM will remain in this list
+	 * until the VM is disconnected.
+	 * {@link mono.debugger.event.VMDisconnectEvent} is placed in the event queue
+	 * after the VM is removed from the list.
+	 *
+	 * @return a list of {@link VirtualMachine} objects, each mirroring
+	 * a target VM.
+	 */
+	List<VirtualMachine> connectedVirtualMachines();
 
-     /**
-      * Returns the major version number of the JDI interface.
-      * See {@link VirtualMachine#version} target VM version and
-      * information and
-      * {@link VirtualMachine#description} more version information.
-      *
-      * @return the integer major version number.
-      */
-     int majorInterfaceVersion();
+	/**
+	 * Returns the major version number of the JDI interface.
+	 * See {@link VirtualMachine#version} target VM version and
+	 * information and
+	 * {@link VirtualMachine#description} more version information.
+	 *
+	 * @return the integer major version number.
+	 */
+	int majorInterfaceVersion();
 
-     /**
-      * Returns the minor version number of the JDI interface.
-      * See {@link VirtualMachine#version} target VM version and
-      * information and
-      * {@link VirtualMachine#description} more version information.
-      *
-      * @return the integer minor version number
-      */
-     int minorInterfaceVersion();
+	/**
+	 * Returns the minor version number of the JDI interface.
+	 * See {@link VirtualMachine#version} target VM version and
+	 * information and
+	 * {@link VirtualMachine#description} more version information.
+	 *
+	 * @return the integer minor version number
+	 */
+	int minorInterfaceVersion();
 
-     /**
-      * Create a virtual machine mirror for a target VM.
-      *
-      * <p> Creates a virtual machine mirror for a target VM
-      * for which a {@link mono.debugger.connect.spi.Connection Connection}
-      * already exists. A Connection is created when a {@link
-      * mono.debugger.connect.Connector Connector} establishes
-      * a connection and successfully handshakes with a target VM.
-      * A Connector can then use this method to create a virtual machine
-      * mirror to represent the composite state of the target VM.
-      *
-      * <p> The <tt>process</tt> argument specifies the
-      * {@link java.lang.Process} object for the taget VM. It may be
-      * specified as <tt>null</tt>. If the target VM is launched
-      * by a {@link mono.debugger.connect.LaunchingConnector
-      * LaunchingConnector} the <tt>process</tt> argument should be
-      * specified, otherwise calling {@link mono.debugger.VirtualMachine#process()}
-      * on the created virtual machine will return <tt>null</tt>.
-      *
-      * <p> This method exists so that Connectors may create
-      * a virtual machine mirror when a connection is established
-      * to a target VM. Only developers creating new Connector
-      * implementations should need to make direct use of this
-      * method. </p>
-      *
-      * @param  connection
-      *         The open connection to the target VM.
-      *
-      * @param  process
-      *         If launched, the {@link java.lang.Process} object for
-      *         the target VM. <tt>null</tt> if not launched.
-      *
-      * @return new virtual machine representing the target VM.
-      *
-      * @throws IOException
-      *         if an I/O error occurs
-      *
-      * @throws IllegalStateException
-      *         if the connection is not open
-      *
-      * @see mono.debugger.connect.spi.Connection#isOpen()
-      * @see mono.debugger.VirtualMachine#process()
-      *
-      * @since 1.5
-      */
-     VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException;
+	/**
+	 * Create a virtual machine mirror for a target VM.
+	 * <p/>
+	 * <p> Creates a virtual machine mirror for a target VM
+	 * for which a {@link mono.debugger.connect.spi.Connection Connection}
+	 * already exists. A Connection is created when a {@link
+	 * mono.debugger.connect.Connector Connector} establishes
+	 * a connection and successfully handshakes with a target VM.
+	 * A Connector can then use this method to create a virtual machine
+	 * mirror to represent the composite state of the target VM.
+	 * <p/>
+	 * <p> The <tt>process</tt> argument specifies the
+	 * {@link java.lang.Process} object for the taget VM. It may be
+	 * specified as <tt>null</tt>. If the target VM is launched
+	 * by a {@link mono.debugger.connect.LaunchingConnector
+	 * LaunchingConnector} the <tt>process</tt> argument should be
+	 * specified, otherwise calling {@link mono.debugger.VirtualMachine#process()}
+	 * on the created virtual machine will return <tt>null</tt>.
+	 * <p/>
+	 * <p> This method exists so that Connectors may create
+	 * a virtual machine mirror when a connection is established
+	 * to a target VM. Only developers creating new Connector
+	 * implementations should need to make direct use of this
+	 * method. </p>
+	 *
+	 * @param connection The open connection to the target VM.
+	 * @param process    If launched, the {@link java.lang.Process} object for
+	 *                   the target VM. <tt>null</tt> if not launched.
+	 * @return new virtual machine representing the target VM.
+	 * @throws IOException           if an I/O error occurs
+	 * @throws IllegalStateException if the connection is not open
+	 * @see mono.debugger.connect.spi.Connection#isOpen()
+	 * @see mono.debugger.VirtualMachine#process()
+	 * @since 1.5
+	 */
+	VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException;
 
-     /**
-      * Creates a new virtual machine.
-      *
-      * <p> This convenience method works as if by invoking {@link
-      * #createVirtualMachine(Connection, Process)} method and
-      * specifying <tt>null</tt> as the <tt>process</tt> argument.
-      *
-      * <p> This method exists so that Connectors may create
-      * a virtual machine mirror when a connection is established
-      * to a target VM. Only developers creating new Connector
-      * implementations should need to make direct use of this
-      * method. </p>
-      *
-      * @return the new virtual machine
-      *
-      * @throws IOException
-      *         if an I/O error occurs
-      *
-      * @throws IllegalStateException
-      *         if the connection is not open
-      *
-      * @since 1.5
-      */
-     VirtualMachine createVirtualMachine(Connection connection) throws IOException;
+	/**
+	 * Creates a new virtual machine.
+	 * <p/>
+	 * <p> This convenience method works as if by invoking {@link
+	 * #createVirtualMachine(Connection, Process)} method and
+	 * specifying <tt>null</tt> as the <tt>process</tt> argument.
+	 * <p/>
+	 * <p> This method exists so that Connectors may create
+	 * a virtual machine mirror when a connection is established
+	 * to a target VM. Only developers creating new Connector
+	 * implementations should need to make direct use of this
+	 * method. </p>
+	 *
+	 * @return the new virtual machine
+	 * @throws IOException           if an I/O error occurs
+	 * @throws IllegalStateException if the connection is not open
+	 * @since 1.5
+	 */
+	VirtualMachine createVirtualMachine(Connection connection) throws IOException;
 }
