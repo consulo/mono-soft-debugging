@@ -68,7 +68,7 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public class VMDeathEvent extends EventSetImpl.ThreadedEventImpl
+public class VMDeathEvent extends ThreadedEvent
 {
 	public final int exitCode;
 

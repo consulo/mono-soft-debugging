@@ -25,7 +25,6 @@
 
 package mono.debugger.event;
 
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
 
@@ -46,7 +45,7 @@ import mono.debugger.VirtualMachine;
  * @see mono.debugger.request.BreakpointRequest
  * @since 1.3
  */
-public class BreakpointEvent extends EventSetImpl.LocatableEventImpl
+public class BreakpointEvent extends LocatableEvent
 {
 	public BreakpointEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.Breakpoint evt)
 	{

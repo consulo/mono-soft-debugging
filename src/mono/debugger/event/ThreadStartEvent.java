@@ -25,7 +25,8 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
+import mono.debugger.JDWP;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of a new running thread in the target VM.
@@ -52,12 +53,16 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface ThreadStartEvent extends Event {
-    /**
-     * Returns the thread which has started.
-     *
-     * @return a {@link mono.debugger.ThreadMirror} which mirrors the event's thread in
-     * the target VM.
-     */
-    public ThreadMirror thread();
+public class ThreadStartEvent extends ThreadedEvent
+{
+	public ThreadStartEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ThreadStart evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread);
+	}
+
+	@Override
+	public String eventName()
+	{
+		return "ThreadStartEvent";
+	}
 }

@@ -25,7 +25,8 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
+import mono.debugger.JDWP;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of step completion in the target VM.
@@ -46,6 +47,16 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface StepEvent extends LocatableEvent {
+public class StepEvent extends LocatableEvent
+{
+	public StepEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.Step evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
+	}
 
+	@Override
+	public String eventName()
+	{
+		return "StepEvent";
+	}
 }

@@ -26,7 +26,6 @@
 package mono.debugger.event;
 
 import org.jetbrains.annotations.NotNull;
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.MethodMirror;
 import mono.debugger.VirtualMachine;
@@ -47,7 +46,7 @@ import mono.debugger.VirtualMachine;
  * @author Robert Field
  * @since  1.3
  */
-public class MethodEntryEvent extends EventSetImpl.ThreadedEventImpl
+public class MethodEntryEvent extends ThreadedEvent
 {
 	private MethodMirror myMethodMirror;
 

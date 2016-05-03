@@ -25,7 +25,8 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
+import mono.debugger.JDWP;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of a completed thread in the target VM. The
@@ -45,12 +46,16 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface ThreadDeathEvent extends Event {
-    /**
-     * Returns the thread which is terminating.
-     *
-     * @return a {@link mono.debugger.ThreadMirror} which mirrors the event's thread in
-     * the target VM.
-     */
-    public ThreadMirror thread();
+public class ThreadDeathEvent extends ThreadedEvent
+{
+	public ThreadDeathEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ThreadDeath evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread);
+	}
+
+	@Override
+	public String eventName()
+	{
+		return "ThreadDeathEvent";
+	}
 }

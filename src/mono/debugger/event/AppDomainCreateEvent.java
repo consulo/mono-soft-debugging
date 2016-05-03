@@ -2,7 +2,6 @@ package mono.debugger.event;
 
 import org.jetbrains.annotations.NotNull;
 import mono.debugger.AppDomainMirror;
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
 
@@ -10,7 +9,7 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 14.04.14
  */
-public class AppDomainCreateEvent extends EventSetImpl.ThreadedEventImpl implements Event
+public class AppDomainCreateEvent extends ThreadedEvent implements Event
 {
 	private AppDomainMirror myAppDomainMirror;
 

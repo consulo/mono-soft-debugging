@@ -860,7 +860,7 @@ public class JDWP
 							aEventsCommon = new VMStart(vm, ps);
 							break;
 						case STEP:
-							aEventsCommon = new SingleStep(vm, ps);
+							aEventsCommon = new Step(vm, ps);
 							break;
 						case BREAKPOINT:
 							aEventsCommon = new Breakpoint(vm, ps);
@@ -953,7 +953,7 @@ public class JDWP
 				 * Notification of step completion in the target VM. The step event
 				 * is generated before the code at its location is executed.
 				 */
-				static class SingleStep extends EventsCommon
+				public static class Step extends EventsCommon
 				{
 					@Override
 					EventKind eventKind()
@@ -961,22 +961,11 @@ public class JDWP
 						return EventKind.STEP;
 					}
 
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
+					public final int requestID;
+					public final ThreadMirror thread;
+					public final Location location;
 
-					/**
-					 * Stepped thread
-					 */
-					final ThreadMirror thread;
-
-					/**
-					 * Location stepped to
-					 */
-					final Location location;
-
-					SingleStep(VirtualMachineImpl vm, PacketStream ps)
+					Step(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
 						thread = ps.readThreadMirror();
@@ -1176,7 +1165,7 @@ public class JDWP
 				 * about the creation of the thread object which may have happened
 				 * much earlier, depending on the VM being debugged.
 				 */
-				static class ThreadStart extends EventsCommon
+				public static class ThreadStart extends EventsCommon
 				{
 					@Override
 					EventKind eventKind()
@@ -1184,23 +1173,12 @@ public class JDWP
 						return EventKind.THREAD_START;
 					}
 
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
-
-					/**
-					 * Started thread
-					 */
-					final ThreadMirror thread;
+					public final int requestID;
+					public final ThreadMirror thread;
 
 					ThreadStart(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
 					}
 				}
@@ -1212,7 +1190,7 @@ public class JDWP
 				 * about the lifetime of the thread object. It may or may not be collected
 				 * soon depending on what references exist in the target VM.
 				 */
-				static class ThreadDeath extends EventsCommon
+				public static class ThreadDeath extends EventsCommon
 				{
 					@Override
 					EventKind eventKind()
@@ -1220,23 +1198,12 @@ public class JDWP
 						return EventKind.THREAD_DEATH;
 					}
 
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
-
-					/**
-					 * Ending thread
-					 */
-					final ThreadMirror thread;
+					public final int requestID;
+					public final ThreadMirror thread;
 
 					ThreadDeath(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
 					}
 				}

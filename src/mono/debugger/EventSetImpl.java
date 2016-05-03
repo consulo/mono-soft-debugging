@@ -76,7 +76,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 
 	public abstract static class EventImpl extends MirrorImpl implements Event
 	{
-
 		private final EventKind eventCmd;
 		private final int requestID;
 		// This is set only for client requests, not internal requests.
@@ -131,103 +130,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		public String toString()
 		{
 			return eventName();
-		}
-	}
-
-	public abstract static class ThreadedEventImpl extends EventImpl
-	{
-		private ThreadMirror thread;
-
-		public ThreadedEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread)
-		{
-			super(virtualMachine, evt, requestID);
-			this.thread = thread;
-		}
-
-		public ThreadMirror thread()
-		{
-			return thread;
-		}
-
-		@Override
-		public String toString()
-		{
-			return eventName() + " in thread " + thread.name();
-		}
-	}
-
-	public static abstract class LocatableEventImpl extends ThreadedEventImpl implements Locatable
-	{
-		private Location location;
-
-		public LocatableEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.EventsCommon evt, int requestID, ThreadMirror thread, Location location)
-		{
-			super(virtualMachine, evt, requestID, thread);
-			this.location = location;
-		}
-
-		@Override
-		public Location location()
-		{
-			return location;
-		}
-
-		/**
-		 * For MethodEntry and MethodExit
-		 */
-		public MethodMirror method()
-		{
-			return location.method();
-		}
-
-		@Override
-		public String toString()
-		{
-			return eventName() + "@" +
-					((location() == null) ? " null" : location().toString()) +
-					" in thread " + thread().name();
-		}
-	}
-
-	class StepEventImpl extends LocatableEventImpl implements StepEvent
-	{
-		StepEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.SingleStep evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "StepEvent";
-		}
-	}
-
-	class ThreadDeathEventImpl extends ThreadedEventImpl implements ThreadDeathEvent
-	{
-		ThreadDeathEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ThreadDeath evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "ThreadDeathEvent";
-		}
-	}
-
-	class ThreadStartEventImpl extends ThreadedEventImpl implements ThreadStartEvent
-	{
-		ThreadStartEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ThreadStart evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "ThreadStartEvent";
 		}
 	}
 
@@ -330,9 +232,9 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			case APPDOMAIN_UNLOAD:
 				return new AppDomainUnloadEvent(vm, (JDWP.Event.Composite.Events.AppDomainUnload) comm);
 			case THREAD_START:
-				return new ThreadStartEventImpl(vm, (JDWP.Event.Composite.Events.ThreadStart) comm);
+				return new ThreadStartEvent(vm, (JDWP.Event.Composite.Events.ThreadStart) comm);
 			case THREAD_DEATH:
-				return new ThreadDeathEventImpl(vm, (JDWP.Event.Composite.Events.ThreadDeath) comm);
+				return new ThreadDeathEvent(vm, (JDWP.Event.Composite.Events.ThreadDeath) comm);
 			case EXCEPTION:
 				return new ExceptionEvent(vm, (JDWP.Event.Composite.Events.Exception) comm);
 			case BREAKPOINT:
@@ -344,7 +246,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			case TYPE_LOAD:
 				return new TypeLoadEvent(vm, (JDWP.Event.Composite.Events.TypeLoad) comm);
 			case STEP:
-				return new StepEventImpl(vm, (JDWP.Event.Composite.Events.SingleStep) comm);
+				return new StepEvent(vm, (JDWP.Event.Composite.Events.Step) comm);
 			case ASSEMBLY_LOAD:
 				return new AssemblyLoadEvent(vm, (JDWP.Event.Composite.Events.AssemblyLoad) comm);
 			case ASSEMBLY_UNLOAD:
@@ -382,9 +284,9 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 	{
 		for(Event event : this)
 		{
-			if(event instanceof ThreadedEventImpl)
+			if(event instanceof ThreadedEvent)
 			{
-				return ((ThreadedEventImpl) event).thread();
+				return ((ThreadedEvent) event).thread();
 			}
 		}
 		return null;

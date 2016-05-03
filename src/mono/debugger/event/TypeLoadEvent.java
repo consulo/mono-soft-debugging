@@ -1,7 +1,6 @@
 package mono.debugger.event;
 
 import org.jetbrains.annotations.NotNull;
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.TypeMirror;
 import mono.debugger.VirtualMachine;
@@ -10,7 +9,7 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 24.04.14
  */
-public class TypeLoadEvent extends EventSetImpl.ThreadedEventImpl
+public class TypeLoadEvent extends ThreadedEvent
 {
 	private final TypeMirror myTypeMirror;
 

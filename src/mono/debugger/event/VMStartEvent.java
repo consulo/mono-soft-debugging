@@ -25,7 +25,6 @@
 
 package mono.debugger.event;
 
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
 
@@ -45,7 +44,7 @@ import mono.debugger.VirtualMachine;
  * @author Robert Field
  * @since  1.3
  */
-public class VMStartEvent extends EventSetImpl.ThreadedEventImpl
+public class VMStartEvent extends ThreadedEvent
 {
 	public VMStartEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.VMStart evt)
 	{

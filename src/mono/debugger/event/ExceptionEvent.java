@@ -25,7 +25,6 @@
 
 package mono.debugger.event;
 
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.ObjectValueMirror;
 import mono.debugger.VirtualMachine;
@@ -47,7 +46,7 @@ import mono.debugger.VirtualMachine;
  * @author Robert Field
  * @since 1.3
  */
-public class ExceptionEvent extends EventSetImpl.LocatableEventImpl implements Event
+public class ExceptionEvent extends LocatableEvent implements Event
 {
 	private ObjectValueMirror exception;
 

@@ -1,6 +1,5 @@
 package mono.debugger.event;
 
-import mono.debugger.EventSetImpl;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
 
@@ -8,7 +7,7 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 24.04.2015
  */
-public class UserLogEvent extends EventSetImpl.ThreadedEventImpl
+public class UserLogEvent extends ThreadedEvent
 {
 	private final String myCategory;
 	private final int myLevel;
