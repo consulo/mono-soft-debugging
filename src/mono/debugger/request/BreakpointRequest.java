@@ -25,7 +25,6 @@
 
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.JDWP;
@@ -51,7 +50,7 @@ import mono.debugger.VirtualMachine;
  * @author Robert Field
  * @since  1.3
  */
-public class BreakpointRequest extends ClassVisibleEventRequest
+public class BreakpointRequest extends TypeVisibleEventRequest
 {
 	private final Location location;
 
@@ -77,11 +76,5 @@ public class BreakpointRequest extends ClassVisibleEventRequest
 	public String toString()
 	{
 		return "breakpoint request " + location() + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitBreakpoint(this, a);
 	}
 }

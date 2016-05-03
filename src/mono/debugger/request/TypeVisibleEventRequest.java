@@ -24,13 +24,29 @@
  */
 package mono.debugger.request;
 
+import mono.debugger.AssemblyMirror;
 import mono.debugger.EventRequestManagerImpl;
+import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
 
-public abstract class ClassVisibleEventRequest extends ThreadVisibleEventRequest
+public abstract class TypeVisibleEventRequest extends ThreadVisibleEventRequest
 {
-	public ClassVisibleEventRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
+	public TypeVisibleEventRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
 	{
 		super(virtualMachine, requestManager);
 	}
+
+	public synchronized void addAssemblyFilter(AssemblyMirror... mirrors)
+	{
+		for(AssemblyMirror mirror : mirrors)
+		{
+			validateMirror(mirror);
+		}
+		if(isEnabled() || deleted)
+		{
+			throw invalidState();
+		}
+		filters.add(JDWP.EventRequest.Set.Modifier.AssemblyOnly.create(mirrors));
+	}
+
 }

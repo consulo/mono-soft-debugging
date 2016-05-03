@@ -1,6 +1,5 @@
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.VirtualMachine;
@@ -9,7 +8,7 @@ import mono.debugger.VirtualMachine;
  * @author VISTALL
  * @since 11.05.14
  */
-public class AppDomainUnloadRequest extends EventRequestImpl
+public class AppDomainUnloadRequest extends EventRequest
 {
 	public AppDomainUnloadRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
 	{
@@ -20,11 +19,5 @@ public class AppDomainUnloadRequest extends EventRequestImpl
 	public EventKind eventCmd()
 	{
 		return EventKind.APPDOMAIN_UNLOAD;
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitAppDomainCreateUnload(this, a);
 	}
 }

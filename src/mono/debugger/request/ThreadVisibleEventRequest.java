@@ -29,7 +29,7 @@ import mono.debugger.JDWP;
 import mono.debugger.ThreadMirror;
 import mono.debugger.VirtualMachine;
 
-public abstract class ThreadVisibleEventRequest extends EventRequestImpl
+public abstract class ThreadVisibleEventRequest extends EventRequest
 {
 	public ThreadVisibleEventRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
 	{

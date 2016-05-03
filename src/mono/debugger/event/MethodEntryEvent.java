@@ -25,7 +25,11 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
+import org.jetbrains.annotations.NotNull;
+import mono.debugger.EventSetImpl;
+import mono.debugger.JDWP;
+import mono.debugger.MethodMirror;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of a method invocation in the target VM. This event
@@ -43,12 +47,25 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface MethodEntryEvent extends LocatableEvent {
+public class MethodEntryEvent extends EventSetImpl.ThreadedEventImpl
+{
+	private MethodMirror myMethodMirror;
 
-    /**
-     * Returns the method that was entered.
-     *
-     * @return a {@link mono.debugger.MethodMirror} which mirrors the method that was entered.
-     */
-    public MethodMirror method();
+	public MethodEntryEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.MethodEntry evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread);
+		myMethodMirror = evt.method;
+	}
+
+	@NotNull
+	public MethodMirror method()
+	{
+		return myMethodMirror;
+	}
+
+	@Override
+	public String eventName()
+	{
+		return "MethodEntryEvent";
+	}
 }

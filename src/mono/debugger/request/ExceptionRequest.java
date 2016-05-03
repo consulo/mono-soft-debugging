@@ -48,7 +48,7 @@ import mono.debugger.VirtualMachineImpl;
  * @see EventRequestManager
  * @since 1.3
  */
-public class ExceptionRequest extends ClassVisibleEventRequest
+public class ExceptionRequest extends TypeVisibleEventRequest
 {
 	private TypeMirror exception = null;
 	private boolean caught = true;
@@ -96,11 +96,5 @@ public class ExceptionRequest extends ClassVisibleEventRequest
 	public String toString()
 	{
 		return "exception request " + exception() + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitException(this, a);
 	}
 }

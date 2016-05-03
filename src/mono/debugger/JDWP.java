@@ -511,6 +511,33 @@ public class JDWP
 					}
 				}
 
+				public static class AssemblyOnly extends ModifierCommon
+				{
+					static final byte ALT_ID = 11;
+
+					public static Modifier create(AssemblyMirror... mirrors)
+					{
+						return new Modifier(ALT_ID, new AssemblyOnly(mirrors));
+					}
+
+					final AssemblyMirror[] myAssemblyMirrors;
+
+					AssemblyOnly(AssemblyMirror... assemblyMirrors)
+					{
+						this.myAssemblyMirrors = assemblyMirrors;
+					}
+
+					@Override
+					void write(PacketStream ps, VirtualMachineImpl vm)
+					{
+						ps.writeInt(myAssemblyMirrors.length);
+						for(AssemblyMirror mirror : myAssemblyMirrors)
+						{
+							ps.writeId(mirror);
+						}
+					}
+				}
+
 				/**
 				 * Restricts reported class prepare events to those
 				 * for reference types which have a source name
@@ -1003,7 +1030,7 @@ public class JDWP
 				 * before its thread start event occurs if methods are called
 				 * as part of the thread's initialization.
 				 */
-				static class MethodEntry extends EventsCommon
+				public static class MethodEntry extends EventsCommon
 				{
 					@Override
 					EventKind eventKind()
@@ -1011,34 +1038,15 @@ public class JDWP
 						return EventKind.METHOD_ENTRY;
 					}
 
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
-
-					/**
-					 * Thread which entered method
-					 */
-					final ThreadMirror thread;
-
-					/**
-					 * The initial executable location in the method.
-					 */
-					final Location location;
+					public final int requestID;
+					public final ThreadMirror thread;
+					public final MethodMirror method;
 
 					MethodEntry(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
-						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
+						method = ps.readMethodMirror();
 					}
 				}
 
@@ -1050,7 +1058,7 @@ public class JDWP
 				 * methods. Method exit events are not generated if the method terminates
 				 * with a thrown exception.
 				 */
-				static class MethodExit extends EventsCommon
+				public static class MethodExit extends EventsCommon
 				{
 					@Override
 					EventKind eventKind()
@@ -1058,34 +1066,15 @@ public class JDWP
 						return EventKind.METHOD_EXIT;
 					}
 
-					/**
-					 * Request that generated event
-					 */
-					final int requestID;
-
-					/**
-					 * Thread which exited method
-					 */
-					final ThreadMirror thread;
-
-					/**
-					 * Location of exit
-					 */
-					final Location location;
+					public final int requestID;
+					public final ThreadMirror thread;
+					public final MethodMirror method;
 
 					MethodExit(VirtualMachineImpl vm, PacketStream ps)
 					{
 						requestID = ps.readInt();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "requestID(int): " + requestID);
-						}
 						thread = ps.readThreadMirror();
-						location = ps.readLocation();
-						if(vm.traceReceives)
-						{
-							vm.printReceiveTrace(6, "location(Location): " + location);
-						}
+						method = ps.readMethodMirror();
 					}
 				}
 

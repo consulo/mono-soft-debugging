@@ -25,7 +25,6 @@
 
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.VirtualMachine;
@@ -64,11 +63,5 @@ public class ThreadDeathRequest extends ThreadVisibleEventRequest
 	public String toString()
 	{
 		return "thread death request " + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitThreadDeath(this, a);
 	}
 }

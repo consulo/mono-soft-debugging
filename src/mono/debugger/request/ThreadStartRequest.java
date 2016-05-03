@@ -25,7 +25,6 @@
 
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.VirtualMachine;
@@ -64,11 +63,5 @@ public class ThreadStartRequest extends ThreadVisibleEventRequest
 	public String toString()
 	{
 		return "thread start request " + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitThreadStart(this, a);
 	}
 }

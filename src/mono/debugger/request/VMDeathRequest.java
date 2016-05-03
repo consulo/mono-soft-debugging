@@ -59,7 +59,7 @@ import mono.debugger.VirtualMachine;
  * @author Robert Field
  * @since  1.4
  */
-public class VMDeathRequest extends EventRequestImpl
+public class VMDeathRequest extends EventRequest
 {
 	public VMDeathRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
 	{
@@ -76,11 +76,5 @@ public class VMDeathRequest extends EventRequestImpl
 	public String toString()
 	{
 		return "VM death request " + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitVMDeath(this, a);
 	}
 }

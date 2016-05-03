@@ -25,7 +25,11 @@
 
 package mono.debugger.event;
 
-import mono.debugger.*;
+import org.jetbrains.annotations.NotNull;
+import mono.debugger.EventSetImpl;
+import mono.debugger.JDWP;
+import mono.debugger.MethodMirror;
+import mono.debugger.VirtualMachine;
 
 /**
  * Notification of a method return in the target VM. This event
@@ -40,34 +44,24 @@ import mono.debugger.*;
  * @author Robert Field
  * @since  1.3
  */
-public interface MethodExitEvent extends LocatableEvent {
+public class MethodExitEvent extends EventSetImpl.ThreadedEventImpl
+{
+	private MethodMirror myMethodMirror;
 
-    /**
-     * Returns the method that was exited.
-     *
-     * @return a {@link mono.debugger.MethodMirror} which mirrors the method that was exited.
-     * @throws mono.debugger.InvalidObjectException may be thrown if class
-     * has been garbage collected.
-     */
-    public MethodMirror method();
+	public MethodExitEvent(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.MethodExit evt)
+	{
+		super(virtualMachine, evt, evt.requestID, evt.thread);
+		myMethodMirror = evt.method;
+	}
 
-    /**
-     * Returns the value that the method will return.
-     *
-     * Not all target virtual machines support this operation.
-     * Use
-     * {@link VirtualMachine#canGetMethodReturnValues() canGetMethodReturnValues()}
-     * to determine if this operation is supported.
-     *
-     * @return a {@link Value} which mirrors the value to be returned.
-     *
-     * @throws java.lang.UnsupportedOperationException if
-     * the target virtual machine does not support this
-     * operation - see
-     * {@link VirtualMachine#canGetMethodReturnValues() canGetMethodReturnValues()}
-     *
-     * @since 1.6
-     */
-
-    public Value returnValue();
+	@NotNull
+	public MethodMirror method()
+	{
+		return myMethodMirror;
+	}
+	@Override
+	public String eventName()
+	{
+		return "MethodExitEvent";
+	}
 }

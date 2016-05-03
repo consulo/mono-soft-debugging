@@ -203,43 +203,6 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		}
 	}
 
-	class MethodEntryEventImpl extends LocatableEventImpl implements MethodEntryEvent
-	{
-		MethodEntryEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.MethodEntry evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "MethodEntryEvent";
-		}
-	}
-
-	class MethodExitEventImpl extends LocatableEventImpl implements MethodExitEvent
-	{
-		private Value returnVal = null;
-
-		MethodExitEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.MethodExit evt)
-		{
-			super(virtualMachine, evt, evt.requestID, evt.thread, evt.location);
-		}
-
-		@Override
-		public String eventName()
-		{
-			return "MethodExitEvent";
-		}
-
-		@Override
-		public Value returnValue()
-		{
-			return returnVal;
-		}
-
-	}
-
 	class ThreadDeathEventImpl extends ThreadedEventImpl implements ThreadDeathEvent
 	{
 		ThreadDeathEventImpl(VirtualMachine virtualMachine, JDWP.Event.Composite.Events.ThreadDeath evt)
@@ -375,9 +338,9 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 			case BREAKPOINT:
 				return new BreakpointEvent(vm, (JDWP.Event.Composite.Events.Breakpoint) comm);
 			case METHOD_ENTRY:
-				return new MethodEntryEventImpl(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
+				return new MethodEntryEvent(vm, (JDWP.Event.Composite.Events.MethodEntry) comm);
 			case METHOD_EXIT:
-				return new MethodExitEventImpl(vm, (JDWP.Event.Composite.Events.MethodExit) comm);
+				return new MethodExitEvent(vm, (JDWP.Event.Composite.Events.MethodExit) comm);
 			case TYPE_LOAD:
 				return new TypeLoadEvent(vm, (JDWP.Event.Composite.Events.TypeLoad) comm);
 			case STEP:

@@ -142,7 +142,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	public void deleteEventRequest(EventRequest eventRequest)
 	{
 		validateMirror(eventRequest);
-		((EventRequestImpl) eventRequest).delete();
+		eventRequest.delete();
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		validateMirrors(eventRequests);
 		for(EventRequest eventRequest : eventRequests)
 		{
-			((EventRequestImpl)eventRequest).delete();
+			eventRequest.delete();
 		}
 	}
 
@@ -249,7 +249,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		List<? extends EventRequest> rl = requestList(eventCmd);
 		for(int i = rl.size() - 1; i >= 0; i--)
 		{
-			EventRequestImpl er = (EventRequestImpl) rl.get(i);
+			EventRequest er = rl.get(i);
 			if(er.id() == requestId)
 			{
 				return er;
@@ -258,7 +258,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		return null;
 	}
 
-	public <T extends EventRequestImpl> T add(T t)
+	public <T extends EventRequest> T add(T t)
 	{
 		myEventRequests.get(t.eventCmd()).add(t);
 		return t;

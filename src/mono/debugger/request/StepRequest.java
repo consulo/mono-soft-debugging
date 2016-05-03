@@ -28,7 +28,6 @@ package mono.debugger.request;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.JDWP;
@@ -50,7 +49,7 @@ import mono.debugger.VirtualMachineImpl;
  * @see EventRequestManager
  * @since 1.3
  */
-public class StepRequest extends ClassVisibleEventRequest
+public class StepRequest extends TypeVisibleEventRequest
 {
 	public static enum StepDepth
 	{
@@ -120,11 +119,5 @@ public class StepRequest extends ClassVisibleEventRequest
 	public String toString()
 	{
 		return "step request " + thread() + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitStep(this, a);
 	}
 }

@@ -25,7 +25,6 @@
 
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.VirtualMachine;
@@ -47,7 +46,7 @@ import mono.debugger.VirtualMachine;
  * @author Robert Field
  * @since  1.3
  */
-public class MethodEntryRequest extends ClassVisibleEventRequest
+public class MethodEntryRequest extends TypeVisibleEventRequest
 {
 	public MethodEntryRequest(VirtualMachine virtualMachine, EventRequestManagerImpl requestManager)
 	{
@@ -64,11 +63,5 @@ public class MethodEntryRequest extends ClassVisibleEventRequest
 	public String toString()
 	{
 		return "method entry request " + state();
-	}
-
-	@Override
-	public <A, R> R visit(@NotNull EventRequestVisitor<A, R> visitor, A a)
-	{
-		return visitor.visitMethodEntry(this, a);
 	}
 }
