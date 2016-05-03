@@ -54,13 +54,13 @@ import mono.debugger.VirtualMachine;
 public interface EventRequestManager extends Mirror
 {
 	@NotNull
-	EventRequest createAppDomainCreate();
+	EventRequest createAppDomainCreateRequest();
 
 	@NotNull
-	EventRequest createAppDomainUnload();
+	EventRequest createAppDomainUnloadRequest();
 
 	@NotNull
-	TypeLoadRequest createTypeLoad();
+	TypeLoadRequest createTypeLoadRequest();
 
 	/**
 	 * Creates a new disabled {@link ThreadStartRequest}.
@@ -87,13 +87,6 @@ public interface EventRequestManager extends Mirror
 	 * The new event request is added to the list managed by this
 	 * EventRequestManager. Use {@link EventRequest#enable()} to
 	 * activate this event request.
-	 * <p/>
-	 * A specific exception type. Caught exceptions,  uncaught exceptions,
-	 * or both can be selected. Note, however, that
-	 * at the time an exception is thrown, it is not always
-	 * possible to determine whether it is truly caught. See
-	 * {@link mono.debugger.event.ExceptionEvent#catchLocation} for
-	 * details.
 	 *
 	 * @param refType        If non-null, specifies that exceptions which are
 	 *                       instances of refType will be reported. If null,
@@ -102,6 +95,7 @@ public interface EventRequestManager extends Mirror
 	 * @param notifyUncaught If true, uncaught exceptions will be reported.
 	 * @return the created {@link ExceptionRequest}
 	 */
+	@NotNull
 	ExceptionRequest createExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses);
 
 	/**
@@ -112,6 +106,7 @@ public interface EventRequestManager extends Mirror
 	 *
 	 * @return the created {@link MethodEntryRequest}
 	 */
+	@NotNull
 	MethodEntryRequest createMethodEntryRequest();
 
 	/**
@@ -122,6 +117,7 @@ public interface EventRequestManager extends Mirror
 	 *
 	 * @return the created {@link MethodExitRequest}
 	 */
+	@NotNull
 	MethodExitRequest createMethodExitRequest();
 
 	/**

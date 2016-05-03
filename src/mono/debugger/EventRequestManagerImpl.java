@@ -62,6 +62,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		}
 	}
 
+	@NotNull
 	@Override
 	public ExceptionRequest createExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses)
 	{
@@ -84,21 +85,21 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 
 	@NotNull
 	@Override
-	public EventRequest createAppDomainCreate()
+	public EventRequest createAppDomainCreateRequest()
 	{
 		return add(new AppDomainCreateRequest(vm, this));
 	}
 
 	@NotNull
 	@Override
-	public TypeLoadRequest createTypeLoad()
+	public TypeLoadRequest createTypeLoadRequest()
 	{
 		return add(new TypeLoadRequest(vm, this));
 	}
 
 	@NotNull
 	@Override
-	public EventRequest createAppDomainUnload()
+	public EventRequest createAppDomainUnloadRequest()
 	{
 		return add(new AppDomainUnloadRequest(vm, this));
 	}
@@ -109,12 +110,14 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		return add(new ThreadStartRequest(vm, this));
 	}
 
+	@NotNull
 	@Override
 	public MethodEntryRequest createMethodEntryRequest()
 	{
 		return add(new MethodEntryRequest(vm, this));
 	}
 
+	@NotNull
 	@Override
 	public MethodExitRequest createMethodExitRequest()
 	{
