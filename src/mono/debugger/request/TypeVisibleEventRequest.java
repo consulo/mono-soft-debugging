@@ -36,6 +36,26 @@ public abstract class TypeVisibleEventRequest extends ThreadVisibleEventRequest
 		super(virtualMachine, requestManager);
 	}
 
+	public synchronized void addSourceFileFilter(String... files)
+	{
+		if(isEnabled() || deleted)
+		{
+			throw invalidState();
+		}
+
+		filters.add(JDWP.EventRequest.Set.Modifier.SourceFileMatch.create(files));
+	}
+
+	public synchronized void addTypeNameFilter(String... qNames)
+	{
+		if(isEnabled() || deleted)
+		{
+			throw invalidState();
+		}
+
+		filters.add(JDWP.EventRequest.Set.Modifier.TypeNameFilter.create(qNames));
+	}
+
 	public synchronized void addAssemblyFilter(AssemblyMirror... mirrors)
 	{
 		for(AssemblyMirror mirror : mirrors)
@@ -48,5 +68,4 @@ public abstract class TypeVisibleEventRequest extends ThreadVisibleEventRequest
 		}
 		filters.add(JDWP.EventRequest.Set.Modifier.AssemblyOnly.create(mirrors));
 	}
-
 }
