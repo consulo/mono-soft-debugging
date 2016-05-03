@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.DeprecationInfo;
 import edu.arizona.cs.mbel.signature.TypeAttributes;
 import mono.debugger.protocol.Type_GetCustomAttributes;
 import mono.debugger.protocol.Type_GetFields;
@@ -122,6 +123,8 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 	}
 
 	@NotNull
+	@Deprecated
+	@DeprecationInfo(value = "Use #fullName()", until = "1.1")
 	public String qualifiedName()
 	{
 		TypeMirror parentType = parentType();
