@@ -309,7 +309,7 @@ public class PacketStream
 
 	public boolean readByteBool()
 	{
-		int ret = readInt();
+		int ret = readByte();
 		return (ret != 0);
 	}
 
