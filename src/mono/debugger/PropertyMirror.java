@@ -130,6 +130,20 @@ public class PropertyMirror extends FieldOrPropertyMirror
 		throw new IllegalArgumentException();
 	}
 
+	@Override
+	public boolean isAbstract()
+	{
+		if(myGetMethod != null)
+		{
+			return myGetMethod.isAbstract();
+		}
+		else if(mySetMethod != null)
+		{
+			return mySetMethod.isAbstract();
+		}
+		throw new IllegalArgumentException();
+	}
+
 	@NotNull
 	@Override
 	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException

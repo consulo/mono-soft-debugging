@@ -15,4 +15,6 @@ public interface ModifierOwner
 	CustomAttributeMirror[] findCustomAttributes(@NotNull String vmQName);
 
 	boolean isStatic();
+
+	boolean isAbstract();
 }

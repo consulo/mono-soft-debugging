@@ -207,4 +207,10 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 	{
 		return (info().attributes & MethodAttributes.Static) == MethodAttributes.Static;
 	}
+
+	@Override
+	public boolean isAbstract()
+	{
+		return (info().attributes & MethodAttributes.Abstract) == MethodAttributes.Abstract;
+	}
 }
