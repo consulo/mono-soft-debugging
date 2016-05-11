@@ -174,7 +174,7 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 	@Override
 	protected CustomAttributeMirror[] customAttributesImpl() throws JDWPException
 	{
-		return Method_GetCustomAttributes.process(vm, this).customAttributeMirrors;
+		return vm.isAtLeastVersion(2, 21) ? Method_GetCustomAttributes.process(vm, this).customAttributeMirrors : CustomAttributeMirror.EMPTY_ARRAY;
 	}
 
 	@NotNull
