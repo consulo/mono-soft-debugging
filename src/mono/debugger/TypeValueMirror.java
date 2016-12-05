@@ -11,7 +11,7 @@ public class TypeValueMirror extends ValueImpl<TypeMirror>
 {
 	private TypeMirror myTypeMirror;
 
-	TypeValueMirror(VirtualMachine aVm, TypeMirror typeMirror)
+	public TypeValueMirror(VirtualMachine aVm, TypeMirror typeMirror)
 	{
 		super(aVm);
 		myTypeMirror = typeMirror;

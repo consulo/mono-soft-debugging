@@ -172,6 +172,10 @@ public class PacketStream
 				writeNumberValue(((NumberValueMirror) value).getTag(), ((NumberValueMirror) value).value());
 			}
 		}
+		else if(value instanceof TypeValueMirror)
+		{
+			writeId(((TypeValueMirror) value).value());
+		}
 		else if(value instanceof ValueTypeValueMirror)
 		{
 			writeByte(SignatureConstants.ELEMENT_TYPE_VALUETYPE);
