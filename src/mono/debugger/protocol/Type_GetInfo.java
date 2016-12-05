@@ -39,11 +39,13 @@ public class Type_GetInfo implements Type
 	public final String fullName;
 	public final AssemblyMirror assemblyMirror;
 	public final TypeMirror baseType;
+	public final TypeMirror elementType;
 	public TypeMirror generalType;
 	public TypeMirror[] genericArguments = TypeMirror.EMPTY_ARRAY;
 	public final byte rank;
 	public final int attributes;
 	public TypeMirror[] nestedTypes;
+	public boolean isPointer;
 
 	private Type_GetInfo(VirtualMachineImpl vm, TypeMirror parent, PacketStream ps)
 	{
@@ -53,14 +55,14 @@ public class Type_GetInfo implements Type
 		assemblyMirror = ps.readAssemblyMirror();
 		ps.readId(); //TODO [VISTALL] ModuleMirror
 		baseType = ps.readTypeMirror();
-		TypeMirror elementType = ps.readTypeMirror();
+		elementType = ps.readTypeMirror();
 		int token = ps.readInt();
 		rank = ps.readByte();
 		attributes = ps.readInt();
 		byte runtimeAttributes = ps.readByte();
 
 		boolean is_byref = (runtimeAttributes & 1) != 0;
-		boolean is_pointer = (runtimeAttributes & 2) != 0;
+		isPointer = (runtimeAttributes & 2) != 0;
 		boolean is_primitive = (runtimeAttributes & 4) != 0;
 		boolean is_valuetype = (runtimeAttributes & 8) != 0;
 		boolean is_enum = (runtimeAttributes & 16) != 0;

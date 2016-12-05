@@ -94,6 +94,17 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		}
 	}
 
+	public boolean isPointer()
+	{
+		return info().isPointer;
+	}
+
+	@Nullable
+	public TypeMirror elementType()
+	{
+		return info().elementType;
+	}
+
 	@Nullable
 	public TypeMirror parentType()
 	{
