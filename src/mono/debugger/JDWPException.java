@@ -64,6 +64,8 @@ public class JDWPException extends Exception
 				return new IllegalArgumentException();
 			case JDWP.Error.ERR_UNLOADED:
 				return new UnloadedElementException();
+			case JDWP.Error.ERR_NO_INVOCATION:
+				return new NoInvocationException();
 			default:
 				return new InternalException("Unexpected JDWP Error: " + errorCode, errorCode);
 		}
