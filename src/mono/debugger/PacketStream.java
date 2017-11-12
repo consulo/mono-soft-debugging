@@ -149,7 +149,8 @@ public class PacketStream
 	{
 		if(value instanceof StringValueMirror)
 		{
-			writeValue(((StringValueMirror) value).object());
+			writeByte(SignatureConstants.ELEMENT_TYPE_STRING);
+			writeId(((StringValueMirror) value).object());
 		}
 		else if(value instanceof CharValueMirror)
 		{
