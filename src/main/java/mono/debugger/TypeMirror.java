@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mustbe.consulo.DeprecationInfo;
-import edu.arizona.cs.mbel.signature.TypeAttributes;
+import consulo.annotations.DeprecationInfo;
+import consulo.internal.dotnet.asm.signature.TypeAttributes;
 import mono.debugger.protocol.Type_GetCustomAttributes;
 import mono.debugger.protocol.Type_GetFields;
 import mono.debugger.protocol.Type_GetInfo;

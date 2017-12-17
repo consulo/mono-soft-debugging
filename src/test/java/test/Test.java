@@ -1,6 +1,6 @@
 package test;
 
-import edu.arizona.cs.mbel.signature.TypeAttributes;
+import consulo.internal.dotnet.asm.signature.TypeAttributes;
 
 /**
  * @author VISTALL

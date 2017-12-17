@@ -2,7 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import edu.arizona.cs.mbel.signature.SignatureConstants;
+import consulo.internal.dotnet.asm.signature.SignatureConstants;
 
 /**
  * @author VISTALL

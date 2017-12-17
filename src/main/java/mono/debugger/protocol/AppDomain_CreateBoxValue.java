@@ -1,6 +1,6 @@
 package mono.debugger.protocol;
 
-import edu.arizona.cs.mbel.signature.SignatureConstants;
+import consulo.internal.dotnet.asm.signature.SignatureConstants;
 import mono.debugger.AppDomainMirror;
 import mono.debugger.JDWPException;
 import mono.debugger.ObjectValueMirror;

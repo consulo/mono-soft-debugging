@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import edu.arizona.cs.mbel.signature.MethodAttributes;
+import consulo.internal.dotnet.asm.signature.MethodAttributes;
 import mono.debugger.protocol.Method_GetCustomAttributes;
 import mono.debugger.protocol.Method_GetDebugInfo;
 import mono.debugger.protocol.Method_GetDeclarationType;

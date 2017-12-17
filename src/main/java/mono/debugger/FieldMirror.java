@@ -2,7 +2,7 @@ package mono.debugger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import edu.arizona.cs.mbel.signature.FieldAttributes;
+import consulo.internal.dotnet.asm.signature.FieldAttributes;
 import mono.debugger.protocol.ObjectReference_GetValues;
 import mono.debugger.protocol.ObjectReference_SetValues;
 import mono.debugger.protocol.Type_GetFieldCustomAttributes;
