@@ -118,7 +118,8 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		}
 	}
 
-	public void setLocalOrParameterValues(@Nonnull ImmutablePair<LocalVariableOrParameterMirror, Value<?>>... pairs)
+	@SafeVarargs
+	public final void setLocalOrParameterValues(@Nonnull ImmutablePair<LocalVariableOrParameterMirror, Value<?>>... pairs)
 	{
 		try
 		{

@@ -126,10 +126,16 @@ public class ThreadMirror extends MirrorWithIdAndName
 	@Nonnull
 	public List<StackFrameMirror> frames()
 	{
+		return frames(0, -1);
+	}
+
+	@Nonnull
+	public List<StackFrameMirror> frames(int startIndex, int length)
+	{
 		try
 		{
-			Thread_GetFrameInfo.Frame[] frames = Thread_GetFrameInfo.process(vm, this, 0, -1).frames;
-			List<StackFrameMirror> frameMirrors = new ArrayList<StackFrameMirror>(frames.length);
+			Thread_GetFrameInfo.Frame[] frames = Thread_GetFrameInfo.process(vm, this, startIndex, length).frames;
+			List<StackFrameMirror> frameMirrors = new ArrayList<>(frames.length);
 			for(Thread_GetFrameInfo.Frame frame : frames)
 			{
 				if(frame.location == null)
@@ -137,9 +143,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 					throw new InternalException("Invalid frame location");
 				}
 
-				StackFrameMirror frameMirror = new StackFrameMirror(vm, this, frame.frameID, frame.location, StackFrameMirror.StackFrameFlags.values
-						()[frame.flags]);
-				frameMirrors.add(frameMirror);
+				frameMirrors.add(new StackFrameMirror(vm, this, frame.frameID, frame.location, StackFrameMirror.StackFrameFlags.values()[frame.flags]));
 			}
 			return frameMirrors;
 
