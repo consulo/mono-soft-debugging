@@ -9,7 +9,10 @@ import javax.annotation.Nullable;
  */
 public interface GenericTarget<T extends Mirror>
 {
-	@Nullable("Null is this is original mirror, if it a runtime copy with generic - ill return not null")
+	/**
+	 * @return null is this is original mirror, if it a runtime copy with generic - ill return not null
+	 */
+	@Nullable
 	T original();
 
 	@Nonnull
