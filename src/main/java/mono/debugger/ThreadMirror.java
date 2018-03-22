@@ -28,7 +28,8 @@ package mono.debugger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.protocol.Thread_GetFrameInfo;
 import mono.debugger.protocol.Thread_GetId;
 import mono.debugger.protocol.Thread_GetName;
@@ -56,7 +57,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		super(aVm, aRef);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String nameImpl() throws JDWPException
 	{
@@ -122,7 +123,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 		return (status().state & ThreadState.Suspended) != 0;
 	}
 
-	@NotNull
+	@Nonnull
 	public List<StackFrameMirror> frames()
 	{
 		try

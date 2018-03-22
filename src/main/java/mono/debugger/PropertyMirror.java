@@ -1,7 +1,8 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import mono.debugger.protocol.Type_GetPropertyCustomAttributes;
 
 /**
@@ -14,12 +15,12 @@ public class PropertyMirror extends FieldOrPropertyMirror
 	private final MethodMirror mySetMethod;
 
 	public PropertyMirror(
-			@NotNull VirtualMachine aVm,
+			@Nonnull VirtualMachine aVm,
 			int id,
-			@NotNull String name,
+			@Nonnull String name,
 			@Nullable MethodMirror getMethod,
 			@Nullable MethodMirror setMethod,
-			@NotNull TypeMirror parent,
+			@Nonnull TypeMirror parent,
 			int attributes)
 	{
 		super(aVm, id, parent, attributes, name);
@@ -62,7 +63,7 @@ public class PropertyMirror extends FieldOrPropertyMirror
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public TypeMirror type()
 	{
 		if(myGetMethod != null)
@@ -98,7 +99,7 @@ public class PropertyMirror extends FieldOrPropertyMirror
 	}
 
 	@Override
-	public void setValue(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue, @NotNull Value<?> value)
+	public void setValue(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue, @Nonnull Value<?> value)
 	{
 		if(isStatic() && thisObjectValue != null || !isStatic() && thisObjectValue == null)
 		{
@@ -144,7 +145,7 @@ public class PropertyMirror extends FieldOrPropertyMirror
 		throw new IllegalArgumentException();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException
 	{

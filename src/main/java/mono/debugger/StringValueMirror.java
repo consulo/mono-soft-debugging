@@ -1,6 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.protocol.StringReference_GetValue;
 
 /**
@@ -17,13 +18,13 @@ public class StringValueMirror extends ValueImpl<String>
 		myObjectValueMirror = objectValueMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public ObjectValueMirror object()
 	{
 		return myObjectValueMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String value()
 	{
@@ -44,7 +45,7 @@ public class StringValueMirror extends ValueImpl<String>
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitStringValue(this, value());
 	}

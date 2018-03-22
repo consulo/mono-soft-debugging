@@ -25,7 +25,8 @@
 
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.protocol.Method_GetDebugInfo;
 
 public class LocationImpl extends MirrorImpl implements Location
@@ -66,14 +67,14 @@ public class LocationImpl extends MirrorImpl implements Location
 		return method().hashCode() + (int) codeIndex();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TypeMirror declaringType()
 	{
 		return myMethodMirror.declaringType();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MethodMirror method()
 	{

@@ -27,8 +27,8 @@ package mono.debugger;
 
 import java.io.ByteArrayOutputStream;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import consulo.internal.dotnet.asm.signature.SignatureConstants;
 
 public class PacketStream
@@ -416,7 +416,7 @@ public class PacketStream
 		return readInt();
 	}
 
-	@NotNull
+	@Nonnull
 	public ThreadMirror readThreadMirror()
 	{
 		int ref = readId();
@@ -473,14 +473,14 @@ public class PacketStream
 		return vm.getOrCreateTypeMirror(ref, parent);
 	}
 
-	@NotNull
+	@Nonnull
 	public ObjectValueMirror readObjectMirror()
 	{
 		int ref = readId();
 		return new ObjectValueMirror(vm, ref);
 	}
 
-	@NotNull
+	@Nonnull
 	public Value readValue()
 	{
 		int tag = readUByte();
@@ -541,7 +541,7 @@ public class PacketStream
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public CustomAttributeMirror[] readCustomAttributes()
 	{
 		int size = readInt();

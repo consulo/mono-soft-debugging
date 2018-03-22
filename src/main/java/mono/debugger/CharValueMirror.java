@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -24,7 +24,7 @@ public class CharValueMirror extends ValueImpl<Character>
 		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName(TypeTag.Char.getType(), false);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Character value()
 	{
@@ -32,7 +32,7 @@ public class CharValueMirror extends ValueImpl<Character>
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitCharValue(this, value());
 	}

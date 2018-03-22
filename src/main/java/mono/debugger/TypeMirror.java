@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import consulo.annotations.DeprecationInfo;
 import consulo.internal.dotnet.asm.signature.TypeAttributes;
 import mono.debugger.protocol.Type_GetCustomAttributes;
@@ -41,7 +41,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 	private PropertyMirror[] myProperties;
 	private TypeMirror[] myInterfaces;
 
-	public TypeMirror(@NotNull VirtualMachine aVm, @Nullable TypeMirror parent, int id)
+	public TypeMirror(@Nonnull VirtualMachine aVm, @Nullable TypeMirror parent, int id)
 	{
 		super(aVm, id);
 		myParent = parent;
@@ -53,7 +53,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return info().assemblyMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	private Type_GetInfo info()
 	{
 		if(myInfo == null)
@@ -82,7 +82,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return false;
 	}
 
-	public boolean isAssignableFrom(@NotNull TypeMirror typeMirror)
+	public boolean isAssignableFrom(@Nonnull TypeMirror typeMirror)
 	{
 		try
 		{
@@ -117,7 +117,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return info().baseType;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{
@@ -127,13 +127,13 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 	/**
 	 * In most case it ill return same as {@link #qualifiedName()}. But if it runtime copy - it ill different
 	 */
-	@NotNull
+	@Nonnull
 	public String fullName()
 	{
 		return info().fullName;
 	}
 
-	@NotNull
+	@Nonnull
 	@Deprecated
 	@DeprecationInfo(value = "Use #fullName()", until = "1.1")
 	public String qualifiedName()
@@ -159,14 +159,14 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return info().generalType;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TypeMirror[] genericArguments()
 	{
 		return info().genericArguments;
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror[] nestedTypes()
 	{
 		return info().nestedTypes;
@@ -177,13 +177,13 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return info().rank > 0;
 	}
 
-	@NotNull
+	@Nonnull
 	public String namespace()
 	{
 		return info().namespace;
 	}
 
-	@NotNull
+	@Nonnull
 	public MethodMirror[] methods()
 	{
 		if(myMethodMirrors != null)
@@ -200,7 +200,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror[] getInterfaces()
 	{
 		if(myInterfaces != null)
@@ -225,13 +225,13 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 	}
 
 	@Nullable
-	public MethodMirror findMethodByName(@NotNull String name, boolean deep)
+	public MethodMirror findMethodByName(@Nonnull String name, boolean deep)
 	{
 		return findMethodByName(name, deep, EMPTY_ARRAY);
 	}
 
 	@Nullable
-	public MethodMirror findMethodByName(@NotNull String name, boolean deep, TypeMirror[] expectedParameters)
+	public MethodMirror findMethodByName(@Nonnull String name, boolean deep, TypeMirror[] expectedParameters)
 	{
 		loop:
 		for(MethodMirror methodMirror : methods())
@@ -267,7 +267,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException
 	{
 		return Type_GetCustomAttributes.process(vm, this).customAttributeMirrors;
@@ -285,7 +285,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return (info().attributes & TypeAttributes.Abstract) == TypeAttributes.Abstract;
 	}
 
-	@NotNull
+	@Nonnull
 	public FieldMirror[] fields()
 	{
 		if(myFieldMirrors != null)
@@ -302,7 +302,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public List<FieldMirror> fieldsDeep()
 	{
 		List<FieldMirror> list = new ArrayList<FieldMirror>();
@@ -315,7 +315,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return list;
 	}
 
-	@NotNull
+	@Nonnull
 	public PropertyMirror[] properties()
 	{
 		if(myProperties != null)
@@ -332,7 +332,7 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public List<FieldOrPropertyMirror> fieldAndProperties(boolean deep)
 	{
 		List<FieldOrPropertyMirror> mirrors = new ArrayList<FieldOrPropertyMirror>();

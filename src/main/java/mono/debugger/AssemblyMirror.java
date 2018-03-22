@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import mono.debugger.protocol.Assembly_GetLocation;
 import mono.debugger.protocol.Assembly_GetName;
 import mono.debugger.protocol.Assembly_GetType;
@@ -14,12 +14,12 @@ public class AssemblyMirror extends MirrorWithIdAndName
 {
 	private String myLocation;
 
-	public AssemblyMirror(@NotNull VirtualMachine aVm, int aRef)
+	public AssemblyMirror(@Nonnull VirtualMachine aVm, int aRef)
 	{
 		super(aVm, aRef);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{
@@ -27,7 +27,7 @@ public class AssemblyMirror extends MirrorWithIdAndName
 	}
 
 	@Nullable
-	public TypeMirror findTypeByQualifiedName(@NotNull String name, boolean ignoreCase)
+	public TypeMirror findTypeByQualifiedName(@Nonnull String name, boolean ignoreCase)
 	{
 		try
 		{
@@ -39,7 +39,7 @@ public class AssemblyMirror extends MirrorWithIdAndName
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public String location()
 	{
 		if(myLocation == null)

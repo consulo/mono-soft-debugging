@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -18,7 +18,7 @@ public abstract class LocalVariableOrParameterMirror  extends MirrorWithIdAndNam
 		myName = name;
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror type()
 	{
 		return myType;
@@ -26,7 +26,7 @@ public abstract class LocalVariableOrParameterMirror  extends MirrorWithIdAndNam
 
 	public abstract int idForStackFrame();
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{

@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -20,12 +20,12 @@ public class StructValueMirror extends ValueTypeValueMirror<Object>
 {
 	public static final Pattern BackingFieldPattern = Pattern.compile("<([\\S\\d]+)>k__BackingField");
 
-	public StructValueMirror(VirtualMachine aVm, @NotNull TypeMirror typeMirror, @NotNull Value[] values)
+	public StructValueMirror(VirtualMachine aVm, @Nonnull TypeMirror typeMirror, @Nonnull Value[] values)
 	{
 		super(aVm, typeMirror, values);
 	}
 
-	@NotNull
+	@Nonnull
 	public Map<FieldOrPropertyMirror, Value<?>> map()
 	{
 		Value[] fieldValues = fieldValues();
@@ -89,7 +89,7 @@ public class StructValueMirror extends ValueTypeValueMirror<Object>
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitStructValue(this);
 	}

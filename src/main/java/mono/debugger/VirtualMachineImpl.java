@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.connect.spi.Connection;
 import mono.debugger.event.EventQueue;
 import mono.debugger.protocol.AppDomain_GetRootDomain;
@@ -163,14 +164,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return state;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public AppDomainMirror rootAppDomain()
 	{
 		return myRootAppDomain;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TypeMirror[] findTypesByQualifiedName(String typeName, boolean ignoreCase)
 	{
@@ -185,7 +186,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TypeMirror[] findTypesBySourcePath(String sourcePath, boolean ignoreCase)
 	{
@@ -200,7 +201,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ThreadMirror> allThreads()
 	{
@@ -282,7 +283,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EventQueue eventQueue()
 	{
@@ -294,7 +295,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return eventQueue;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EventRequestManager eventRequestManager()
 	{
@@ -334,7 +335,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		target.stopListening();
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Process process()
 	{
@@ -348,13 +349,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 	}
 
 	@Override
-	public void enableEvents(@NotNull EventKind... eventKinds)
+	public void enableEvents(@Nonnull EventKind... eventKinds)
 	{
 		enableEvents(SuspendPolicy.ALL, eventKinds);
 	}
 
 	@Override
-	public void enableEvents(@NotNull SuspendPolicy policy, @NotNull EventKind... eventKinds)
+	public void enableEvents(@Nonnull SuspendPolicy policy, @Nonnull EventKind... eventKinds)
 	{
 		for(EventKind eventKind : eventKinds)
 		{
@@ -369,14 +370,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String version()
 	{
 		return myVersionInfo.jdwpMajor + "." + myVersionInfo.jdwpMinor;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String name()
 	{
@@ -391,7 +392,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror getOrCreateTypeMirror(int id, TypeMirror parent)
 	{
 		TypeMirror typeMirror = myTypeMirrorCache.get(id);
@@ -402,13 +403,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return typeMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public Collection<TypeMirror> getCachedTypeMirrors()
 	{
 		return myTypeMirrorCache.values();
 	}
 
-	@NotNull
+	@Nonnull
 	public MethodMirror getOrCreateMethodMirror(int id)
 	{
 		MethodMirror methodMirror = myMethodMirrorCache.get(id);
@@ -419,7 +420,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine
 		return methodMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public AssemblyMirror getOrCreateAssemblyMirror(int id)
 	{
 		AssemblyMirror assemblyMirror = myAssemblyMirrorCache.get(id);

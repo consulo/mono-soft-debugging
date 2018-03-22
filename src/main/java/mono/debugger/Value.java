@@ -25,8 +25,8 @@
 
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface Value<T> extends Mirror
 {
@@ -36,5 +36,5 @@ public interface Value<T> extends Mirror
 	@Nullable
 	T value();
 
-	void accept(@NotNull ValueVisitor valueVisitor);
+	void accept(@Nonnull ValueVisitor valueVisitor);
 }

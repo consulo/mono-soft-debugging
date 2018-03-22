@@ -25,7 +25,7 @@
 
 package mono.debugger.event;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import mono.debugger.JDWP;
 import mono.debugger.MethodMirror;
 import mono.debugger.VirtualMachine;
@@ -56,7 +56,7 @@ public class MethodEntryEvent extends ThreadedEvent
 		myMethodMirror = evt.method;
 	}
 
-	@NotNull
+	@Nonnull
 	public MethodMirror method()
 	{
 		return myMethodMirror;

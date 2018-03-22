@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -26,7 +26,7 @@ public class NoObjectValueMirror extends ValueImpl<Object> implements MirrorWith
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitNoObjectValue(this);
 	}

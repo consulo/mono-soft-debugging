@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import mono.debugger.protocol.ObjectReference_GetAddress;
 import mono.debugger.protocol.ObjectReference_GetType;
 
@@ -63,7 +63,7 @@ public class ObjectValueMirror extends ValueImpl<Object> implements MirrorWithId
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitObjectValue(this);
 	}

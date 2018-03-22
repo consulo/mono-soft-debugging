@@ -1,7 +1,8 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import consulo.internal.dotnet.asm.signature.FieldAttributes;
 import mono.debugger.protocol.ObjectReference_GetValues;
 import mono.debugger.protocol.ObjectReference_SetValues;
@@ -16,11 +17,11 @@ import mono.debugger.util.ImmutablePair;
  */
 public class FieldMirror extends FieldOrPropertyMirror
 {
-	@NotNull
+	@Nonnull
 	private final TypeMirror myTypeMirror;
 
 	public FieldMirror(
-			@NotNull VirtualMachine aVm, int id, @NotNull String name, @NotNull TypeMirror typeMirror, @NotNull TypeMirror parent, int attributes)
+			@Nonnull VirtualMachine aVm, int id, @Nonnull String name, @Nonnull TypeMirror typeMirror, @Nonnull TypeMirror parent, int attributes)
 	{
 		super(aVm, id, parent, attributes, name);
 		myTypeMirror = typeMirror;
@@ -55,7 +56,7 @@ public class FieldMirror extends FieldOrPropertyMirror
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue, @NotNull Value<?> value)
+	public void setValue(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue, @Nonnull Value<?> value)
 	{
 		if(isStatic() && thisObjectValue != null || !isStatic() && thisObjectValue == null)
 		{
@@ -80,13 +81,13 @@ public class FieldMirror extends FieldOrPropertyMirror
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public TypeMirror type()
 	{
 		return myTypeMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public CustomAttributeMirror[] customAttributesImpl() throws JDWPException
 	{

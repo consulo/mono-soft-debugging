@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import mono.debugger.event.*;
 import mono.debugger.request.EventRequest;
 
@@ -272,7 +272,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		return vm;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public SuspendPolicy suspendPolicy()
 	{
@@ -292,7 +292,7 @@ public class EventSetImpl extends ArrayList<Event> implements EventSet
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Iterator<Event> iterator()
 	{

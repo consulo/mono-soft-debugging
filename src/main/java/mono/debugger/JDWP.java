@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import mono.debugger.request.StepRequest;
 
 public class JDWP

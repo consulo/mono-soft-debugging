@@ -27,7 +27,8 @@ package mono.debugger;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.event.EventQueue;
 import mono.debugger.request.EventRequestManager;
 
@@ -72,19 +73,19 @@ import mono.debugger.request.EventRequestManager;
  */
 public interface VirtualMachine extends Mirror
 {
-	@NotNull
+	@Nonnull
 	AppDomainMirror rootAppDomain();
 
 	/**
 	 * @since 2.9
 	 */
-	@NotNull
+	@Nonnull
 	TypeMirror[] findTypesByQualifiedName(String typeName, boolean ignoreCase);
 
 	/**
 	 * @since 2.7
 	 */
-	@NotNull
+	@Nonnull
 	TypeMirror[] findTypesBySourcePath(String sourcePath, boolean ignoreCase);
 
 	/**
@@ -103,7 +104,7 @@ public interface VirtualMachine extends Mirror
 	 * @return a list of {@link ThreadMirror} objects, one for each
 	 *         running thread in the mirrored VM.
 	 */
-	@NotNull
+	@Nonnull
 	List<ThreadMirror> allThreads();
 
 	/**
@@ -135,7 +136,7 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @return the {@link EventQueue} for this virtual machine.
 	 */
-	@NotNull
+	@Nonnull
 	EventQueue eventQueue();
 
 	/**
@@ -148,7 +149,7 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @return the {@link EventRequestManager} for this virtual machine.
 	 */
-	@NotNull
+	@Nonnull
 	EventRequestManager eventRequestManager();
 
 	/**
@@ -160,7 +161,7 @@ public interface VirtualMachine extends Mirror
 	 *         machine, or null if it was not launched by a
 	 *         {@link mono.debugger.connect.LaunchingConnector}.
 	 */
-	@NotNull
+	@Nonnull
 	Process process();
 
 	/**
@@ -214,14 +215,14 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @return the target VM version.
 	 */
-	@NotNull
+	@Nonnull
 	String version();
 
 	boolean isAtLeastVersion(int major, int minor);
 
-	void enableEvents(@NotNull EventKind... eventKinds);
+	void enableEvents(@Nonnull EventKind... eventKinds);
 
-	void enableEvents(@NotNull SuspendPolicy policy, @NotNull EventKind... eventKinds);
+	void enableEvents(@Nonnull SuspendPolicy policy, @Nonnull EventKind... eventKinds);
 
 	/**
 	 * Returns the name of the target VM as reported by the
@@ -229,6 +230,6 @@ public interface VirtualMachine extends Mirror
 	 *
 	 * @return the target VM name.
 	 */
-	@NotNull
+	@Nonnull
 	String name();
 }

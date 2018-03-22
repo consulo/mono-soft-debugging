@@ -1,7 +1,8 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import mono.debugger.protocol.AppDomain_CreateBoxValue;
 import mono.debugger.protocol.AppDomain_CreateString;
 import mono.debugger.protocol.AppDomain_GetAssemblies;
@@ -19,13 +20,13 @@ public class AppDomainMirror extends MirrorWithIdAndName
 	private AssemblyMirror myCorlibAssemblyMirror;
 	private AssemblyMirror[] myAssemblyMirrors;
 
-	public AppDomainMirror(@NotNull VirtualMachine aVm, int aRef)
+	public AppDomainMirror(@Nonnull VirtualMachine aVm, int aRef)
 	{
 		super(aVm, aRef);
 	}
 
-	@NotNull
-	public StringValueMirror createString(@NotNull String str)
+	@Nonnull
+	public StringValueMirror createString(@Nonnull String str)
 	{
 		try
 		{
@@ -37,8 +38,8 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		}
 	}
 
-	@NotNull
-	public ObjectValueMirror createBoxValue(int tag, @NotNull Number value)
+	@Nonnull
+	public ObjectValueMirror createBoxValue(int tag, @Nonnull Number value)
 	{
 		try
 		{
@@ -67,7 +68,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		return myEntryAssemblyMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public AssemblyMirror corlibAssembly()
 	{
 		if(myCorlibAssemblyMirror == null)
@@ -84,7 +85,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		return myCorlibAssemblyMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public AssemblyMirror[] assemblies()
 	{
 		if(myAssemblyMirrors == null)
@@ -101,7 +102,7 @@ public class AppDomainMirror extends MirrorWithIdAndName
 		return myAssemblyMirrors;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{

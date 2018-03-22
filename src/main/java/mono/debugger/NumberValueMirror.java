@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -11,7 +11,7 @@ public class NumberValueMirror extends ValueImpl<Number>
 	private final int myTag;
 	private final Number myValue;
 
-	public NumberValueMirror(VirtualMachine aVm, int tag, @NotNull Number value)
+	public NumberValueMirror(VirtualMachine aVm, int tag, @Nonnull Number value)
 	{
 		super(aVm);
 		myTag = tag;
@@ -19,7 +19,7 @@ public class NumberValueMirror extends ValueImpl<Number>
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	public Number value()
 	{
 		return myValue;
@@ -33,7 +33,7 @@ public class NumberValueMirror extends ValueImpl<Number>
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitNumberValue(this, value());
 	}

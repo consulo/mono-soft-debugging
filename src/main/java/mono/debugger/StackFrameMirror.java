@@ -1,7 +1,8 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import mono.debugger.protocol.StackFrame_GetThis;
 import mono.debugger.protocol.StackFrame_GetValues;
 import mono.debugger.protocol.StackFrame_SetValues;
@@ -39,20 +40,20 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		return myFlags;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Location location()
 	{
 		return myLocation;
 	}
 
-	@NotNull
+	@Nonnull
 	public ThreadMirror thread()
 	{
 		return myThreadMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public Value thisObject()
 	{
 		try
@@ -117,7 +118,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		}
 	}
 
-	public void setLocalOrParameterValues(@NotNull ImmutablePair<LocalVariableOrParameterMirror, Value<?>>... pairs)
+	public void setLocalOrParameterValues(@Nonnull ImmutablePair<LocalVariableOrParameterMirror, Value<?>>... pairs)
 	{
 		try
 		{

@@ -25,8 +25,9 @@
 
 package mono.debugger.request;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import mono.debugger.EventKind;
 import mono.debugger.EventRequestManagerImpl;
 import mono.debugger.JDWP;
@@ -65,7 +66,7 @@ public class ExceptionRequest extends TypeVisibleEventRequest
 		filters.add(0, JDWP.EventRequest.Set.Modifier.ExceptionOnly.create(refType, notifyCaught, notifyUncaught, notifyOnSubclasses));
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror exception()
 	{
 		return exception;

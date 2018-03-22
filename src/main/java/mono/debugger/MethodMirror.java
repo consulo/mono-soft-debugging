@@ -3,8 +3,8 @@ package mono.debugger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import consulo.internal.dotnet.asm.signature.MethodAttributes;
 import mono.debugger.protocol.Method_GetCustomAttributes;
 import mono.debugger.protocol.Method_GetDebugInfo;
@@ -31,7 +31,7 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 	private int myMaxCodeIndex = Integer.MIN_VALUE;
 	private Method_GetDebugInfo.Entry[] myDebugEntries;
 
-	public MethodMirror(@NotNull VirtualMachine aVm, int id)
+	public MethodMirror(@Nonnull VirtualMachine aVm, int id)
 	{
 		super(aVm, id);
 	}
@@ -107,13 +107,13 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 	}
 
 	@Nullable
-	public Value<?> invoke(@NotNull ThreadMirror threadMirror, @Nullable Value<?> thisObject, Value<?>... arguments)
+	public Value<?> invoke(@Nonnull ThreadMirror threadMirror, @Nullable Value<?> thisObject, Value<?>... arguments)
 	{
 		return invoke(threadMirror, InvokeFlags.NONE, thisObject, arguments);
 	}
 
 	@Nullable
-	public Value<?> invoke(@NotNull ThreadMirror threadMirror, @NotNull InvokeFlags invokeFlags, @Nullable Value<?> thisObject, Value<?>... arguments)
+	public Value<?> invoke(@Nonnull ThreadMirror threadMirror, @Nonnull InvokeFlags invokeFlags, @Nullable Value<?> thisObject, Value<?>... arguments)
 	{
 		if(arguments.length != parameters().length)
 		{
@@ -130,7 +130,7 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public Method_GetDebugInfo.Entry[] debugInfo()
 	{
 		if(myMaxCodeIndex == Integer.MIN_VALUE)
@@ -150,13 +150,13 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 		return myDebugEntries;
 	}
 
-	@NotNull
+	@Nonnull
 	public LocalVariableMirror[] locals()
 	{
 		return localsInfo().localVariables;
 	}
 
-	@NotNull
+	@Nonnull
 	public LocalVariableMirror[] locals(long index)
 	{
 		LocalVariableMirror[] locals = locals();
@@ -177,14 +177,14 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 		return vm.isAtLeastVersion(2, 21) ? Method_GetCustomAttributes.process(vm, this).customAttributeMirrors : CustomAttributeMirror.EMPTY_ARRAY;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{
 		return Method_GetName.process(vm, this).name;
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror declaringType()
 	{
 		if(myDeclarationType != null)

@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -11,10 +11,10 @@ public abstract class FieldOrPropertyMirror extends CustomAttributeMirrorOwner i
 {
 	private final TypeMirror myParent;
 	protected final int myAttributes;
-	@NotNull
+	@Nonnull
 	private final String myName;
 
-	public FieldOrPropertyMirror(@NotNull VirtualMachine aVm, int id, TypeMirror parent, int attributes, @NotNull String name)
+	public FieldOrPropertyMirror(@Nonnull VirtualMachine aVm, int id, TypeMirror parent, int attributes, @Nonnull String name)
 	{
 		super(aVm, id);
 		myParent = parent;
@@ -27,23 +27,23 @@ public abstract class FieldOrPropertyMirror extends CustomAttributeMirrorOwner i
 		return myAttributes;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected String nameImpl() throws JDWPException
 	{
 		return myName;
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror parent()
 	{
 		return myParent;
 	}
 
-	@NotNull
+	@Nonnull
 	public abstract TypeMirror type();
 
 	public abstract Value<?> value(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue);
 
-	public abstract void setValue(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue, @NotNull Value<?> value);
+	public abstract void setValue(@Nullable ThreadMirror threadMirror, @Nullable ObjectValueMirror thisObjectValue, @Nonnull Value<?> value);
 }

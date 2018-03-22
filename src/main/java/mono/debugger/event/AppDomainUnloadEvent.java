@@ -1,6 +1,7 @@
 package mono.debugger.event;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.AppDomainMirror;
 import mono.debugger.JDWP;
 import mono.debugger.VirtualMachine;
@@ -19,7 +20,7 @@ public class AppDomainUnloadEvent extends ThreadedEvent implements Event
 		myAppDomainMirror = evt.appDomainMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	public AppDomainMirror getAppDomainMirror()
 	{
 		return myAppDomainMirror;

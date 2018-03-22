@@ -1,6 +1,6 @@
 package mono.debugger.event;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import mono.debugger.JDWP;
 import mono.debugger.TypeMirror;
 import mono.debugger.VirtualMachine;
@@ -25,7 +25,7 @@ public class TypeLoadEvent extends ThreadedEvent
 		return "type load";
 	}
 
-	@NotNull
+	@Nonnull
 	public TypeMirror typeMirror()
 	{
 		return myTypeMirror;

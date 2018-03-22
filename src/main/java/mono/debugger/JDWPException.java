@@ -25,7 +25,7 @@
 
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class JDWPException extends Exception
 {
@@ -43,7 +43,7 @@ public class JDWPException extends Exception
 		return errorCode;
 	}
 
-	@NotNull
+	@Nonnull
 	public RuntimeException asUncheckedException()
 	{
 		switch(errorCode)

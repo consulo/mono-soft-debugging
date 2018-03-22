@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -24,7 +24,7 @@ public class TypeValueMirror extends ValueImpl<TypeMirror>
 		return vm.rootAppDomain().corlibAssembly().findTypeByQualifiedName("System.Type", false);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TypeMirror value()
 	{
@@ -32,7 +32,7 @@ public class TypeValueMirror extends ValueImpl<TypeMirror>
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitTypeValue(this, value());
 	}

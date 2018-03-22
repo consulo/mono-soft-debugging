@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author VISTALL
@@ -11,7 +11,7 @@ public class BooleanValueMirror extends ValueImpl<Boolean>
 {
 	private final Boolean myValue;
 
-	public BooleanValueMirror(VirtualMachine aVm, @NotNull Boolean value)
+	public BooleanValueMirror(VirtualMachine aVm, @Nonnull Boolean value)
 	{
 		super(aVm);
 		myValue = value;
@@ -24,7 +24,7 @@ public class BooleanValueMirror extends ValueImpl<Boolean>
 		return virtualMachine().rootAppDomain().corlibAssembly().findTypeByQualifiedName(TypeTag.Boolean.getType(), false);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Boolean value()
 	{
@@ -32,7 +32,7 @@ public class BooleanValueMirror extends ValueImpl<Boolean>
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitBooleanValue(this, value());
 	}

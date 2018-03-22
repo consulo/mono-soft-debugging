@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -11,73 +11,73 @@ public interface ValueVisitor
 	class Adapter implements ValueVisitor
 	{
 		@Override
-		public void visitObjectValue(@NotNull ObjectValueMirror value)
+		public void visitObjectValue(@Nonnull ObjectValueMirror value)
 		{
 		}
 
 		@Override
-		public void visitStringValue(@NotNull StringValueMirror value, @NotNull String mainValue)
+		public void visitStringValue(@Nonnull StringValueMirror value, @Nonnull String mainValue)
 		{
 		}
 
 		@Override
-		public void visitNumberValue(@NotNull NumberValueMirror value, @NotNull Number mainValue)
+		public void visitNumberValue(@Nonnull NumberValueMirror value, @Nonnull Number mainValue)
 		{
 		}
 
 		@Override
-		public void visitNoObjectValue(@NotNull NoObjectValueMirror value)
+		public void visitNoObjectValue(@Nonnull NoObjectValueMirror value)
 		{
 		}
 
 		@Override
-		public void visitArrayValue(@NotNull ArrayValueMirror value)
+		public void visitArrayValue(@Nonnull ArrayValueMirror value)
 		{
 		}
 
 		@Override
-		public void visitBooleanValue(@NotNull BooleanValueMirror value, @NotNull Boolean mainValue)
+		public void visitBooleanValue(@Nonnull BooleanValueMirror value, @Nonnull Boolean mainValue)
 		{
 		}
 
 		@Override
-		public void visitCharValue(@NotNull CharValueMirror valueMirror, @NotNull Character mainValue)
+		public void visitCharValue(@Nonnull CharValueMirror valueMirror, @Nonnull Character mainValue)
 		{
 		}
 
 		@Override
-		public void visitTypeValue(@NotNull TypeValueMirror typeValueMirror, @NotNull TypeMirror mainValue)
+		public void visitTypeValue(@Nonnull TypeValueMirror typeValueMirror, @Nonnull TypeMirror mainValue)
 		{
 		}
 
 		@Override
-		public void visitStructValue(@NotNull StructValueMirror mirror)
+		public void visitStructValue(@Nonnull StructValueMirror mirror)
 		{
 		}
 
 		@Override
-		public void visitEnumValue(@NotNull EnumValueMirror mirror)
+		public void visitEnumValue(@Nonnull EnumValueMirror mirror)
 		{
 		}
 	}
 
-	void visitObjectValue(@NotNull ObjectValueMirror value);
+	void visitObjectValue(@Nonnull ObjectValueMirror value);
 
-	void visitStringValue(@NotNull StringValueMirror value, @NotNull String mainValue);
+	void visitStringValue(@Nonnull StringValueMirror value, @Nonnull String mainValue);
 
-	void visitNumberValue(@NotNull NumberValueMirror value, @NotNull Number mainValue);
+	void visitNumberValue(@Nonnull NumberValueMirror value, @Nonnull Number mainValue);
 
-	void visitNoObjectValue(@NotNull NoObjectValueMirror value);
+	void visitNoObjectValue(@Nonnull NoObjectValueMirror value);
 
-	void visitArrayValue(@NotNull ArrayValueMirror value);
+	void visitArrayValue(@Nonnull ArrayValueMirror value);
 
-	void visitBooleanValue(@NotNull BooleanValueMirror value, @NotNull Boolean mainValue);
+	void visitBooleanValue(@Nonnull BooleanValueMirror value, @Nonnull Boolean mainValue);
 
-	void visitCharValue(@NotNull CharValueMirror valueMirror, @NotNull Character mainValue);
+	void visitCharValue(@Nonnull CharValueMirror valueMirror, @Nonnull Character mainValue);
 
-	void visitTypeValue(@NotNull TypeValueMirror typeValueMirror, @NotNull TypeMirror mainValue);
+	void visitTypeValue(@Nonnull TypeValueMirror typeValueMirror, @Nonnull TypeMirror mainValue);
 
-	void visitStructValue(@NotNull StructValueMirror mirror);
+	void visitStructValue(@Nonnull StructValueMirror mirror);
 
-	void visitEnumValue(@NotNull EnumValueMirror mirror);
+	void visitEnumValue(@Nonnull EnumValueMirror mirror);
 }

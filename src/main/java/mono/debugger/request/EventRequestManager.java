@@ -28,8 +28,9 @@ package mono.debugger.request;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.NativeMethodException;
@@ -53,13 +54,13 @@ import mono.debugger.VirtualMachine;
 
 public interface EventRequestManager extends Mirror
 {
-	@NotNull
+	@Nonnull
 	EventRequest createAppDomainCreateRequest();
 
-	@NotNull
+	@Nonnull
 	EventRequest createAppDomainUnloadRequest();
 
-	@NotNull
+	@Nonnull
 	TypeLoadRequest createTypeLoadRequest();
 
 	/**
@@ -95,7 +96,7 @@ public interface EventRequestManager extends Mirror
 	 * @param notifyUncaught If true, uncaught exceptions will be reported.
 	 * @return the created {@link ExceptionRequest}
 	 */
-	@NotNull
+	@Nonnull
 	ExceptionRequest createExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses);
 
 	/**
@@ -106,7 +107,7 @@ public interface EventRequestManager extends Mirror
 	 *
 	 * @return the created {@link MethodEntryRequest}
 	 */
-	@NotNull
+	@Nonnull
 	MethodEntryRequest createMethodEntryRequest();
 
 	/**
@@ -117,7 +118,7 @@ public interface EventRequestManager extends Mirror
 	 *
 	 * @return the created {@link MethodExitRequest}
 	 */
-	@NotNull
+	@Nonnull
 	MethodExitRequest createMethodExitRequest();
 
 	/**
@@ -341,12 +342,12 @@ public interface EventRequestManager extends Mirror
 	 */
 	List<VMDeathRequest> vmDeathRequests();
 
-	@NotNull
+	@Nonnull
 	List<EventRequest> appDomainCreateEventRequests();
 
-	@NotNull
+	@Nonnull
 	List<EventRequest> appDomainUnloadEventRequests();
 
-	@NotNull
+	@Nonnull
 	List<TypeLoadRequest> typeLoadRequests();
 }

@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ModifierOwner
 {
-	@NotNull
+	@Nonnull
 	CustomAttributeMirror[] customAttributes();
 
-	@NotNull
-	CustomAttributeMirror[] findCustomAttributes(@NotNull String vmQName);
+	@Nonnull
+	CustomAttributeMirror[] findCustomAttributes(@Nonnull String vmQName);
 
 	boolean isStatic();
 

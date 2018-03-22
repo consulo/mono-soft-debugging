@@ -25,8 +25,8 @@
 
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A point within the executing code of the target VM.
@@ -88,10 +88,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Location extends Mirror
 {
-	@NotNull
+	@Nonnull
 	TypeMirror declaringType();
 
-	@NotNull
+	@Nonnull
 	MethodMirror method();
 
 	long codeIndex();

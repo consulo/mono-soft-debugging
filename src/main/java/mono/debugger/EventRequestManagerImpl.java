@@ -32,8 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import mono.debugger.request.*;
 
 /**
@@ -62,7 +63,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ExceptionRequest createExceptionRequest(@Nullable TypeMirror refType, boolean notifyCaught, boolean notifyUncaught, boolean notifyOnSubclasses)
 	{
@@ -83,21 +84,21 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		return add(new ThreadDeathRequest(vm, this));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EventRequest createAppDomainCreateRequest()
 	{
 		return add(new AppDomainCreateRequest(vm, this));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public TypeLoadRequest createTypeLoadRequest()
 	{
 		return add(new TypeLoadRequest(vm, this));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EventRequest createAppDomainUnloadRequest()
 	{
@@ -110,14 +111,14 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		return add(new ThreadStartRequest(vm, this));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MethodEntryRequest createMethodEntryRequest()
 	{
 		return add(new MethodEntryRequest(vm, this));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public MethodExitRequest createMethodExitRequest()
 	{
@@ -215,21 +216,21 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		return (List<MethodExitRequest>) unmodifiableRequestList(EventKind.METHOD_EXIT);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<EventRequest> appDomainCreateEventRequests()
 	{
 		return (List<EventRequest>) unmodifiableRequestList(EventKind.APPDOMAIN_CREATE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<EventRequest> appDomainUnloadEventRequests()
 	{
 		return (List<EventRequest>) unmodifiableRequestList(EventKind.APPDOMAIN_UNLOAD);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<TypeLoadRequest> typeLoadRequests()
 	{

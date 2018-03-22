@@ -3,7 +3,7 @@ package mono.debugger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -13,16 +13,16 @@ public abstract class CustomAttributeMirrorOwner extends MirrorWithIdAndName imp
 {
 	private CustomAttributeMirror[] myCustomAttributeMirrors;
 
-	public CustomAttributeMirrorOwner(@NotNull VirtualMachine aVm, int id)
+	public CustomAttributeMirrorOwner(@Nonnull VirtualMachine aVm, int id)
 	{
 		super(aVm, id);
 	}
 
 	protected abstract CustomAttributeMirror[] customAttributesImpl() throws JDWPException;
 
-	@NotNull
+	@Nonnull
 	@Override
-	public CustomAttributeMirror[] findCustomAttributes(@NotNull String vmQName)
+	public CustomAttributeMirror[] findCustomAttributes(@Nonnull String vmQName)
 	{
 		CustomAttributeMirror[] customAttributeMirrors = customAttributes();
 		if(customAttributeMirrors.length == 0)
@@ -46,7 +46,7 @@ public abstract class CustomAttributeMirrorOwner extends MirrorWithIdAndName imp
 		return list.isEmpty() ? CustomAttributeMirror.EMPTY_ARRAY : list.toArray(new CustomAttributeMirror[list.size()]);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public final CustomAttributeMirror[] customAttributes()
 	{

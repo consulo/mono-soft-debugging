@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL
@@ -10,7 +10,7 @@ public class ThrowValueException extends RuntimeException
 {
 	private final Value<?> myThrowExceptionValue;
 
-	public ThrowValueException(@NotNull Value<?> throwExceptionValue)
+	public ThrowValueException(@Nonnull Value<?> throwExceptionValue)
 	{
 		myThrowExceptionValue = throwExceptionValue;
 	}

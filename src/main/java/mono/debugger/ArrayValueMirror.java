@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import mono.debugger.protocol.ArrayReference_GetLength;
 import mono.debugger.protocol.ArrayReference_GetValues;
 import mono.debugger.protocol.ArrayReference_SetValues;
@@ -20,7 +20,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		myObjectValueMirror = objectValueMirror;
 	}
 
-	@NotNull
+	@Nonnull
 	private ArrayReference_GetLength.DimensionInfo[] dimensionInfos()
 	{
 		if(myInfos != null)
@@ -38,7 +38,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public Value<?> get(int index)
 	{
 		try
@@ -51,7 +51,7 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 		}
 	}
 
-	public void set(int index, @NotNull Value<?> value)
+	public void set(int index, @Nonnull Value<?> value)
 	{
 		try
 		{
@@ -85,12 +85,12 @@ public class ArrayValueMirror extends ValueImpl<Object> implements MirrorWithId
 	}
 
 	@Override
-	public void accept(@NotNull ValueVisitor valueVisitor)
+	public void accept(@Nonnull ValueVisitor valueVisitor)
 	{
 		valueVisitor.visitArrayValue(this);
 	}
 
-	@NotNull
+	@Nonnull
 	public ObjectValueMirror object()
 	{
 		return myObjectValueMirror;

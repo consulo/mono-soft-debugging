@@ -28,7 +28,8 @@ package mono.debugger.event;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import mono.debugger.Location;
 import mono.debugger.Mirror;
 import mono.debugger.SuspendPolicy;
@@ -154,7 +155,7 @@ public interface EventSet extends Mirror, Set<Event>
 	 * {@link mono.debugger.request.EventRequest#SUSPEND_EVENT_THREAD SUSPEND_EVENT_THREAD} or
 	 * {@link mono.debugger.request.EventRequest#SUSPEND_NONE SUSPEND_NONE}.
 	 */
-	@NotNull
+	@Nonnull
 	SuspendPolicy suspendPolicy();
 
 	/**
