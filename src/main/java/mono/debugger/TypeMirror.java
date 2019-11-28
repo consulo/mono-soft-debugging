@@ -1,22 +1,16 @@
 package mono.debugger;
 
+import consulo.annotation.DeprecationInfo;
+import consulo.internal.dotnet.asm.signature.TypeAttributes;
+import mono.debugger.protocol.*;
+import mono.debugger.util.BitUtil;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import consulo.annotations.DeprecationInfo;
-import consulo.internal.dotnet.asm.signature.TypeAttributes;
-import mono.debugger.protocol.Type_GetCustomAttributes;
-import mono.debugger.protocol.Type_GetFields;
-import mono.debugger.protocol.Type_GetInfo;
-import mono.debugger.protocol.Type_GetInterfaces;
-import mono.debugger.protocol.Type_GetMethods;
-import mono.debugger.protocol.Type_GetProperties;
-import mono.debugger.protocol.Type_IsAssignableFrom;
-import mono.debugger.util.BitUtil;
 
 /**
  * @author VISTALL
