@@ -1,6 +1,5 @@
 package mono.debugger.protocol;
 
-import mono.debugger.InvokeFlags;
 import mono.debugger.InvokeResult;
 import mono.debugger.JDWPException;
 import mono.debugger.MethodMirror;
@@ -18,19 +17,19 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 {
 	static final int COMMAND = 7;
 
-	public static VirtualMachine_InvokeMethod process(VirtualMachineImpl vm, ThreadMirror threadMirror, InvokeFlags invokeFlags,
+	public static VirtualMachine_InvokeMethod process(VirtualMachineImpl vm, ThreadMirror threadMirror, int invokeFlags,
 													  MethodMirror methodMirror, Value<?> thisObjectMirror, Value<?>... arguments) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, threadMirror, invokeFlags, methodMirror, thisObjectMirror, arguments);
 		return waitForReply(vm, ps);
 	}
 
-	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror threadMirror, InvokeFlags invokeFlags, MethodMirror methodMirror,
+	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror threadMirror, int invokeFlags, MethodMirror methodMirror,
 									   Value<?> thisObjectMirror, Value<?>[] arguments)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(threadMirror);
-		ps.writeInt(invokeFlags.ordinal());
+		ps.writeInt(invokeFlags);
 		ps.writeId(methodMirror);
 		ps.writeValue(thisObjectMirror);
 		ps.writeInt(arguments.length);
