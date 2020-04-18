@@ -6,18 +6,18 @@ package mono.debugger;
  */
 public enum InvokeFlags
 {
-	NONE,
-	DISABLE_BREAKPOINTS,
-	SINGLE_THREADED,
-	OUT_THIS,
-	OUT_ARGS,
-	VIRTUAL;
+	NONE(0),
+	DISABLE_BREAKPOINTS(1),
+	SINGLE_THREADED(2),
+	OUT_THIS(4),
+	OUT_ARGS(8),
+	VIRTUAL(16);
 
 	private int mask;
 
-	InvokeFlags()
+	InvokeFlags(int mask)
 	{
-		mask = 1 << ordinal();
+		this.mask = mask;
 	}
 
 	public static int pack(InvokeFlags... flags)
