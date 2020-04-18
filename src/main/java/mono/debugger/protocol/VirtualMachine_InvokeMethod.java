@@ -1,6 +1,7 @@
 package mono.debugger.protocol;
 
 import mono.debugger.InvokeFlags;
+import mono.debugger.InvokeResult;
 import mono.debugger.JDWPException;
 import mono.debugger.MethodMirror;
 import mono.debugger.PacketStream;
@@ -18,14 +19,14 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 	static final int COMMAND = 7;
 
 	public static VirtualMachine_InvokeMethod process(VirtualMachineImpl vm, ThreadMirror threadMirror, InvokeFlags invokeFlags,
-			MethodMirror methodMirror, Value<?> thisObjectMirror, Value<?>... arguments) throws JDWPException
+													  MethodMirror methodMirror, Value<?> thisObjectMirror, Value<?>... arguments) throws JDWPException
 	{
 		PacketStream ps = enqueueCommand(vm, threadMirror, invokeFlags, methodMirror, thisObjectMirror, arguments);
 		return waitForReply(vm, ps);
 	}
 
 	static PacketStream enqueueCommand(VirtualMachineImpl vm, ThreadMirror threadMirror, InvokeFlags invokeFlags, MethodMirror methodMirror,
-			Value<?> thisObjectMirror, Value<?>[] arguments)
+									   Value<?> thisObjectMirror, Value<?>[] arguments)
 	{
 		PacketStream ps = new PacketStream(vm, COMMAND_SET, COMMAND);
 		ps.writeId(threadMirror);
@@ -49,15 +50,32 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 
 	private boolean myThrowException;
 	private Value myValue;
+	private Value myOutThis;
+	private Value[] myOutArgs;
 
 	private VirtualMachine_InvokeMethod(VirtualMachineImpl vm, PacketStream ps)
 	{
-		byte result = ps.readByte();
-		myThrowException = result == 0;
+		byte resflags = ps.readByte();
+		myThrowException = resflags == 0;
 		myValue = ps.readValue();
+		if((resflags & 2) != 0)
+		{
+			myOutThis = ps.readValue();
+		}
+
+		if((resflags & 4) != 0)
+		{
+			int args = ps.readInt();
+			myOutArgs = new Value[args];
+
+			for(int i = 0; i < args; i++)
+			{
+				myOutArgs[i] = ps.readValue();
+			}
+		}
 	}
 
-	public Value<?> getValue()
+	public InvokeResult getValue()
 	{
 		if(myThrowException)
 		{
@@ -65,7 +83,7 @@ public class VirtualMachine_InvokeMethod implements VirtualMachine
 		}
 		else
 		{
-			return myValue;
+			return new InvokeResult(myThrowException, myValue, myOutThis, myOutArgs);
 		}
 	}
 }

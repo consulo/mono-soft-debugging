@@ -107,13 +107,28 @@ public class MethodMirror extends CustomAttributeMirrorOwner implements MirrorWi
 	}
 
 	@Nullable
+	@Deprecated
 	public Value<?> invoke(@Nonnull ThreadMirror threadMirror, @Nullable Value<?> thisObject, Value<?>... arguments)
 	{
 		return invoke(threadMirror, InvokeFlags.NONE, thisObject, arguments);
 	}
 
 	@Nullable
+	@Deprecated
 	public Value<?> invoke(@Nonnull ThreadMirror threadMirror, @Nonnull InvokeFlags invokeFlags, @Nullable Value<?> thisObject, Value<?>... arguments)
+	{
+		InvokeResult invokeResult = invokeNew(threadMirror, invokeFlags, thisObject, arguments);
+		return invokeResult.getValue();
+	}
+
+	@Nonnull
+	public InvokeResult invokeNew(@Nonnull ThreadMirror threadMirror, @Nullable Value<?> thisObject, Value<?>... arguments)
+	{
+		return invokeNew(threadMirror, InvokeFlags.NONE, thisObject, arguments);
+	}
+
+	@Nonnull
+	public InvokeResult invokeNew(@Nonnull ThreadMirror threadMirror, @Nonnull InvokeFlags invokeFlags, @Nullable Value<?> thisObject, Value<?>... arguments)
 	{
 		if(arguments.length != parameters().length)
 		{
