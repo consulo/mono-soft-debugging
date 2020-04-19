@@ -39,6 +39,22 @@ public class Method_GetLocalsInfo implements Method
 
 	private Method_GetLocalsInfo(VirtualMachineImpl vm, PacketStream ps)
 	{
+		if(vm.isAtLeastVersion(2, 43))
+		{
+			int nscopes = ps.readInt();
+			int[] scopes_start = new int[nscopes];
+			int[] scopes_end = new int[nscopes];
+			int last_start = 0;
+			for(int i = 0; i < nscopes; ++i)
+			{
+				scopes_start[i] = last_start + ps.readInt();
+				scopes_end[i] = scopes_start[i] + ps.readInt();
+				last_start = scopes_start[i];
+			}
+
+			// TODO [VISTALL] use it
+		}
+		
 		int size = ps.readInt();
 
 		this.localVariables = new LocalVariableMirror[size];

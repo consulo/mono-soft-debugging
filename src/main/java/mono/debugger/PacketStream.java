@@ -498,7 +498,13 @@ public class PacketStream
 				return new NumberValueMirror(vm, tag, readInt());
 			case SignatureConstants.ELEMENT_TYPE_U8:
 			case SignatureConstants.ELEMENT_TYPE_I8:
+				return new NumberValueMirror(vm, tag, readLong());
 			case SignatureConstants.ELEMENT_TYPE_PTR:
+				int typeId = 0;
+				if(vm.isAtLeastVersion(2, 46))
+				{
+					typeId = readId();
+				}
 				return new NumberValueMirror(vm, tag, readLong());
 			case SignatureConstants.ELEMENT_TYPE_R4:
 				return new NumberValueMirror(vm, tag, readFloat());

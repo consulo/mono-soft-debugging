@@ -18,6 +18,9 @@ public class Method_GetDebugInfo implements Method
 		public int offset;
 		public int line;
 		public int column;
+		public int end_line = -1;
+		public int end_column = -1;
+
 		public SourceFile sourceFile;
 	}
 
@@ -97,6 +100,12 @@ public class Method_GetDebugInfo implements Method
 			if(vm.isAtLeastVersion(2, 19))
 			{
 				entries[i].column = ps.readInt();
+			}
+
+			if(vm.isAtLeastVersion(2, 32))
+			{
+				entries[i].end_line = ps.readInt();
+				entries[i].end_column = ps.readInt();
 			}
 		}
 	}
