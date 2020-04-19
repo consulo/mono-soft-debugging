@@ -37,7 +37,7 @@ import mono.debugger.connect.spi.Connection;
 public class VirtualMachineManagerImpl implements VirtualMachineManager
 {
 	private static final int MAJOR_VERSION = 2;
-	private static final int MINOR_VERSION = 29;
+	private static final int MINOR_VERSION = 56;
 
 	private List<VirtualMachine> targets = new ArrayList<VirtualMachine>();
 	private final ThreadGroup mainGroupForJDI;

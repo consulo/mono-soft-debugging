@@ -37,6 +37,19 @@ public class StringReference_GetValue implements StringReference
 
 	private StringReference_GetValue(VirtualMachineImpl vm, PacketStream ps)
 	{
-		value = ps.readString();
+		boolean is_utf16 = false;
+		if(vm.isAtLeastVersion(2, 41))
+		{
+			is_utf16 = ps.readByteBool();
+		}
+
+		if(is_utf16)
+		{
+			value = ps.readStringUTF16();
+		}
+		else
+		{
+			value = ps.readString();
+		}
 	}
 }

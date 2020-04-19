@@ -26,6 +26,7 @@
 package mono.debugger;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -389,29 +390,25 @@ public class PacketStream
 	 */
 	public String readString()
 	{
-		String ret;
 		int len = readInt();
 
-		try
-		{
-			ret = new String(pkt.data, inCursor, len, "UTF8");
-		}
-		catch(java.io.UnsupportedEncodingException e)
-		{
-			System.err.println(e);
-			ret = "Conversion error!";
-		}
+		String ret = new String(pkt.data, inCursor, len, StandardCharsets.UTF_8);
+
+		inCursor += len;
+		return ret;
+	}
+
+	public String readStringUTF16()
+	{
+		int len = readInt();
+
+		String ret = new String(pkt.data, inCursor, len, StandardCharsets.UTF_16LE);
+
 		inCursor += len;
 		return ret;
 	}
 
 	public int readId()
-	{
-		return readInt();
-	}
-
-	@Deprecated
-	int readClassRef()
 	{
 		return readInt();
 	}
