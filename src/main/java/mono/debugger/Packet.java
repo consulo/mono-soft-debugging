@@ -43,6 +43,7 @@ public class Packet extends Object {
 	public short cmdSet;
 	public short cmd;
 	public  short errorCode;
+	public String errorMessage;
     byte[] data;
     volatile boolean replied = false;
 

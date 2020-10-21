@@ -31,11 +31,13 @@ public class JDWPException extends Exception
 {
 	private static final long serialVersionUID = -6321344442751299874L;
 	short errorCode;
+	private final String myMessage;
 
-	public JDWPException(short errorCode)
+	public JDWPException(short errorCode, String message)
 	{
-		super();
+		super(message);
 		this.errorCode = errorCode;
+		myMessage = message;
 	}
 
 	short errorCode()
@@ -51,7 +53,7 @@ public class JDWPException extends Exception
 			case JDWP.Error.NOT_SUSPENDED:
 				return new NotSuspendedException();
 			case JDWP.Error.INVALID_OBJECT:
-				return new InvalidObjectException();
+				return new InvalidObjectException(myMessage);
 			case JDWP.Error.INVALID_FRAMEID:
 				return new InvalidStackFrameException();
 			case JDWP.Error.INVALID_FIELDID:

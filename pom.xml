@@ -29,13 +29,17 @@
 	<version>2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<properties>
+		<java.level>11</java.level>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>consulo</id>
 			<url>https://maven.consulo.io/repository/snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>interval:60</updatePolicy>
+				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>

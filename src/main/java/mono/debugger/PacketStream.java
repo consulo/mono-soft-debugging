@@ -85,7 +85,7 @@ public class PacketStream
 
 		if(pkt.errorCode != Packet.ReplyNoError)
 		{
-			throw new JDWPException(pkt.errorCode);
+			throw new JDWPException(pkt.errorCode, pkt.errorMessage);
 		}
 	}
 
