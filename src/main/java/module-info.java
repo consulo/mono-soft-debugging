@@ -7,7 +7,9 @@ module mono.soft.debugging {
     requires consulo.annotation;
 
     exports mono.debugger;
+    exports mono.debugger.connect;
     exports mono.debugger.event;
     exports mono.debugger.request;
+    exports mono.debugger.protocol;
     exports mono.debugger.util;
 }
