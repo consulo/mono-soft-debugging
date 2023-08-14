@@ -25,16 +25,13 @@
 
 package mono.debugger;
 
-import java.util.ArrayList;
-import java.util.List;
+import mono.debugger.protocol.*;
+import mono.debugger.util.BitUtil;
 
 import javax.annotation.Nonnull;
-
-import mono.debugger.protocol.Thread_GetFrameInfo;
-import mono.debugger.protocol.Thread_GetId;
-import mono.debugger.protocol.Thread_GetName;
-import mono.debugger.protocol.Thread_GetState;
-import mono.debugger.protocol.Thread_GetTId;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 public class ThreadMirror extends MirrorWithIdAndName
 {
@@ -143,7 +140,17 @@ public class ThreadMirror extends MirrorWithIdAndName
 					throw new InternalException("Invalid frame location");
 				}
 
-				frameMirrors.add(new StackFrameMirror(vm, this, frame.frameID, frame.location, StackFrameMirror.StackFrameFlags.values()[frame.flags]));
+				List<StackFrameMirror.StackFrameFlags> result = new ArrayList<>();
+				byte flags = frame.flags;
+				for(StackFrameMirror.StackFrameFlags f : StackFrameMirror.StackFrameFlags.values())
+				{
+					if(BitUtil.isSet(flags, f.mask))
+					{
+						result.add(f);
+					}
+				}
+
+				frameMirrors.add(new StackFrameMirror(vm, this, frame.frameID, frame.location, EnumSet.copyOf(result)));
 			}
 			return frameMirrors;
 

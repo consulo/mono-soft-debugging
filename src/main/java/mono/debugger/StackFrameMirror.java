@@ -1,12 +1,13 @@
 package mono.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import mono.debugger.protocol.StackFrame_GetThis;
 import mono.debugger.protocol.StackFrame_GetValues;
 import mono.debugger.protocol.StackFrame_SetValues;
 import mono.debugger.util.ImmutablePair;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.EnumSet;
 
 /**
  * @author VISTALL
@@ -18,15 +19,22 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 	{
 		NONE,
 		DEBUGGER_INVOKE,
-		NATIVE_TRANSITION
+		NATIVE_TRANSITION;
+
+		public final int mask;
+
+		StackFrameFlags()
+		{
+			mask = 1 << ordinal();
+		}
 	}
 
 	private final ThreadMirror myThreadMirror;
 	private final int myFrameID;
 	private final Location myLocation;
-	private final StackFrameFlags myFlags;
+	private final EnumSet<StackFrameFlags> myFlags;
 
-	public StackFrameMirror(VirtualMachine aVm, ThreadMirror threadMirror, int frameID, Location location, StackFrameFlags flags)
+	public StackFrameMirror(VirtualMachine aVm, ThreadMirror threadMirror, int frameID, Location location, EnumSet<StackFrameFlags> flags)
 	{
 		super(aVm);
 		myThreadMirror = threadMirror;
@@ -35,7 +43,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 		myFlags = flags;
 	}
 
-	public StackFrameFlags flags()
+	public EnumSet<StackFrameFlags> flags()
 	{
 		return myFlags;
 	}
@@ -76,7 +84,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 	public Value localOrParameterValue(LocalVariableOrParameterMirror mirror)
 	{
 		// native methods ill throw absent information
-		if(flags() == StackFrameFlags.NATIVE_TRANSITION)
+		if(flags().contains(StackFrameFlags.NATIVE_TRANSITION))
 		{
 			return null;
 		}
@@ -99,7 +107,7 @@ public class StackFrameMirror extends MirrorImpl implements Locatable, MirrorWit
 	public Value[] localOrParameterValues(LocalVariableOrParameterMirror... mirror)
 	{
 		// native methods ill throw absent information
-		if(flags() == StackFrameFlags.NATIVE_TRANSITION)
+		if(flags().contains(StackFrameFlags.NATIVE_TRANSITION))
 		{
 			return null;
 		}
