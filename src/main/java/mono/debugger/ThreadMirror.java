@@ -150,7 +150,7 @@ public class ThreadMirror extends MirrorWithIdAndName
 					}
 				}
 
-				frameMirrors.add(new StackFrameMirror(vm, this, frame.frameID, frame.location, EnumSet.copyOf(result)));
+				frameMirrors.add(new StackFrameMirror(vm, this, frame.frameID, frame.location, result.isEmpty() ? EnumSet.noneOf(StackFrameMirror.StackFrameFlags.class) : EnumSet.copyOf(result)));
 			}
 			return frameMirrors;
 
