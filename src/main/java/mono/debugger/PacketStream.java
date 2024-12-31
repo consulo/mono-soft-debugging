@@ -28,8 +28,8 @@ package mono.debugger;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.internal.dotnet.asm.signature.SignatureConstants;
 
 public class PacketStream

@@ -25,8 +25,8 @@
 
 package mono.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public interface Value<T> extends Mirror
 {

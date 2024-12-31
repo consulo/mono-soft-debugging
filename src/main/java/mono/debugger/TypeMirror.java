@@ -1,12 +1,11 @@
 package mono.debugger;
 
-import consulo.annotation.DeprecationInfo;
 import consulo.internal.dotnet.asm.signature.TypeAttributes;
 import mono.debugger.protocol.*;
 import mono.debugger.util.BitUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -127,9 +126,11 @@ public class TypeMirror extends CustomAttributeMirrorOwner implements MirrorWith
 		return info().fullName;
 	}
 
+	/**
+	 * @see #fullName()
+	 */
 	@Nonnull
 	@Deprecated
-	@DeprecationInfo(value = "Use #fullName()", until = "1.1")
 	public String qualifiedName()
 	{
 		TypeMirror parentType = parentType();

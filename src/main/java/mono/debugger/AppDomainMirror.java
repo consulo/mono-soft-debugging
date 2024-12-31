@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import mono.debugger.protocol.AppDomain_CreateBoxValue;
 import mono.debugger.protocol.AppDomain_CreateString;

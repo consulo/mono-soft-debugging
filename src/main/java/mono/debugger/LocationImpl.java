@@ -25,7 +25,7 @@
 
 package mono.debugger;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import mono.debugger.protocol.Method_GetDebugInfo;
 

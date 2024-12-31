@@ -1,6 +1,6 @@
 package mono.debugger;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import mono.debugger.protocol.ArrayReference_GetLength;
 import mono.debugger.protocol.ArrayReference_GetValues;
 import mono.debugger.protocol.ArrayReference_SetValues;

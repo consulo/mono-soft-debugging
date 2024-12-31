@@ -3,8 +3,8 @@ package mono.debugger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import consulo.internal.dotnet.asm.signature.MethodAttributes;
 import mono.debugger.protocol.Method_GetCustomAttributes;
 import mono.debugger.protocol.Method_GetDebugInfo;

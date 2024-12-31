@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import mono.debugger.event.*;
 import mono.debugger.request.EventRequest;
 

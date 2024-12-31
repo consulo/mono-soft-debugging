@@ -4,7 +4,7 @@
  */
 module mono.soft.debugging {
     requires transitive consulo.internal.dotnet.asm;
-    requires consulo.annotation;
+    requires jakarta.annotation;
 
     exports mono.debugger;
     exports mono.debugger.connect;

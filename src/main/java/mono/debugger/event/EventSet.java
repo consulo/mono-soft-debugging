@@ -28,7 +28,7 @@ package mono.debugger.event;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import mono.debugger.Location;
 import mono.debugger.Mirror;

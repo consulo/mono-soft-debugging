@@ -28,7 +28,7 @@ package mono.debugger;
 import mono.debugger.protocol.*;
 import mono.debugger.util.BitUtil;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;

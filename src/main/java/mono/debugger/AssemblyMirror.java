@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import mono.debugger.protocol.Assembly_GetLocation;
 import mono.debugger.protocol.Assembly_GetName;
 import mono.debugger.protocol.Assembly_GetType;

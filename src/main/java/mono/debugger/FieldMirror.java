@@ -1,7 +1,7 @@
 package mono.debugger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 import consulo.internal.dotnet.asm.signature.FieldAttributes;
 import mono.debugger.protocol.ObjectReference_GetValues;

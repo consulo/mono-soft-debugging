@@ -42,9 +42,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>consulo</groupId>
-			<artifactId>consulo-annotation</artifactId>
-			<version>3-SNAPSHOT</version>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

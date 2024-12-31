@@ -5,8 +5,8 @@ import mono.debugger.protocol.StackFrame_GetValues;
 import mono.debugger.protocol.StackFrame_SetValues;
 import mono.debugger.util.ImmutablePair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.EnumSet;
 
 /**

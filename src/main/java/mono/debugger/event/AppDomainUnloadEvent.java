@@ -1,6 +1,6 @@
 package mono.debugger.event;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import mono.debugger.AppDomainMirror;
 import mono.debugger.JDWP;

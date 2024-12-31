@@ -27,7 +27,7 @@ package mono.debugger;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import mono.debugger.event.EventQueue;
 import mono.debugger.request.EventRequestManager;
